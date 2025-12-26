@@ -1,0 +1,2753 @@
+{
+  "FP9ZEZHD": {
+    "amount": 4186,
+    "max_activations": 13,
+    "current_activations": 0,
+    "activated_by": []
+  },
+  "QIQ7JACL": {
+    "amount": 624,
+    "max_activations": 12,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      7457101105
+    ]
+  },
+  "FYUTCOZH": {
+    "amount": 1690,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7984662069,
+      5559322286,
+      7526512670
+    ]
+  },
+  "2CE91JQO": {
+    "amount": 1632,
+    "max_activations": 8,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      1127818088,
+      7457101105,
+      5267528078,
+      1375612102
+    ]
+  },
+  "P1CUDNZ6": {
+    "amount": 4365,
+    "max_activations": 19,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      6392713275,
+      5559322286,
+      7406011511,
+      7985048553,
+      1375612102,
+      5267528078,
+      1127818088,
+      7457101105
+    ]
+  },
+  "IG30ZQ3V": {
+    "amount": 3847,
+    "max_activations": 15,
+    "current_activations": 8,
+    "activated_by": [
+      7985048553,
+      7245117477,
+      5267528078,
+      1127818088,
+      7984662069,
+      1375612102,
+      7457101105,
+      7406011511
+    ]
+  },
+  "JCBCMZP0": {
+    "amount": 1756,
+    "max_activations": 15,
+    "current_activations": 6,
+    "activated_by": [
+      7245117477,
+      1127818088,
+      1375612102,
+      7457101105,
+      7406011511,
+      7984662069
+    ]
+  },
+  "AH3L5FBE": {
+    "amount": 460,
+    "max_activations": 15,
+    "current_activations": 3,
+    "activated_by": [
+      7245117477,
+      1375612102,
+      7457101105
+    ]
+  },
+  "SYY4KU6L": {
+    "amount": 3757,
+    "max_activations": 18,
+    "current_activations": 6,
+    "activated_by": [
+      1127818088,
+      7245117477,
+      5267528078,
+      7984662069,
+      1375612102,
+      7457101105
+    ]
+  },
+  "ONWZYMAJ": {
+    "amount": 270,
+    "max_activations": 20,
+    "current_activations": 6,
+    "activated_by": [
+      5267528078,
+      7245117477,
+      7984662069,
+      6282991913,
+      1375612102,
+      7457101105
+    ]
+  },
+  "WS0ANH6B": {
+    "amount": 780,
+    "max_activations": 9,
+    "current_activations": 6,
+    "activated_by": [
+      1375612102,
+      5267528078,
+      6282991913,
+      7245117477,
+      7457101105,
+      7984662069
+    ]
+  },
+  "UEK4YKY4": {
+    "amount": 4628,
+    "max_activations": 10,
+    "current_activations": 7,
+    "activated_by": [
+      7406011511,
+      7457101105,
+      7984662069,
+      7635456693,
+      7526512670,
+      5559322286,
+      7245117477
+    ]
+  },
+  "XLSODJUJ": {
+    "amount": 3959,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      7406011511,
+      7487610033,
+      7985048553,
+      7635456693,
+      7984662069,
+      5559322286,
+      1127818088,
+      7457101105
+    ]
+  },
+  "SZ6HDY8O": {
+    "amount": 4193,
+    "max_activations": 19,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      6468192187,
+      7635456693,
+      7245117477,
+      7406011511,
+      1127818088,
+      7457101105
+    ]
+  },
+  "2IO3PG29": {
+    "amount": 505,
+    "max_activations": 8,
+    "current_activations": 6,
+    "activated_by": [
+      5267528078,
+      7984662069,
+      7635456693,
+      7985048553,
+      7406011511,
+      7457101105
+    ]
+  },
+  "OHKUMZQ5": {
+    "amount": 4521,
+    "max_activations": 6,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      7406011511,
+      5267528078,
+      1127818088,
+      7245117477,
+      6468192187
+    ]
+  },
+  "SKX63WQD": {
+    "amount": 3219,
+    "max_activations": 12,
+    "current_activations": 8,
+    "activated_by": [
+      7985048553,
+      1127818088,
+      7984662069,
+      6468192187,
+      7457101105,
+      5694141752,
+      7245117477,
+      5267528078
+    ]
+  },
+  "08ETINM4": {
+    "amount": 880,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7984662069,
+      7457101105,
+      7635456693
+    ]
+  },
+  "ODQ3IXI2": {
+    "amount": 1584,
+    "max_activations": 18,
+    "current_activations": 4,
+    "activated_by": [
+      1375612102,
+      7635456693,
+      1127818088,
+      7984662069
+    ]
+  },
+  "UMI0FJ9Z": {
+    "amount": 3067,
+    "max_activations": 11,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7457101105,
+      7245117477,
+      7635456693,
+      7526512670,
+      1375612102,
+      5343032038
+    ]
+  },
+  "3619Z2GP": {
+    "amount": 1365,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      5267528078,
+      7457101105,
+      7635456693,
+      7245117477,
+      1127818088,
+      5343032038,
+      1375612102
+    ]
+  },
+  "86M39PZK": {
+    "amount": 403,
+    "max_activations": 17,
+    "current_activations": 4,
+    "activated_by": [
+      5267528078,
+      7984662069,
+      7526512670,
+      1375612102
+    ]
+  },
+  "E3470NEX": {
+    "amount": 3704,
+    "max_activations": 17,
+    "current_activations": 5,
+    "activated_by": [
+      7984662069,
+      1375612102,
+      1127818088,
+      5343032038,
+      7985048553
+    ]
+  },
+  "AB2EN67A": {
+    "amount": 1098,
+    "max_activations": 18,
+    "current_activations": 10,
+    "activated_by": [
+      7985048553,
+      7984662069,
+      7526512670,
+      7457101105,
+      1375612102,
+      1127818088,
+      5267528078,
+      7635456693,
+      7245117477,
+      5343032038
+    ]
+  },
+  "BS9AGSEE": {
+    "amount": 4197,
+    "max_activations": 16,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      7245117477,
+      5343032038,
+      7457101105,
+      1375612102,
+      1127818088,
+      5267528078,
+      7985048553
+    ]
+  },
+  "15DM5S1P": {
+    "amount": 3310,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      7985048553,
+      5343032038,
+      7245117477,
+      7457101105,
+      1375612102,
+      1127818088,
+      5267528078
+    ]
+  },
+  "2NZQUXK6": {
+    "amount": 1996,
+    "max_activations": 8,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      7245117477,
+      7457101105,
+      6468192187,
+      5343032038,
+      7406011511,
+      1375612102,
+      1127818088
+    ]
+  },
+  "9NKLNLLK": {
+    "amount": 3612,
+    "max_activations": 11,
+    "current_activations": 8,
+    "activated_by": [
+      1375612102,
+      7245117477,
+      5343032038,
+      1127818088,
+      5267528078,
+      7985048553,
+      7406011511,
+      7457101105
+    ]
+  },
+  "INOYQMH8": {
+    "amount": 1011,
+    "max_activations": 17,
+    "current_activations": 8,
+    "activated_by": [
+      1127818088,
+      5267528078,
+      7245117477,
+      7985048553,
+      6468192187,
+      7406011511,
+      5343032038,
+      7457101105
+    ]
+  },
+  "I9F68SUY": {
+    "amount": 1372,
+    "max_activations": 9,
+    "current_activations": 7,
+    "activated_by": [
+      1127818088,
+      7245117477,
+      7985048553,
+      7984662069,
+      7406011511,
+      5343032038,
+      7457101105
+    ]
+  },
+  "YROX5XKP": {
+    "amount": 3118,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      5267528078,
+      7245117477,
+      1127818088,
+      7526512670,
+      7985048553,
+      7984662069,
+      7406011511,
+      5343032038,
+      7457101105
+    ]
+  },
+  "P16URKK9": {
+    "amount": 3209,
+    "max_activations": 13,
+    "current_activations": 9,
+    "activated_by": [
+      7526512670,
+      7985048553,
+      7245117477,
+      7984662069,
+      7406011511,
+      5343032038,
+      1127818088,
+      7457101105,
+      1375612102
+    ]
+  },
+  "SKH0F5WN": {
+    "amount": 4265,
+    "max_activations": 15,
+    "current_activations": 10,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      6468192187,
+      5267528078,
+      7406011511,
+      7245117477,
+      5343032038,
+      1127818088,
+      7457101105,
+      1375612102
+    ]
+  },
+  "DX2CNNCA": {
+    "amount": 2981,
+    "max_activations": 14,
+    "current_activations": 8,
+    "activated_by": [
+      7406011511,
+      7984662069,
+      1127818088,
+      7526512670,
+      5343032038,
+      5267528078,
+      7457101105,
+      1375612102
+    ]
+  },
+  "0OYKK5TL": {
+    "amount": 2111,
+    "max_activations": 11,
+    "current_activations": 10,
+    "activated_by": [
+      1127818088,
+      7635456693,
+      7526512670,
+      5267528078,
+      7406011511,
+      7984662069,
+      7985048553,
+      7457101105,
+      1375612102,
+      5343032038
+    ]
+  },
+  "P4USKWTO": {
+    "amount": 4001,
+    "max_activations": 14,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      1127818088,
+      5267528078,
+      7406011511,
+      6468192187,
+      1375612102,
+      7985048553,
+      5343032038
+    ]
+  },
+  "BRB5I34P": {
+    "amount": 2732,
+    "max_activations": 16,
+    "current_activations": 4,
+    "activated_by": [
+      5267528078,
+      7635456693,
+      7984662069,
+      7526512670
+    ]
+  },
+  "MEOW": {
+    "amount": 15000,
+    "max_activations": 100,
+    "current_activations": 13,
+    "activated_by": [
+      5205862657,
+      7327742115,
+      6553341597,
+      5559322286,
+      6431804516,
+      7984662069,
+      1127818088,
+      7526512670,
+      6045987175,
+      5390915859,
+      5037263025,
+      1318082849,
+      5060996329
+    ]
+  },
+  "LQ7WSVGF": {
+    "amount": 1858,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7984662069,
+      7457101105
+    ]
+  },
+  "N2EKULNN": {
+    "amount": 1496,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      5267528078,
+      7984662069,
+      5694141752,
+      7457101105,
+      5559322286,
+      6045987175
+    ]
+  },
+  "I3NWIUI8": {
+    "amount": 278,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7984662069,
+      1318082849,
+      5267528078
+    ]
+  },
+  "09UA9CN9": {
+    "amount": 2261,
+    "max_activations": 16,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      1318082849,
+      5390915859,
+      7457101105,
+      5559322286,
+      6045987175,
+      5694141752
+    ]
+  },
+  "TKROE1HH": {
+    "amount": 1701,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      7984662069,
+      1318082849,
+      5267528078,
+      5390915859
+    ]
+  },
+  "8KYKE2K9": {
+    "amount": 3652,
+    "max_activations": 17,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      1318082849,
+      5390915859,
+      7457101105,
+      5559322286,
+      6045987175
+    ]
+  },
+  "OGJL75S0": {
+    "amount": 2896,
+    "max_activations": 20,
+    "current_activations": 8,
+    "activated_by": [
+      1318082849,
+      7526512670,
+      5390915859,
+      7984662069,
+      6045987175,
+      5267528078,
+      7457101105,
+      5559322286
+    ]
+  },
+  "ZNR2EQOI": {
+    "amount": 3416,
+    "max_activations": 14,
+    "current_activations": 9,
+    "activated_by": [
+      1318082849,
+      7526512670,
+      6847698143,
+      5390915859,
+      7984662069,
+      6045987175,
+      5267528078,
+      7457101105,
+      5559322286
+    ]
+  },
+  "GRHN9MDV": {
+    "amount": 1770,
+    "max_activations": 10,
+    "current_activations": 8,
+    "activated_by": [
+      6045987175,
+      1318082849,
+      5390915859,
+      5037263025,
+      7984662069,
+      7457101105,
+      5559322286,
+      7985048553
+    ]
+  },
+  "739AOFRO": {
+    "amount": 2218,
+    "max_activations": 18,
+    "current_activations": 8,
+    "activated_by": [
+      6045987175,
+      1318082849,
+      5037263025,
+      5390915859,
+      7984662069,
+      5267528078,
+      7457101105,
+      5559322286
+    ]
+  },
+  "59LQRNCV": {
+    "amount": 527,
+    "max_activations": 16,
+    "current_activations": 9,
+    "activated_by": [
+      6045987175,
+      1318082849,
+      5390915859,
+      5037263025,
+      7984662069,
+      5267528078,
+      7457101105,
+      5559322286,
+      7985048553
+    ]
+  },
+  "8024XKII": {
+    "amount": 2752,
+    "max_activations": 10,
+    "current_activations": 9,
+    "activated_by": [
+      5037263025,
+      1318082849,
+      5390915859,
+      5267528078,
+      7984662069,
+      7457101105,
+      5559322286,
+      7985048553,
+      6045987175
+    ]
+  },
+  "UZ8D5XRH": {
+    "amount": 3152,
+    "max_activations": 17,
+    "current_activations": 7,
+    "activated_by": [
+      7457101105,
+      7985048553,
+      5267528078,
+      7984662069,
+      1318082849,
+      5390915859,
+      6045987175
+    ]
+  },
+  "AQ3UMFYD": {
+    "amount": 3472,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      6045987175,
+      1127818088,
+      5267528078,
+      1318082849,
+      6952627933,
+      5559322286,
+      7457101105
+    ]
+  },
+  "QLPVRGCP": {
+    "amount": 4979,
+    "max_activations": 13,
+    "current_activations": 9,
+    "activated_by": [
+      6045987175,
+      1375612102,
+      7985048553,
+      1127818088,
+      7984662069,
+      5267528078,
+      1318082849,
+      7457101105,
+      5343032038
+    ]
+  },
+  "PABJH1U2": {
+    "amount": 2597,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7245117477,
+      1127818088
+    ]
+  },
+  "UR6K7QTF": {
+    "amount": 2033,
+    "max_activations": 11,
+    "current_activations": 9,
+    "activated_by": [
+      7245117477,
+      1127818088,
+      7526512670,
+      7984662069,
+      5267528078,
+      7985048553,
+      1318082849,
+      7457101105,
+      5343032038
+    ]
+  },
+  "0G7L64CL": {
+    "amount": 1599,
+    "max_activations": 10,
+    "current_activations": 8,
+    "activated_by": [
+      1127818088,
+      7526512670,
+      7984662069,
+      5267528078,
+      7985048553,
+      1318082849,
+      7457101105,
+      5343032038
+    ]
+  },
+  "7ARCS3VE": {
+    "amount": 2705,
+    "max_activations": 17,
+    "current_activations": 9,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      5267528078,
+      1127818088,
+      7985048553,
+      1318082849,
+      5694141752,
+      7457101105,
+      5343032038
+    ]
+  },
+  "QHT8PZQJ": {
+    "amount": 1055,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7984662069
+    ]
+  },
+  "LWASNCFN": {
+    "amount": 3124,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      1127818088,
+      7984662069
+    ]
+  },
+  "YOOQGEIS": {
+    "amount": 792,
+    "max_activations": 14,
+    "current_activations": 9,
+    "activated_by": [
+      7985048553,
+      5267528078,
+      7984662069,
+      1127818088,
+      1318082849,
+      5694141752,
+      6045987175,
+      5559322286,
+      7457101105
+    ]
+  },
+  "KIDMJAJC": {
+    "amount": 3194,
+    "max_activations": 13,
+    "current_activations": 12,
+    "activated_by": [
+      6847698143,
+      7526512670,
+      6012269129,
+      1318082849,
+      7406011511,
+      7984662069,
+      1127818088,
+      6045987175,
+      7985048553,
+      5694141752,
+      7457101105,
+      5343032038
+    ]
+  },
+  "5POXHVXA": {
+    "amount": 1221,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7984662069,
+      1318082849
+    ]
+  },
+  "UOMG2AF5": {
+    "amount": 261,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      1318082849,
+      6847698143,
+      7984662069,
+      5267528078,
+      5559322286
+    ]
+  },
+  "I09CFXTJ": {
+    "amount": 4292,
+    "max_activations": 6,
+    "current_activations": 5,
+    "activated_by": [
+      1318082849,
+      7984662069,
+      5559322286,
+      1127818088,
+      5694141752
+    ]
+  },
+  "E7VWJP1J": {
+    "amount": 3008,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      1318082849,
+      7984662069,
+      1127818088,
+      5694141752,
+      7457101105
+    ]
+  },
+  "BQFSOFG4": {
+    "amount": 1689,
+    "max_activations": 11,
+    "current_activations": 10,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      6847698143,
+      6045987175,
+      6012269129,
+      1318082849,
+      5694141752,
+      5291822814,
+      7457101105,
+      5343032038
+    ]
+  },
+  "meow_news": {
+    "amount": 25000,
+    "max_activations": 25,
+    "current_activations": 9,
+    "activated_by": [
+      5559322286,
+      6431804516,
+      5205862657,
+      7526512670,
+      7327742115,
+      6553341597,
+      5694141752,
+      7837405030,
+      7406011511
+    ]
+  },
+  "UHOT5NM4": {
+    "amount": 1904,
+    "max_activations": 12,
+    "current_activations": 9,
+    "activated_by": [
+      6045987175,
+      7985048553,
+      5694141752,
+      5291822814,
+      1318082849,
+      7457101105,
+      5267528078,
+      1127818088,
+      5343032038
+    ]
+  },
+  "MPY5QV92": {
+    "amount": 2387,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      1318082849,
+      6045987175,
+      7984662069,
+      5037263025,
+      5291822814,
+      7526512670,
+      1127818088
+    ]
+  },
+  "1I7ET7AL": {
+    "amount": 106,
+    "max_activations": 12,
+    "current_activations": 8,
+    "activated_by": [
+      1318082849,
+      7526512670,
+      1127818088,
+      5267528078,
+      7984662069,
+      5343032038,
+      7457101105,
+      6045987175
+    ]
+  },
+  "0H2C2O1T": {
+    "amount": 601,
+    "max_activations": 6,
+    "current_activations": 6,
+    "activated_by": [
+      6045987175,
+      7611706342,
+      5701765081,
+      8283451639,
+      7984662069,
+      5694141752
+    ]
+  },
+  "CSYURBPW": {
+    "amount": 3967,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      5701765081,
+      7611706342
+    ]
+  },
+  "INVCAQIY": {
+    "amount": 2568,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      7611706342,
+      5291822814,
+      6164341779,
+      7457101105,
+      7632239276,
+      6045987175,
+      1127818088,
+      7406011511,
+      5267528078,
+      5559322286
+    ]
+  },
+  "1RLVXKK9": {
+    "amount": 2394,
+    "max_activations": 18,
+    "current_activations": 11,
+    "activated_by": [
+      6045987175,
+      5291822814,
+      7632239276,
+      6012269129,
+      1127818088,
+      1318082849,
+      7406011511,
+      5267528078,
+      7985048553,
+      5559322286,
+      7457101105
+    ]
+  },
+  "2FQ57D50": {
+    "amount": 3309,
+    "max_activations": 15,
+    "current_activations": 12,
+    "activated_by": [
+      5291822814,
+      6164341779,
+      5082483905,
+      7245117477,
+      8382423088,
+      1127818088,
+      1318082849,
+      7406011511,
+      5267528078,
+      7985048553,
+      5559322286,
+      7457101105
+    ]
+  },
+  "48S4TV60": {
+    "amount": 2429,
+    "max_activations": 13,
+    "current_activations": 12,
+    "activated_by": [
+      8382423088,
+      5291822814,
+      6164341779,
+      1127818088,
+      5082483905,
+      7245117477,
+      1318082849,
+      7406011511,
+      5267528078,
+      7985048553,
+      5559322286,
+      7457101105
+    ]
+  },
+  "60GSWW9L": {
+    "amount": 1078,
+    "max_activations": 19,
+    "current_activations": 10,
+    "activated_by": [
+      5291822814,
+      1127818088,
+      6164341779,
+      7813753641,
+      1318082849,
+      7406011511,
+      5267528078,
+      7985048553,
+      5559322286,
+      7457101105
+    ]
+  },
+  "ADROWVDS": {
+    "amount": 4936,
+    "max_activations": 17,
+    "current_activations": 9,
+    "activated_by": [
+      7813753641,
+      1127818088,
+      7526512670,
+      8355915185,
+      1318082849,
+      7406011511,
+      5267528078,
+      5559322286,
+      7457101105
+    ]
+  },
+  "X66H0ACC": {
+    "amount": 4390,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      8355915185,
+      1318082849,
+      5082483905
+    ]
+  },
+  "7IT47FVW": {
+    "amount": 166,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      5267528078,
+      1318082849
+    ]
+  },
+  "OY2YMSZH": {
+    "amount": 2602,
+    "max_activations": 20,
+    "current_activations": 9,
+    "activated_by": [
+      7406011511,
+      7984662069,
+      1318082849,
+      5416555776,
+      5267528078,
+      6847698143,
+      1127818088,
+      7457101105,
+      5559322286
+    ]
+  },
+  "AYXKHV8Q": {
+    "amount": 441,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      5416555776,
+      6847698143,
+      7984662069,
+      7813753641,
+      8116982609,
+      1318082849,
+      7406011511,
+      5267528078,
+      1127818088
+    ]
+  },
+  "GF27ROZV": {
+    "amount": 325,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5416555776
+    ]
+  },
+  "BGH8LULY": {
+    "amount": 1755,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7813753641,
+      1127818088
+    ]
+  },
+  "TUFKBBCJ": {
+    "amount": 533,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      5416555776,
+      5694141752,
+      7837405030,
+      7406011511,
+      1127818088,
+      7526512670
+    ]
+  },
+  "8PV3TK38": {
+    "amount": 1275,
+    "max_activations": 15,
+    "current_activations": 4,
+    "activated_by": [
+      7984662069,
+      7985048553,
+      1127818088,
+      5267528078
+    ]
+  },
+  "45UL6EWD": {
+    "amount": 317,
+    "max_activations": 19,
+    "current_activations": 5,
+    "activated_by": [
+      7406011511,
+      7984662069,
+      7985048553,
+      1127818088,
+      5267528078
+    ]
+  },
+  "EKK2WBNV": {
+    "amount": 1022,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5559322286
+    ]
+  },
+  "IA5H4EP9": {
+    "amount": 3719,
+    "max_activations": 18,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      7245117477,
+      5694141752,
+      7985048553,
+      5267528078,
+      7406011511,
+      7457101105,
+      5343032038
+    ]
+  },
+  "DEF2T3GP": {
+    "amount": 1142,
+    "max_activations": 6,
+    "current_activations": 6,
+    "activated_by": [
+      7406011511,
+      5267528078,
+      1838448049,
+      5694141752,
+      7984662069,
+      7457101105
+    ]
+  },
+  "W6O2UNGB": {
+    "amount": 1196,
+    "max_activations": 16,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      7457101105,
+      1127818088,
+      7245117477,
+      5343032038
+    ]
+  },
+  "0WVMB2I7": {
+    "amount": 517,
+    "max_activations": 18,
+    "current_activations": 6,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      7245117477,
+      7457101105,
+      5267528078,
+      5343032038
+    ]
+  },
+  "H9CAYEDY": {
+    "amount": 2100,
+    "max_activations": 19,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      7457101105,
+      7985048553,
+      5267528078,
+      5343032038,
+      1127818088
+    ]
+  },
+  "MAZX4E53": {
+    "amount": 3229,
+    "max_activations": 15,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      7526512670,
+      7406011511,
+      7985048553,
+      5343032038,
+      7457101105,
+      5267528078,
+      1127818088
+    ]
+  },
+  "384MR0SI": {
+    "amount": 690,
+    "max_activations": 8,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      5343032038,
+      7457101105,
+      7985048553,
+      5267528078,
+      1127818088,
+      5694141752
+    ]
+  },
+  "HS26STLV": {
+    "amount": 213,
+    "max_activations": 17,
+    "current_activations": 10,
+    "activated_by": [
+      7985048553,
+      7245117477,
+      5267528078,
+      7457101105,
+      5343032038,
+      7526512670,
+      7984662069,
+      7406011511,
+      1127818088,
+      5694141752
+    ]
+  },
+  "NG9POLFG": {
+    "amount": 4154,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7457101105
+    ]
+  },
+  "VEGDJUM1": {
+    "amount": 4508,
+    "max_activations": 12,
+    "current_activations": 9,
+    "activated_by": [
+      7245117477,
+      5343032038,
+      7526512670,
+      7984662069,
+      7406011511,
+      1127818088,
+      7457101105,
+      5694141752,
+      5267528078
+    ]
+  },
+  "GF98XIJS": {
+    "amount": 4572,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      1127818088,
+      7457101105,
+      7985048553,
+      5694141752,
+      5267528078,
+      5343032038
+    ]
+  },
+  "BHJW3RCA": {
+    "amount": 3879,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7245117477
+    ]
+  },
+  "U3QEBH46": {
+    "amount": 565,
+    "max_activations": 14,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      7406011511,
+      1127818088,
+      7457101105,
+      7985048553,
+      5694141752,
+      5267528078,
+      5343032038
+    ]
+  },
+  "CM42R01J": {
+    "amount": 3556,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7245117477,
+      7984662069,
+      7526512670,
+      7406011511,
+      1127818088,
+      7457101105,
+      7985048553
+    ]
+  },
+  "3O8F4DU3": {
+    "amount": 1466,
+    "max_activations": 11,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7406011511,
+      7985048553,
+      5694141752,
+      1127818088,
+      7457101105,
+      5343032038
+    ]
+  },
+  "AJ4YXZH6": {
+    "amount": 106,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      5694141752,
+      7406011511,
+      7984662069,
+      1127818088,
+      7457101105,
+      5343032038
+    ]
+  },
+  "MEMZP7BJ": {
+    "amount": 1028,
+    "max_activations": 9,
+    "current_activations": 7,
+    "activated_by": [
+      5267528078,
+      1127818088,
+      7984662069,
+      7457101105,
+      5694141752,
+      7406011511,
+      5343032038
+    ]
+  },
+  "FGLLBN3K": {
+    "amount": 4254,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      7245117477,
+      1127818088,
+      7984662069,
+      5343032038
+    ]
+  },
+  "7B27C217": {
+    "amount": 500,
+    "max_activations": 14,
+    "current_activations": 3,
+    "activated_by": [
+      1127818088,
+      7985048553,
+      5343032038
+    ]
+  },
+  "RFIISZ0K": {
+    "amount": 3576,
+    "max_activations": 6,
+    "current_activations": 4,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      1127818088,
+      5343032038
+    ]
+  },
+  "LX0U90SX": {
+    "amount": 531,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      1127818088,
+      7245117477,
+      7526512670,
+      7985048553,
+      5343032038
+    ]
+  },
+  "26JPDZ89": {
+    "amount": 1829,
+    "max_activations": 7,
+    "current_activations": 4,
+    "activated_by": [
+      7984662069,
+      1127818088,
+      5267528078,
+      5343032038
+    ]
+  },
+  "I5X6P8AS": {
+    "amount": 4477,
+    "max_activations": 11,
+    "current_activations": 4,
+    "activated_by": [
+      7526512670,
+      5267528078,
+      1127818088,
+      5343032038
+    ]
+  },
+  "RGU07NCK": {
+    "amount": 168,
+    "max_activations": 12,
+    "current_activations": 3,
+    "activated_by": [
+      5267528078,
+      1127818088,
+      5343032038
+    ]
+  },
+  "10GZEO93": {
+    "amount": 155,
+    "max_activations": 8,
+    "current_activations": 4,
+    "activated_by": [
+      5267528078,
+      7984662069,
+      1127818088,
+      5343032038
+    ]
+  },
+  "WZML8B1Q": {
+    "amount": 1558,
+    "max_activations": 15,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      1375612102,
+      1127818088,
+      5343032038,
+      5267528078,
+      5694141752
+    ]
+  },
+  "M7T3CRC9": {
+    "amount": 3443,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7984662069
+    ]
+  },
+  "IB5HVACC": {
+    "amount": 1454,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7984662069
+    ]
+  },
+  "1E46OY6V": {
+    "amount": 2137,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      5694141752,
+      5343032038,
+      1127818088,
+      7984662069,
+      5267528078,
+      1280367260
+    ]
+  },
+  "S1XSM901": {
+    "amount": 2005,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5343032038
+    ]
+  },
+  "ZXO4X6FY": {
+    "amount": 2527,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      1127818088
+    ]
+  },
+  "2KZ38ZCL": {
+    "amount": 2468,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      5343032038,
+      5694141752,
+      1280367260
+    ]
+  },
+  "A31O83Q0": {
+    "amount": 2440,
+    "max_activations": 15,
+    "current_activations": 6,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      5343032038,
+      5694141752,
+      5267528078,
+      1280367260
+    ]
+  },
+  "KDWGBP9C": {
+    "amount": 1872,
+    "max_activations": 13,
+    "current_activations": 6,
+    "activated_by": [
+      1127818088,
+      7526512670,
+      5343032038,
+      5694141752,
+      5267528078,
+      1280367260
+    ]
+  },
+  "G9BV9OVQ": {
+    "amount": 2118,
+    "max_activations": 13,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      1127818088,
+      7245117477,
+      5343032038,
+      5694141752,
+      5267528078,
+      1280367260
+    ]
+  },
+  "A2ORMXBJ": {
+    "amount": 2974,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7985048553,
+      5343032038,
+      5694141752,
+      7406011511,
+      5267528078,
+      1280367260
+    ]
+  },
+  "Y99H1BVX": {
+    "amount": 944,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7245117477,
+      7985048553,
+      5694141752,
+      7984662069,
+      1127818088,
+      5343032038,
+      7406011511
+    ]
+  },
+  "LFSSF0C5": {
+    "amount": 3322,
+    "max_activations": 8,
+    "current_activations": 7,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      7406011511,
+      5343032038,
+      5694141752,
+      5267528078,
+      1280367260
+    ]
+  },
+  "UCHVS86N": {
+    "amount": 2641,
+    "max_activations": 20,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      5343032038,
+      7526512670,
+      7245117477,
+      5267528078,
+      1280367260
+    ]
+  },
+  "SEZZJ4JD": {
+    "amount": 163,
+    "max_activations": 11,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      1280367260,
+      5267528078,
+      5343032038,
+      7245117477,
+      7406011511
+    ]
+  },
+  "CCL5XXCN": {
+    "amount": 4907,
+    "max_activations": 18,
+    "current_activations": 7,
+    "activated_by": [
+      1280367260,
+      5267528078,
+      7984662069,
+      7526512670,
+      5343032038,
+      7245117477,
+      7406011511
+    ]
+  },
+  "MIOWNOEK": {
+    "amount": 4672,
+    "max_activations": 8,
+    "current_activations": 8,
+    "activated_by": [
+      7245117477,
+      5559322286,
+      7984662069,
+      5694141752,
+      7985048553,
+      5343032038,
+      7406011511,
+      5267528078
+    ]
+  },
+  "VP7F3EJW": {
+    "amount": 4573,
+    "max_activations": 12,
+    "current_activations": 5,
+    "activated_by": [
+      7984662069,
+      5343032038,
+      5694141752,
+      7406011511,
+      5267528078
+    ]
+  },
+  "3TL1PY2W": {
+    "amount": 976,
+    "max_activations": 6,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      7406011511,
+      5343032038,
+      5267528078,
+      7457101105
+    ]
+  },
+  "R53VGTHZ": {
+    "amount": 3471,
+    "max_activations": 10,
+    "current_activations": 5,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      5694141752,
+      5267528078,
+      1127818088
+    ]
+  },
+  "8CWERFF9": {
+    "amount": 1522,
+    "max_activations": 18,
+    "current_activations": 3,
+    "activated_by": [
+      7984662069,
+      5267528078,
+      1127818088
+    ]
+  },
+  "CXL39C30": {
+    "amount": 2034,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      6680537412
+    ]
+  },
+  "2JEGMXYU": {
+    "amount": 3694,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7245117477,
+      1127818088,
+      7985048553
+    ]
+  },
+  "TH0CR2U7": {
+    "amount": 675,
+    "max_activations": 6,
+    "current_activations": 3,
+    "activated_by": [
+      1127818088,
+      7984662069,
+      5267528078
+    ]
+  },
+  "CE91FUN8": {
+    "amount": 2102,
+    "max_activations": 20,
+    "current_activations": 5,
+    "activated_by": [
+      7245117477,
+      1127818088,
+      7984662069,
+      5267528078,
+      5559322286
+    ]
+  },
+  "EP9NXBR2": {
+    "amount": 3868,
+    "max_activations": 8,
+    "current_activations": 5,
+    "activated_by": [
+      1127818088,
+      7245117477,
+      7984662069,
+      5267528078,
+      5559322286
+    ]
+  },
+  "RE0KPL1G": {
+    "amount": 1926,
+    "max_activations": 19,
+    "current_activations": 8,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      7245117477,
+      7985048553,
+      1375612102,
+      5267528078,
+      1127818088,
+      5694141752
+    ]
+  },
+  "46E0WGEZ": {
+    "amount": 838,
+    "max_activations": 14,
+    "current_activations": 8,
+    "activated_by": [
+      7985048553,
+      5267528078,
+      5694141752,
+      7984662069,
+      7526512670,
+      1280367260,
+      5343032038,
+      1127818088
+    ]
+  },
+  "AEF5KVQP": {
+    "amount": 2366,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      1127818088,
+      7526512670,
+      5694141752,
+      5267528078,
+      7985048553
+    ]
+  },
+  "SNPWIQN5": {
+    "amount": 309,
+    "max_activations": 16,
+    "current_activations": 6,
+    "activated_by": [
+      7526512670,
+      1127818088,
+      5694141752,
+      5267528078,
+      6468192187,
+      5343032038
+    ]
+  },
+  "FY4QH6VA": {
+    "amount": 2663,
+    "max_activations": 8,
+    "current_activations": 5,
+    "activated_by": [
+      5694141752,
+      1127818088,
+      7984662069,
+      7245117477,
+      5343032038
+    ]
+  },
+  "EVQ3P7HL": {
+    "amount": 856,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      1375612102,
+      7984662069,
+      1127818088
+    ]
+  },
+  "R80M8BWB": {
+    "amount": 787,
+    "max_activations": 9,
+    "current_activations": 4,
+    "activated_by": [
+      1127818088,
+      7526512670,
+      5694141752,
+      5343032038
+    ]
+  },
+  "9KNYV9MS": {
+    "amount": 2664,
+    "max_activations": 10,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      7526512670,
+      7985048553,
+      7245117477,
+      5343032038,
+      1127818088
+    ]
+  },
+  "WNPO8Y69": {
+    "amount": 1177,
+    "max_activations": 12,
+    "current_activations": 4,
+    "activated_by": [
+      7526512670,
+      1127818088,
+      7985048553,
+      5694141752
+    ]
+  },
+  "ASI4L9S2": {
+    "amount": 2577,
+    "max_activations": 12,
+    "current_activations": 5,
+    "activated_by": [
+      7245117477,
+      5267528078,
+      5694141752,
+      1127818088,
+      7985048553
+    ]
+  },
+  "KM4ZL99T": {
+    "amount": 3658,
+    "max_activations": 5,
+    "current_activations": 3,
+    "activated_by": [
+      5267528078,
+      5694141752,
+      1127818088
+    ]
+  },
+  "L4SAZINN": {
+    "amount": 2576,
+    "max_activations": 13,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      8114914996,
+      7985048553,
+      7526512670,
+      5343032038,
+      1127818088,
+      5694141752,
+      7406011511,
+      5267528078
+    ]
+  },
+  "US0A7YKQ": {
+    "amount": 785,
+    "max_activations": 9,
+    "current_activations": 6,
+    "activated_by": [
+      8114914996,
+      7985048553,
+      1127818088,
+      5343032038,
+      7406011511,
+      7905644920
+    ]
+  },
+  "C0FJWTR0": {
+    "amount": 768,
+    "max_activations": 13,
+    "current_activations": 5,
+    "activated_by": [
+      1127818088,
+      7245117477,
+      5267528078,
+      7984662069,
+      5343032038
+    ]
+  },
+  "IYSH3FLA": {
+    "amount": 1862,
+    "max_activations": 11,
+    "current_activations": 1,
+    "activated_by": [
+      7985048553
+    ]
+  },
+  "обнова": {
+    "amount": 5000,
+    "max_activations": 25,
+    "current_activations": 2,
+    "activated_by": [
+      5446191917,
+      7355771676
+    ]
+  },
+  "YY986OMI": {
+    "amount": 3674,
+    "max_activations": 9,
+    "current_activations": 5,
+    "activated_by": [
+      7984662069,
+      7245117477,
+      5694141752,
+      7985048553,
+      1127818088
+    ]
+  },
+  "P5FJB9RU": {
+    "amount": 1578,
+    "max_activations": 11,
+    "current_activations": 9,
+    "activated_by": [
+      7245117477,
+      7985048553,
+      7526512670,
+      5446191917,
+      7457101105,
+      5343032038,
+      5694141752,
+      7355771676,
+      7435289035
+    ]
+  },
+  "0UY6QL99": {
+    "amount": 1001,
+    "max_activations": 20,
+    "current_activations": 12,
+    "activated_by": [
+      7939722555,
+      7526512670,
+      5694141752,
+      7984662069,
+      7457101105,
+      7985048553,
+      7976884797,
+      5343032038,
+      5446191917,
+      1127818088,
+      2010374627,
+      7355771676
+    ]
+  },
+  "OGIHZZC8": {
+    "amount": 1463,
+    "max_activations": 16,
+    "current_activations": 9,
+    "activated_by": [
+      7984662069,
+      6749721612,
+      7976884797,
+      5343032038,
+      5694141752,
+      5446191917,
+      1127818088,
+      2010374627,
+      7355771676
+    ]
+  },
+  "E1UV7A8W": {
+    "amount": 3473,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7245117477,
+      8170738268,
+      7984662069
+    ]
+  },
+  "XLTZXWNC": {
+    "amount": 4686,
+    "max_activations": 8,
+    "current_activations": 7,
+    "activated_by": [
+      1127818088,
+      5694141752,
+      7984662069,
+      7457101105,
+      5446191917,
+      5343032038,
+      7355771676
+    ]
+  },
+  "2JFCMBZM": {
+    "amount": 3358,
+    "max_activations": 17,
+    "current_activations": 8,
+    "activated_by": [
+      7457101105,
+      7984662069,
+      7406011511,
+      5446191917,
+      5694141752,
+      5343032038,
+      1375612102,
+      7355771676
+    ]
+  },
+  "PWLMUK94": {
+    "amount": 133,
+    "max_activations": 12,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      967357869,
+      7457101105,
+      7406011511,
+      7985048553,
+      7355771676
+    ]
+  },
+  "FW8Y3RHI": {
+    "amount": 1442,
+    "max_activations": 17,
+    "current_activations": 5,
+    "activated_by": [
+      7457101105,
+      7526512670,
+      5694141752,
+      5446191917,
+      7355771676
+    ]
+  },
+  "FN4Y2C6I": {
+    "amount": 196,
+    "max_activations": 12,
+    "current_activations": 3,
+    "activated_by": [
+      5343032038,
+      7526512670,
+      7355771676
+    ]
+  },
+  "ONYJVSG5": {
+    "amount": 1359,
+    "max_activations": 18,
+    "current_activations": 5,
+    "activated_by": [
+      5446191917,
+      7526512670,
+      5267528078,
+      5694141752,
+      7355771676
+    ]
+  },
+  "C70E4BTC": {
+    "amount": 817,
+    "max_activations": 14,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      7457101105,
+      7851725526,
+      5267528078,
+      7526512670,
+      5446191917,
+      5694141752,
+      7355771676
+    ]
+  },
+  "3CQ1OBQW": {
+    "amount": 3495,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      5694141752,
+      7984662069,
+      5267528078
+    ]
+  },
+  "8M2DZU7U": {
+    "amount": 4366,
+    "max_activations": 16,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      5694141752,
+      7457101105,
+      7526512670,
+      5446191917,
+      7355771676
+    ]
+  },
+  "meow": {
+    "amount": 5000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7526512670
+    ]
+  },
+  "0MAZ72LR": {
+    "amount": 3967,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      7457101105,
+      5694141752,
+      7985048553,
+      5446191917,
+      1127818088,
+      7355771676
+    ]
+  },
+  "BT1WRV1H": {
+    "amount": 4726,
+    "max_activations": 11,
+    "current_activations": 5,
+    "activated_by": [
+      5267528078,
+      7526512670,
+      7985048553,
+      1127818088,
+      7355771676
+    ]
+  },
+  "IMX0GR4P": {
+    "amount": 1082,
+    "max_activations": 19,
+    "current_activations": 6,
+    "activated_by": [
+      7984662069,
+      7526512670,
+      5446191917,
+      7457101105,
+      5694141752,
+      7355771676
+    ]
+  },
+  "G7RW0NB6": {
+    "amount": 1791,
+    "max_activations": 11,
+    "current_activations": 6,
+    "activated_by": [
+      8293448450,
+      7984662069,
+      5446191917,
+      7985048553,
+      5694141752,
+      7355771676
+    ]
+  },
+  "F459YA7B": {
+    "amount": 1635,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7526512670,
+      8293448450,
+      7984662069,
+      5446191917,
+      7985048553,
+      5694141752,
+      7355771676
+    ]
+  },
+  "PUILWCVT": {
+    "amount": 1816,
+    "max_activations": 12,
+    "current_activations": 4,
+    "activated_by": [
+      7984662069,
+      8293448450,
+      7526512670,
+      7355771676
+    ]
+  },
+  "1F1OY46L": {
+    "amount": 3529,
+    "max_activations": 7,
+    "current_activations": 7,
+    "activated_by": [
+      7984662069,
+      7696828602,
+      7526512670,
+      7457101105,
+      8568012798,
+      7985048553,
+      5694141752
+    ]
+  },
+  "RGN3152V": {
+    "amount": 2822,
+    "max_activations": 19,
+    "current_activations": 8,
+    "activated_by": [
+      5694141752,
+      7984662069,
+      7696828602,
+      7526512670,
+      5446191917,
+      7457101105,
+      8293448450,
+      7355771676
+    ]
+  },
+  "KG3U9LKU": {
+    "amount": 1609,
+    "max_activations": 12,
+    "current_activations": 3,
+    "activated_by": [
+      8568012798,
+      7985048553,
+      7355771676
+    ]
+  },
+  "ai_meow": {
+    "amount": 10000,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      5446191917,
+      7526512670
+    ]
+  },
+  "C944MLT1": {
+    "amount": 1938,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      8568012798,
+      7985048553,
+      5694141752,
+      6468192187,
+      8293448450
+    ]
+  },
+  "EU1A5XPL": {
+    "amount": 1542,
+    "max_activations": 17,
+    "current_activations": 7,
+    "activated_by": [
+      8293448450,
+      7696828602,
+      5694141752,
+      7984662069,
+      7985048553,
+      7355771676,
+      5446191917
+    ]
+  },
+  "7O769MG4": {
+    "amount": 2063,
+    "max_activations": 17,
+    "current_activations": 5,
+    "activated_by": [
+      7696828602,
+      8293448450,
+      7457101105,
+      7355771676,
+      5446191917
+    ]
+  },
+  "AMYMEF1O": {
+    "amount": 1841,
+    "max_activations": 10,
+    "current_activations": 8,
+    "activated_by": [
+      7355771676,
+      1967502151,
+      8293448450,
+      7984662069,
+      5343032038,
+      5446191917,
+      7526512670,
+      1375612102
+    ]
+  },
+  "GOMWUU2O": {
+    "amount": 4407,
+    "max_activations": 18,
+    "current_activations": 9,
+    "activated_by": [
+      1967502151,
+      7355771676,
+      7526512670,
+      8293448450,
+      7984662069,
+      7985048553,
+      5343032038,
+      5446191917,
+      1375612102
+    ]
+  },
+  "1STB7UJ4": {
+    "amount": 4767,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      5365339772,
+      1967502151,
+      1709592804,
+      7696828602,
+      8293448450,
+      7355771676,
+      7985048553,
+      7984662069,
+      5446191917,
+      5694141752
+    ]
+  },
+  "FD52DBQY": {
+    "amount": 223,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      6689877443,
+      7696828602,
+      5694141752,
+      7355771676
+    ]
+  },
+  "L8T9FNB7": {
+    "amount": 3648,
+    "max_activations": 6,
+    "current_activations": 6,
+    "activated_by": [
+      7696828602,
+      8293448450,
+      7355771676,
+      6468192187,
+      7984662069,
+      5446191917
+    ]
+  },
+  "нам_4_месяца": {
+    "amount": 2,
+    "max_activations": 9000,
+    "current_activations": 0,
+    "activated_by": []
+  },
+  "нам_5_месяцев": {
+    "amount": 9000,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7526512670,
+      5446191917
+    ]
+  },
+  "3HXG1F68": {
+    "amount": 3630,
+    "max_activations": 11,
+    "current_activations": 7,
+    "activated_by": [
+      7526512670,
+      5694141752,
+      5365339772,
+      7355771676,
+      8568012798,
+      7696828602,
+      5446191917
+    ]
+  },
+  "0P9WTZHS": {
+    "amount": 2804,
+    "max_activations": 9,
+    "current_activations": 3,
+    "activated_by": [
+      5365339772,
+      5694141752,
+      1967502151
+    ]
+  },
+  "нас_дахуя": {
+    "amount": 5000,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7526512670,
+      7696828602
+    ]
+  },
+  "лан": {
+    "amount": 2222,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7526512670
+    ]
+  },
+  "TLMULDJG": {
+    "amount": 371,
+    "max_activations": 19,
+    "current_activations": 7,
+    "activated_by": [
+      6468192187,
+      7696828602,
+      5694141752,
+      5446191917,
+      8293448450,
+      7355771676,
+      5343032038
+    ]
+  },
+  "meow_game": {
+    "amount": 9000,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      7984662069,
+      5205862657
+    ]
+  },
+  "раздача": {
+    "amount": 5000,
+    "max_activations": 100,
+    "current_activations": 9,
+    "activated_by": [
+      7985048553,
+      7984662069,
+      7355771676,
+      5446191917,
+      8434252090,
+      5694141752,
+      5365339772,
+      8293448450,
+      8568012798
+    ]
+  },
+  "новогодний_календарь": {
+    "amount": 10000,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      7985048553,
+      7355771676
+    ]
+  },
+  "46M1Y7HK": {
+    "amount": 4378,
+    "max_activations": 8,
+    "current_activations": 8,
+    "activated_by": [
+      7984662069,
+      7696828602,
+      7367892015,
+      1967502151,
+      7355771676,
+      5343032038,
+      8293448450,
+      5446191917
+    ]
+  },
+  "28": {
+    "amount": 15000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7355771676
+    ]
+  },
+  "PKFRC4JS": {
+    "amount": 2173,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      5446191917,
+      7984662069,
+      967357869,
+      8293448450,
+      7985584520,
+      8478009696,
+      7783358221,
+      7526512670,
+      8161781808,
+      7985048553
+    ]
+  },
+  "72ZOARJU": {
+    "amount": 2094,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      7783358221,
+      7985584520,
+      8293448450,
+      8478009696,
+      7984662069,
+      5694141752,
+      7696828602,
+      5343032038,
+      7526512670
+    ]
+  },
+  "FHEA3NS4": {
+    "amount": 2376,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      7526512670,
+      7696828602,
+      7985584520,
+      8478009696,
+      7355771676,
+      5446191917,
+      1967502151,
+      7783358221,
+      7984662069
+    ]
+  },
+  "актива_нет_пацаны": {
+    "amount": 9000,
+    "max_activations": 20,
+    "current_activations": 11,
+    "activated_by": [
+      7696828602,
+      8434252090,
+      1127818088,
+      7985048553,
+      7355771676,
+      5365339772,
+      7984662069,
+      5836698965,
+      5694141752,
+      7526512670,
+      7985584520
+    ]
+  },
+  "0184HTRU": {
+    "amount": 3941,
+    "max_activations": 20,
+    "current_activations": 10,
+    "activated_by": [
+      8293448450,
+      7696828602,
+      6939750387,
+      1974952545,
+      5343032038,
+      5446191917,
+      7367892015,
+      7355771676,
+      5694141752,
+      7985048553
+    ]
+  },
+  "AYIRMJJT": {
+    "amount": 4357,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      8478009696,
+      7985584520,
+      7526512670,
+      1203883318,
+      7984662069,
+      6655967535,
+      8434252090,
+      8568012798
+    ]
+  },
+  "5555": {
+    "amount": 5555,
+    "max_activations": 4,
+    "current_activations": 1,
+    "activated_by": [
+      7526512670
+    ]
+  },
+  "150U3XLB": {
+    "amount": 141,
+    "max_activations": 9,
+    "current_activations": 8,
+    "activated_by": [
+      5446191917,
+      7984662069,
+      6939750387,
+      5694141752,
+      7985584520,
+      8293448450,
+      6468192187,
+      7526512670
+    ]
+  },
+  "скоро_нг": {
+    "amount": 5000,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      5694141752,
+      7984662069
+    ]
+  },
+  "хост_не_тянет_бота_уже": {
+    "amount": 9000,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      5365339772,
+      5446191917
+    ]
+  },
+  "SRUDE79V": {
+    "amount": 3719,
+    "max_activations": 18,
+    "current_activations": 10,
+    "activated_by": [
+      7526512670,
+      1673393785,
+      7984662069,
+      8293448450,
+      7367892015,
+      7328848417,
+      7985048553,
+      8478009696,
+      7985584520,
+      5694141752
+    ]
+  },
+  "WWKFAPU1": {
+    "amount": 1124,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7355771676
+    ]
+  }
+}

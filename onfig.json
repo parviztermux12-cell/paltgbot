@@ -1,0 +1,13 @@
+{
+  "max_daily_income": 10000000000000000000000,
+  "max_balance": 1000000000000000000000000000000,
+  "transfer_daily_limit": 100000000,
+  "transfer_fee": 0.1,
+  "bank_interest_rate": 0.001,
+  "blackjack_win_multiplier": 2,
+  "roulette_win_multiplier": 2,
+  "mines_multiplier_increment": 0.1,
+  "coin_flip_multiplier": 2,
+  "mines_cells": 25,
+  "mines_count": 5
+}
