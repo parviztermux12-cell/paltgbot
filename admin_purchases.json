@@ -1,0 +1,20 @@
+{
+  "7984662069": {
+    "chat_id": -1002486374757,
+    "invoice_id": 36337163,
+    "expires": null,
+    "days": 90
+  },
+  "7526512670": {
+    "chat_id": -1003135867755,
+    "invoice_id": 36741397,
+    "expires": null,
+    "days": 90
+  },
+  "5446191917": {
+    "chat_id": -1003279681531,
+    "invoice_id": 37449616,
+    "expires": null,
+    "days": 7
+  }
+}
