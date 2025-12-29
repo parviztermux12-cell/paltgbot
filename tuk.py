@@ -45,74 +45,39 @@ WARNS_FILE = "wans.json"
 START_BALANCE = 5000
 PROMO_CHAT_ID = -1003135867755  # ID чата для отправки промокодов (None - отключено)
 
-# ================== ВОЛШЕБНЫЙ КОНФИГ БЛЯТЬ ==================
-config = {
-    "max_daily_income": 999999999999999999999999999,
-    "max_balance": 999999999999999999999999999999,
-    "transfer_daily_limit": 999999999,
-    "transfer_fee": 0.1,
-    "blackjack_win_multiplier": 2.0,
-    "roulette_win_multiplier": 2.0,
-    "slots_win_multiplier": 3.0,
-    "coinflip_win_multiplier": 2.0,
-    "dice_win_multiplier": 2.0,
-    "tyanka_profit_multiplier": 1.0,
-    "business_profit_multiplier": 1.0,
-    "car_profit_multiplier": 1.0,
-    "house_profit_multiplier": 1.0,
-    "pet_profit_multiplier": 1.0,
-    "vip_bonus_multiplier": 1.0,
-    "referral_bonus_multiplier": 1.0
-}
-
-# ================== ПРОСТЫЕ ФУНКЦИИ БЛЯТЬ ==================
-def check_income_limits(user_id, amount):
-    """ХУЙ ЗНАЕТ ЧТО ЭТО, ПРОПУСТИТЬ ВСЁ"""
-    return amount
-
-def add_income(user_id, amount, source="unknown"):
-    """ПРОСТО ДАЁМ БАБКИ"""
-    user_data = get_user_data(user_id)
-    user_data["balance"] += amount
-    save_casino_data()
-    logger.info(f"💰 {user_id} получил {amount}$ от {source}")
-    return amount
-
-def apply_transfer_limits(sender_id, amount):
-    """КОМИССИЯ 10% И ВСЁ"""
-    fee = int(amount * 0.1)
-    return amount - fee, fee
-    
 # ================== СОЗДАЁМ БОТА ==================
 bot = telebot.TeleBot(TOKEN, parse_mode="HTML")
 
 
 
 RP_COMMANDS = {
-    # Нежные действия
-    "обнять": "🫂 {user1} крепко обнял(а) {user2}",
+    # Базовые взаимодействия
+    "обнять": "🤗 {user1} нежно обнял(а) {user2}",
     "поцеловать": "💋 {user1} страстно поцеловал(а) {user2}",
-    "погладить": "✨ {user1} нежно погладил(а) {user2}",
-    
-    # Весёлые взаимодействия
-    "пощекотать": "🪶 {user1} задорно пощекотал(а) {user2}",
-    
-    # Подарки
-    "подарить": "🎁 {user1} сделал(а) подарок {user2}",
-    
-    # Агрессивные действия
     "ударить": "👊 {user1} ударил(а) {user2}",
-    "шлёпнуть": "🖐️ {user1} шлёпнул(а) {user2}",
-    "избить": "🥊 {user1} избил(а) {user2}",
+    "выебать": "🍑 {user1} выебал(а) {user2}",
     
-    # Воровство
-    "украсть": "🥷 {user1} украл(а) что-то у {user2}",
+    "подмигнуть": "😉 {user1} подмигнул(а) {user2}",
     
-    # 18+ действия
-    "выебать": "🍆 {user1} жестко выебал(а) {user2}",
-    "трахнуть": "🔥 {user1} страстно трахнул(а) {user2}",
-    "отсосать": "👅 {user1} жадно отсосал(а) у {user2}",
-    "отлизать": "💦 {user1} умело отлизал(а) {user2}"
+    # Романтичные действия
+    "прижать": "🫂 {user1} прижал(а) к себе {user2}",
+    "погладить": "🥰 {user1} погладил(а) {user2} по голове",
+    "подарить": "💐 {user1} подарил(а) подарок {user2}",
+    
+    # Игровые действия
+    "танцевать": "💃 {user1} станцевал(а) с {user2}",
+    "щекотать": "🪶 {user1} пощекотал(а) {user2}",
+    "поднять": "👐 {user1} поднял(а) на руки {user2}",
+    
+    # Эмоциональные реакции
+    "смеяться": "😂 {user1} рассмешил(а) {user2}",
+    "похвалить": "👏 {user1} похвалил(а) {user2}",
+    "укусить": "🦷 {user1} укусил(а) {user2}",
+    
+    # Ситуационные действия
+    "украсть": "🥷 {user1} украл(а) у {user2}",
+    "спасти": "🦸 {user1} спас(ла) {user2}",
+    "трахнуть": "🔥 {user1} трахнул(а) сочно  {user2}"
 }
 
 # ================== ПОЛНАЯ ОПТИМИЗИРОВАННАЯ VIP СИСТЕМА С ЗАЩИТОЙ ОТ ЧУЖИХ КНОПОК ==================
@@ -432,9 +397,6 @@ def process_vip_income():
         current_time = time.time()
         users_updated = False
         
-        # Загружаем данные казино
-        load_casino_data()  # Добавляем загрузку данных
-        
         for user_id_str, user_data in casino_data.items():
             try:
                 user_id = int(user_id_str)
@@ -462,6 +424,21 @@ def process_vip_income():
         
     except Exception as e:
         logger.error(f"Ошибка в процессе VIP дохода: {e}")
+
+# Запуск фоновой задачи для пассивного дохода
+def start_vip_income_scheduler():
+    """Запуск планировщика пассивного дохода"""
+    while True:
+        try:
+            process_vip_income()
+            time.sleep(300)  # Проверяем каждые 5 минут
+        except Exception as e:
+            time.sleep(60)
+
+# Запускаем в отдельном потоке
+import threading
+vip_income_thread = threading.Thread(target=start_vip_income_scheduler, daemon=True)
+vip_income_thread.start()
 
 # ================== ОБНОВЛЁННЫЙ START ДЛЯ VIP ==================
 
@@ -637,12 +614,11 @@ def rp_action(message):
 def rp_list(message):
     text = "🎭 <b>СПИСОК RP-КОМАНД</b> 🎭\n\n"
     
-    for cmd, action in RP_COMMANDS.items():
-        # Убираем эмодзи и скобки, оставляем только текст действия
-        action_text = action.split(' ', 1)[1] if ' ' in action else action
-        text += f"<code>{cmd}</code>\n"
+    for i, (cmd, action) in enumerate(RP_COMMANDS.items(), 1):
+        demo_action = action.replace('{user1}', '<i>Вы</i>').replace('{user2}', '<i>Друг</i>')
+        text += f"<b>🔹 {cmd}</b>\n<code>{demo_action}</code>\n\n"
     
-    text += "\n💫 <i>Используй команды в ответ на сообщение пользователя!</i>"
+    text += "💫 <i>Используй команды в ответ на сообщение пользователя!</i>"
     
     bot.send_message(message.chat.id, text, parse_mode='HTML')
     
@@ -6228,24 +6204,48 @@ def get_user_data(user_id):
     # Гарантируем возврат словаря (никогда не None)
     return casino_data.get(user_id_str, {})
 
-# ================== ПРОСТЫЕ ФУНКЦИИ БЕЗ CONFIG ==================
+# ================== ФУНКЦИИ БАЛАНСИРОВКИ ЭКОНОМИКИ ==================
 def check_income_limits(user_id, amount):
-    """Всегда возвращаем полную сумму"""
+    """Проверяет, не превышает ли доход дневной лимит"""
+    user_data = get_user_data(user_id)
+    
+    if user_data["daily_income"]["amount"] + amount > config["max_daily_income"]:
+        allowed_amount = config["max_daily_income"] - user_data["daily_income"]["amount"]
+        if allowed_amount <= 0:
+            return 0
+        return allowed_amount
     return amount
 
 def add_income(user_id, amount, source="other"):
-    """Просто добавляем деньги"""
-    user_data = get_user_data(user_id)
-    user_data["balance"] += amount
-    save_casino_data()
-    logger.info(f"Начислен доход {amount}$ пользователю {user_id} из источника {source}")
-    return amount
+    """Добавляет доход с проверкой лимитов"""
+    actual_amount = check_income_limits(user_id, amount)
+    
+    if actual_amount > 0:
+        user_data = get_user_data(user_id)
+        user_data["balance"] = min(user_data["balance"] + actual_amount, config["max_balance"])
+        user_data["daily_income"]["amount"] += actual_amount
+        save_casino_data()
+    
+    return actual_amount
 
 def apply_transfer_limits(sender_id, amount):
-    """Фиксированная комиссия 10%"""
-    fee = int(amount * 0.1)  # 10% комиссия
+    """Проверяет лимиты на переводы и применяет комиссию"""
+    user_data = get_user_data(sender_id)
+    
+    # Проверка дневного лимита переводов
+    if user_data["daily_transfers"]["amount"] + amount > config["transfer_daily_limit"]:
+        allowed_amount = config["transfer_daily_limit"] - user_data["daily_transfers"]["amount"]
+        if allowed_amount <= 0:
+            return 0, 0
+        amount = allowed_amount
+    
+    # Применение комиссии
+    fee = math.floor(amount * config["transfer_fee"])
     net_amount = amount - fee
-    logger.info(f"Перевод от {sender_id}: сумма {amount}$, комиссия {fee}$, чистая {net_amount}$")
+    
+    user_data["daily_transfers"]["amount"] += amount
+    save_casino_data()
+    
     return net_amount, fee
 
 # ================== КАРТЫ ДЛЯ БЛЭКДЖЕКА ==================
@@ -6999,191 +6999,162 @@ def sport_countdown_simple(uid, bet, mid, chat_id, game):
     except:
         pass
 
-# ================== MINES 5x5 ==================
-config = {
-    "mines_count": 5,
-    "mines_multiplier_increment": 0.1
-}
-
+# ================== МИНЫ ==================
 def start_mines(user_id, bet):
-    u = get_user_data(user_id)
-    if u["balance"] < bet:
+    user_data = get_user_data(user_id)
+    if user_data["balance"] < bet:
         return False
-
-    u["balance"] -= bet  
-    u.update({  
-        "game": "mines",  
-        "stage": "mines",  
-        "mines_owner": user_id,  
-        "mines_bet": bet,  
-        "mines_positions": random.sample(range(25), config["mines_count"]),  
-        "mines_open": [],  
-        "mines_multiplier": 1.0,  
-        "mines_started": False  
-    })  
-    save_casino_data()  
+    
+    user_data["balance"] -= bet
+    mines_positions = random.sample(range(config["mines_cells"]), config["mines_count"])
+    
+    user_data.update({
+        "game": "mines",
+        "mines_bet": bet,
+        "mines_positions": mines_positions,
+        "mines_revealed": [],
+        "mines_multiplier": 1.0,
+        "stage": "mines_playing"
+    })
+    save_casino_data()
     return True
 
-def mines_keyboard(user_id, reveal_all=False, hide_buttons=False):
-    u = get_user_data(user_id)
-    kb = InlineKeyboardMarkup()
-
-    btns = []  
-    for i in range(25):  
-        if reveal_all:  
-            text = " 💣 " if i in u["mines_positions"] else " "  
-        else:  
-            text = "       " if i in u["mines_open"] else " ❓ "  
-
-        btns.append(  
-            InlineKeyboardButton(  
-                f" {text} ",  
-                callback_data=f"mines_{i}_{user_id}"  
-            )  
-        )  
-
-    for i in range(0, 25, 5):  
-        kb.row(*btns[i:i + 5])  
-
-    # ЕСЛИ hide_buttons=True - НЕ ДОБАВЛЯЕМ КНОПКИ ДЕЙСТВИЙ
-    if not hide_buttons:
-        if not u["mines_started"]:  
-            kb.row(  
-                InlineKeyboardButton(" ❌ ", callback_data=f"mines_cancel_{user_id}")  
-            )  
-        else:  
-            kb.row(  
-                InlineKeyboardButton(" 💸 Забрать выигрыш", callback_data=f"mines_cash_{user_id}")  
-            )  
-
+def mines_keyboard(user_id):
+    user_data = get_user_data(user_id)
+    revealed = user_data.get("mines_revealed", [])
+    kb = InlineKeyboardMarkup(row_width=5)
+    
+    buttons = []
+    for i in range(config["mines_cells"]):
+        if i in revealed:
+            if i in user_data.get("mines_positions", []):
+                buttons.append(InlineKeyboardButton("💣", callback_data=f"mines_{i}"))
+            else:
+                buttons.append(InlineKeyboardButton("  ✓  ", callback_data=f"mines_{i}"))
+        else:
+            buttons.append(InlineKeyboardButton(" ❓ ", callback_data=f"mines_{i}"))
+    
+    kb.add(*buttons)
+    kb.row(
+        InlineKeyboardButton("💰 Забрать", callback_data="mines_cashout"),
+        InlineKeyboardButton("❌ Отменить", callback_data="mines_cancel")
+    )
     return kb
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("мины "))
-def mines_command(message):
-    user_id = message.from_user.id
-    parts = message.text.split()
+# ================== ОБРАБОТКА КНОПКИ ОТМЕНЫ ==================
+@bot.callback_query_handler(func=lambda call: call.data == "mines_cancel")
+def callback_mines_cancel(call):
+    user_id = call.from_user.id
+    user_data = get_user_data(user_id)
     
-    if len(parts) < 2:
+    if user_data["stage"] != "mines_playing" or not user_data.get("mines_bet"):
+        bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
         return
     
-    try:
-        bet = int(parts[1])
-        if bet < 50:
-            bot.reply_to(message, "❌ Мин. ставка: 50$")
-            return
+    bet = user_data["mines_bet"]
+    
+    # Возвращаем деньги на баланс
+    user_data["balance"] += bet
+    user_data["stage"] = "finished"
+    save_casino_data()
+    
+    # Получаем информацию о пользователе для упоминания
+    user = bot.get_chat(user_id)
+    mention = f'<a href="tg://user?id={user_id}">{user.first_name}</a>'
+    
+    # Отправляем сообщение об отмене
+    cancel_message = f"{mention}, ты отменил игру - <b>деньги возвращаются на твой баланс</b>"
+    bot.send_message(call.message.chat.id, cancel_message, parse_mode="HTML")
+    
+    # Удаляем сообщение с игрой
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+    
+    bot.answer_callback_query(call.id, "✅ Игра отменена!")
+
+# ================== ОБРАБОТКА МИН (ОБНОВЛЕННАЯ) ==================
+@bot.callback_query_handler(func=lambda call: call.data.startswith('mines_'))
+def callback_mines(call):
+    user_id = call.from_user.id
+    user_data = get_user_data(user_id)
+    
+    if user_data["stage"] != "mines_playing":
+        bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
+        return
+        
+    if call.data == "mines_cashout":
+        win_amount = int(user_data["mines_bet"] * user_data["mines_multiplier"])
+        actual_win = add_income(user_id, win_amount, "mines")
+        
+        if actual_win > 0:
+            text = f"💰 Вы забрали {format_number(actual_win)}$! Множитель: {user_data['mines_multiplier']}x"
+        else:
+            text = f"💰 Вы забрали выигрыш, но достигнут дневной лимит дохода!"
             
-        u = get_user_data(user_id)
+        user_data["stage"] = "finished"
+        bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text=text
+        )
+        save_casino_data()
+        bot.answer_callback_query(call.id)
+        return
         
-        if bet > u["balance"]:
-            bot.reply_to(message, "❌ Недостаточно средств!")
-            return
+    if call.data == "mines_cancel":
+        # Обработка уже реализована выше в отдельном обработчике
+        return
         
-        if start_mines(user_id, bet):
-            mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-            bot.send_message(
-                message.chat.id,
-                f"🎮 {mention} начал игру в мины!\n"
-                f"💰 Ставка: {format_number(bet)}$\n"
-                f"💣 Мин: {config['mines_count']}\n"
-                f"🎯 Множитель: x1.0",
-                parse_mode="HTML",
-                reply_markup=mines_keyboard(user_id)
+    cell_index = int(call.data.split('_')[1])
+    mines = user_data["mines_positions"]
+    revealed = user_data.get("mines_revealed", [])
+    
+    if cell_index in revealed:
+        bot.answer_callback_query(call.id, "❌ Эта клетка уже открыта!")
+        return
+        
+    revealed.append(cell_index)
+    user_data["mines_revealed"] = revealed
+    
+    if cell_index in mines:
+        # Игрок наступил на мину
+        user_data["stage"] = "finished"
+        bot.edit_message_text(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            text=f"💥 А все - деньги твои тютю, ставка которую ты проиграл: {format_number(user_data['mines_bet'])}"
+        )
+    else:
+        # Игрок выбрал безопасную клетку
+        user_data["mines_multiplier"] += config["mines_multiplier_increment"]
+        safe_cells = config["mines_cells"] - config["mines_count"]
+        revealed_safe = len([c for c in revealed if c not in mines])
+        
+        if revealed_safe >= safe_cells:
+            # Все безопасные клетки открыты
+            win_amount = int(user_data["mines_bet"] * user_data["mines_multiplier"])
+            actual_win = add_income(user_id, win_amount, "mines")
+            
+            if actual_win > 0:
+                text = f"🎉 Вы открыли все безопасные клетки! Выигрыш: {format_number(actual_win)}$"
+            else:
+                text = f"🎉 Вы открыли все безопасные клетки, но достигнут дневной лимит дохода!"
+                
+            user_data["stage"] = "finished"
+            bot.edit_message_text(
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                text=text
             )
         else:
-            bot.reply_to(message, "❌ Ошибка начала игры!")
+            # Продолжаем игру
+            bot.edit_message_text(
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                text=f"💣 Текущий множитель: {user_data['mines_multiplier']}x\nВыберите клетку:",
+                reply_markup=mines_keyboard(user_id)
+            )
             
-    except ValueError:
-        bot.reply_to(message, "❌ Ставка должна быть числом!")
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("mines_"))
-def mines_handler(call):
-    parts = call.data.split("_")
-    action = parts[1]
-    owner_id = int(parts[2])
-    user_id = call.from_user.id
-
-    if user_id != owner_id:  
-        bot.answer_callback_query(call.id, "НЕ ТВОЯ ИГРА", show_alert=True)  
-        return  
-
-    u = get_user_data(user_id)  
-    if u.get("stage") != "mines":  
-        bot.answer_callback_query(call.id, "ИГРА ЗАКОНЧЕНА")  
-        return  
-
-    # ❌ ОТМЕНА  
-    if action == "cancel" and not u["mines_started"]:  
-        u["balance"] += u["mines_bet"]  
-        u["stage"] = "finished"  
-        save_casino_data()  
-
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, игра отменена.",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
-
-    # 💸 ЗАБРАТЬ ВЫИГРЫШ  
-    if action == "cash" and u["mines_started"]:  
-        win = int(u["mines_bet"] * u["mines_multiplier"])  
-        
-        user_game_data = get_user_data(user_id)
-        user_game_data["balance"] += win
-        save_casino_data()
-        
-        u["stage"] = "finished"  
-        save_casino_data()  
-
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, ты забрал выигрыш <b>{format_number(win)}$</b>\n"
-            f"💰 Новый баланс: <b>{format_number(user_game_data['balance'])}$</b>",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
-
-    # 🧩 КЛЕТКА  
-    cell = int(action)  
-    if cell in u["mines_open"]:  
-        bot.answer_callback_query(call.id)  
-        return  
-
-    u["mines_open"].append(cell)  
-    u["mines_started"] = True  
-
-    # 💥 МИНА  
-    if cell in u["mines_positions"]:  
-        u["stage"] = "finished"  
-        save_casino_data()  
-
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, ты подорвался на мине 💥\n"
-            f"❌ Ставка {format_number(u['mines_bet'])}$ потеряна!",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
-
-    # ✅ БЕЗОПАСНО  
-    u["mines_multiplier"] += config["mines_multiplier_increment"]  
-    save_casino_data()  
-
-    bot.edit_message_reply_markup(  
-        call.message.chat.id,  
-        call.message.message_id,  
-        reply_markup=mines_keyboard(user_id)  
-    )  
-
+    save_casino_data()
     bot.answer_callback_query(call.id)
     
 # ================== КОМАНДЫ "ПОМОЩЬ" И "/help" ==================
@@ -7219,7 +7190,7 @@ def cmd_pomosh(message):
     )
     kb.add(
         InlineKeyboardButton("🆘 Поддержка", callback_data="help_support"),
-        InlineKeyboardButton("📢 Канал", url="https://t.me/meow_newsbot")
+        InlineKeyboardButton("📢 Канал", url="https://t.me/MeowGameNews")
     )
 
     bot.send_message(
@@ -7354,7 +7325,6 @@ def callback_help_sections(call):
                 "<code>играть [ставка]</code> — Блэкджек\n"
                 "<code>рулетка [ставка]</code> — Рулетка\n"
                 "ставка к/ч (к - красное, ч - черное). ставка 1 - 36 (ставите ставку на числа от 1 до 36), команда го, начинает игру"
-                
                 "<code>мины [ставка]</code> — Мины\n\n"
                 
                 "🪙 <b>СПОРТИВНЫЕ:</b>\n"
@@ -7628,7 +7598,7 @@ def callback_back_to_help_main(call):
     )
     kb.add(
         InlineKeyboardButton("🆘 Поддержка", callback_data="help_support"),
-        InlineKeyboardButton("📢 Канал", url="https://t.me/meow_newsbot")
+        InlineKeyboardButton("📢 Канал", url="https://t.me/MeowGameNews")
     )
 
     bot.edit_message_text(
@@ -9983,7 +9953,126 @@ def fake_stats_refresh(call):
     )
 
     bot.answer_callback_query(call.id, "Обновлено ✔️")
+# --- ТОП-10 ---
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "топ")
+def top_cmd(message):
+    users = []
+    for uid, data in casino_data.items():
+        vip = data["vip"]
+        prefix = VIP_LEVELS[vip["level"]]["prefix"] if vip["level"] in VIP_LEVELS else ""
+        users.append((uid, data["balance"], prefix))
 
+    users.sort(key=lambda x: x[1], reverse=True)
+
+    text = "🏆 <b>ТОП-10 игроков</b>\n\n"
+    medals = ["🥇", "🥈", "🥉"]
+
+    for i, (uid, bal, prefix) in enumerate(users[:10], 1):
+        try:
+            user = bot.get_chat(uid)
+            mention = f'<a href="tg://user?id={uid}">{user.first_name}</a>'
+        except:
+            mention = f"User {uid}"
+
+        medal = medals[i-1] if i <= len(medals) else "🔹"
+        text += f"{medal} <b>{i}</b>. {prefix} {mention} — <code>{format_number(bal)}$</code>\n"
+
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton("📋 Весь список", callback_data="top_all_0"))  # начинаем с 0 страницы
+
+    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+
+# --- ВСЕ ПОЛЬЗОВАТЕЛИ СТРАНИЦАМИ ---
+@bot.callback_query_handler(func=lambda c: c.data.startswith("top_all_"))
+def show_full_top(call):
+    page = int(call.data.split("_")[-1])
+    per_page = 5
+
+    users = []
+    for uid, data in casino_data.items():
+        vip = data["vip"]
+        prefix = VIP_LEVELS[vip["level"]]["prefix"] if vip["level"] in VIP_LEVELS else ""
+        users.append((uid, data["balance"], prefix))
+
+    users.sort(key=lambda x: x[1], reverse=True)
+
+    total_pages = (len(users) - 1) // per_page + 1
+    start = page * per_page
+    end = start + per_page
+    users_page = users[start:end]
+
+    text = f"📋 <b>Весь список игроков</b>\nСтр. {page+1}/{total_pages}\n\n"
+    for i, (uid, bal, prefix) in enumerate(users_page, start+1):
+        try:
+            user = bot.get_chat(uid)
+            mention = f'<a href="tg://user?id={uid}">{user.first_name}</a>'
+        except:
+            mention = f"User {uid}"
+
+        text += f"{i}. {prefix} {mention} — <code>{format_number(bal)}$</code>\n"
+
+    kb = InlineKeyboardMarkup()
+    nav_buttons = []
+
+    if page > 0:
+        nav_buttons.append(InlineKeyboardButton("⬅️", callback_data=f"top_all_{page-1}"))
+    if page < total_pages - 1:
+        nav_buttons.append(InlineKeyboardButton("➡️", callback_data=f"top_all_{page+1}"))
+
+    if nav_buttons:
+        kb.row(*nav_buttons)
+    kb.add(InlineKeyboardButton("⬅️ Назад", callback_data="top_back"))
+
+    bot.edit_message_text(
+        text,
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
+
+
+# --- НАЗАД В ТОП-10 ---
+@bot.callback_query_handler(func=lambda c: c.data == "top_back")
+def back_to_top(call):
+    fake_message = call.message
+    top_cmd(fake_message)
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("мины"))
+def mines_cmd(message):
+    try:
+        user_id = message.from_user.id
+        user_data = get_user_data(user_id)
+        
+        if not message.text.split():
+            bot.send_message(message.chat.id, "❌ Используйте: мины [ставка]")
+            return
+            
+        bet = int(message.text.split()[1])
+        
+        if bet <= 0:
+            bot.send_message(message.chat.id, "❌ Ставка должна быть положительной!")
+            return
+            
+        if user_data["balance"] < bet:
+            bot.send_message(message.chat.id, "❌ Недостаточно средств!")
+            return
+            
+        if start_mines(user_id, bet):
+            bot.send_message(
+                message.chat.id,
+                f"💣 Игра в мины началась!\nСтавка: {format_number(bet)}\nТекущий множитель: 1.0x\n\nВыберите клетку:",
+                reply_markup=mines_keyboard(user_id)
+            )
+        else:
+            bot.send_message(message.chat.id, "❌ Ошибка начала игры!")
+            
+    except (IndexError, ValueError):
+        bot.send_message(message.chat.id, "❌ Используйте: мины [ставка]")
+    except Exception as e:
+        bot.send_message(message.chat.id, "❌ Ошибка начала игры!")
+        logger.error(f"Ошибка в игре мины: {e}")
 
 # ================== ОРЕЛ И РЕШКА ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith(('рб ', 'орёл ', 'решка ')))
