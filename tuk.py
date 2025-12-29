@@ -7219,7 +7219,7 @@ def cmd_pomosh(message):
     )
     kb.add(
         InlineKeyboardButton("🆘 Поддержка", callback_data="help_support"),
-        InlineKeyboardButton("📢 Канал", url="https://t.me/MeowGameNews")
+        InlineKeyboardButton("📢 Канал", url="https://t.me/meow_newsbot")
     )
 
     bot.send_message(
@@ -7354,6 +7354,7 @@ def callback_help_sections(call):
                 "<code>играть [ставка]</code> — Блэкджек\n"
                 "<code>рулетка [ставка]</code> — Рулетка\n"
                 "ставка к/ч (к - красное, ч - черное). ставка 1 - 36 (ставите ставку на числа от 1 до 36), команда го, начинает игру"
+                
                 "<code>мины [ставка]</code> — Мины\n\n"
                 
                 "🪙 <b>СПОРТИВНЫЕ:</b>\n"
@@ -7627,7 +7628,7 @@ def callback_back_to_help_main(call):
     )
     kb.add(
         InlineKeyboardButton("🆘 Поддержка", callback_data="help_support"),
-        InlineKeyboardButton("📢 Канал", url="https://t.me/MeowGameNews")
+        InlineKeyboardButton("📢 Канал", url="https://t.me/meow_newsbot")
     )
 
     bot.edit_message_text(
