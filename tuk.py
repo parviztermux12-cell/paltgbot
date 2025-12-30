@@ -6299,13 +6299,13 @@ def bj_action_keyboard(user_id, game_id):
 active_blackjack_games = {}
 
 # ================== СТАРТ ИГРЫ ==================
-def start_blackjack_game(user_id, bet):
-    user_data = get_user_data(user_id)
+def start_blackjack_game(user_data, user_id, bet):
+    # Проверки
+    if bet < 100:
+        return None, "❌ Минимальная ставка 100$!"
 
     if user_data["balance"] < bet:
         return None, "❌ Недостаточно средств!"
-    if bet < 100:
-        return None, "❌ Минимальная ставка 100$!"
 
     deck = new_deck()
     player_hand = [deck.pop(), deck.pop()]
@@ -6325,8 +6325,10 @@ def start_blackjack_game(user_id, bet):
         "start_time": time.time()
     }
 
+    # ✅ СПИСЫВАЕМ ОДИН РАЗ
     user_data["balance"] -= bet
     save_casino_data()
+
     return game_id, "OK"
 
 # ================== СООБЩЕНИЕ ==================
@@ -6481,10 +6483,11 @@ def complete_blackjack_game(game_id):
 def play_blackjack_command(message):
     try:
         user_id = message.from_user.id
-        user_data = get_user_data(user_id)
-        
-        # Получаем ставку из текста сообщения
+        user_data = get_user_data(user_id)  # ОДИН РАЗ
+
         parts = message.text.split()
+
+        # Если ставка не указана — показать помощь
         if len(parts) < 2:
             bot.send_message(
                 message.chat.id,
@@ -6499,7 +6502,8 @@ def play_blackjack_command(message):
                 parse_mode="HTML"
             )
             return
-        
+
+        # Парсим ставку
         try:
             bet = int(parts[1])
         except ValueError:
@@ -6510,8 +6514,8 @@ def play_blackjack_command(message):
                 parse_mode="HTML"
             )
             return
-        
-        # Проверяем минимальную ставку
+
+        # Минимальная ставка
         if bet < 100:
             bot.send_message(
                 message.chat.id,
@@ -6519,34 +6523,29 @@ def play_blackjack_command(message):
                 parse_mode="HTML"
             )
             return
-        
-        # ВАЖНО: УБРАТЬ ПРОВЕРКУ БАЛАНСА ЗДЕСЬ!
-        # Проверка баланса будет в start_blackjack_game()
-        # Если здесь оставить проверку, а там тоже есть - деньги списываются дважды!
-        
-        # Запускаем игру
-        game_id, result = start_blackjack_game(user_id, bet)
-        
-        # Проверяем результат
-        if game_id is None:  # Если функция вернула None - значит была ошибка
+
+        # ❗ НЕ проверяем баланс здесь
+        # ❗ НЕ списываем деньги здесь
+        # Всё это делает start_blackjack_game()
+
+        # ✅ ПРАВИЛЬНЫЙ ВЫЗОВ: передаем user_data и user_id
+        game_id, result = start_blackjack_game(user_data, user_id, bet)
+
+        if game_id is None:
             bot.send_message(message.chat.id, result, parse_mode="HTML")
             return
-        
-        # Получаем информацию об игре
-        game = active_blackjack_games[game_id]
-        
-        # Формируем сообщение с клавиатурой
+
+        # Отправляем игру
         text = format_blackjack_message(game_id)
         kb = bj_action_keyboard(user_id, game_id)
-        
-        # Отправляем сообщение с клавиатурой
+
         bot.send_message(
             message.chat.id,
             text,
             parse_mode="HTML",
             reply_markup=kb
         )
-        
+
     except Exception as e:
         logger.error(f"Ошибка в команде 'играть': {e}")
         bot.send_message(
