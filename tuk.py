@@ -6248,6 +6248,14 @@ def apply_transfer_limits(sender_id, amount):
     logger.info(f"Перевод от {sender_id}: сумма {amount}$, комиссия {fee}$, чистая {net_amount}$")
     return net_amount, fee
 
+import random
+import time
+import uuid
+import sqlite3
+from datetime import datetime
+
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 # ================== КАРТЫ ДЛЯ БЛЭКДЖЕКА ==================
 suits = ["♠️", "♥️", "♦️", "♣️"]
 ranks = {
@@ -6257,12 +6265,14 @@ ranks = {
 }
 
 def new_deck():
-    return [(rank, suit) for rank in ranks for suit in suits]
+    deck = [(rank, suit) for rank in ranks for suit in suits]
+    random.shuffle(deck)
+    return deck
 
 def hand_value(hand):
     value = sum(ranks[card[0]] for card in hand)
     aces = sum(1 for card in hand if card[0] == "A")
-    while value > 21 and aces:
+    while value > 21 and aces > 0:
         value -= 10
         aces -= 1
     return value
@@ -6272,34 +6282,310 @@ def format_hand(hand, hide_second=False):
         return f"{hand[0][0]}{hand[0][1]} ❓"
     return " ".join(f"{r}{s}" for r, s in hand)
 
-# ================== БЛЭКДЖЕК ==================
-def start_blackjack(user_id, bet):
-    deck = new_deck()
-    random.shuffle(deck)
-    player = [deck.pop(), deck.pop()]
-    dealer = [deck.pop(), deck.pop()]
-    user_data = get_user_data(user_id)
-    user_data.update({
-        "deck": deck,
-        "player": player,
-        "dealer": dealer,
-        "bet": bet,
-        "stage": "playing",
-        "game": "blackjack"
-    })
-    user_data["balance"] -= bet
-    save_casino_data()
-    return True
-
-def bj_action_keyboard():
-    kb = InlineKeyboardMarkup()
+# ================== КЛАВИАТУРА ==================
+def bj_action_keyboard(user_id, game_id):
+    kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
-        InlineKeyboardButton("Взять карту", callback_data="bj_hit"),
-        InlineKeyboardButton("Оставить", callback_data="bj_stand"),
-        InlineKeyboardButton("Сдаться", callback_data="bj_surrender")
+        InlineKeyboardButton("🎴 Взять карту", callback_data=f"bj_hit_{user_id}_{game_id}"),
+        InlineKeyboardButton("✋ Остановиться", callback_data=f"bj_stand_{user_id}_{game_id}")
+    )
+    kb.add(
+        InlineKeyboardButton("🏳️ Сдаться", callback_data=f"bj_surrender_{user_id}_{game_id}"),
+        InlineKeyboardButton("💰 Удвоить", callback_data=f"bj_double_{user_id}_{game_id}")
     )
     return kb
 
+# ================== АКТИВНЫЕ ИГРЫ ==================
+active_blackjack_games = {}
+
+# ================== СТАРТ ИГРЫ ==================
+def start_blackjack_game(user_id, bet):
+    user_data = get_user_data(user_id)
+
+    if user_data["balance"] < bet:
+        return None, "❌ Недостаточно средств!"
+    if bet < 100:
+        return None, "❌ Минимальная ставка 100$!"
+
+    deck = new_deck()
+    player_hand = [deck.pop(), deck.pop()]
+    dealer_hand = [deck.pop(), deck.pop()]
+
+    game_id = str(uuid.uuid4())[:8]
+
+    active_blackjack_games[game_id] = {
+        "user_id": user_id,
+        "bet": bet,
+        "deck": deck,
+        "player_hand": player_hand,
+        "dealer_hand": dealer_hand,
+        "player_value": hand_value(player_hand),
+        "dealer_value": hand_value([dealer_hand[0]]),
+        "status": "playing",
+        "start_time": time.time()
+    }
+
+    user_data["balance"] -= bet
+    save_casino_data()
+    return game_id, "OK"
+
+# ================== СООБЩЕНИЕ ==================
+def format_blackjack_message(game_id):
+    game = active_blackjack_games[game_id]
+    uid = game["user_id"]
+
+    try:
+        user = bot.get_chat(uid)
+        name = user.first_name
+    except:
+        name = str(uid)
+
+    text = f"""
+🎰 <b>BLACKJACK</b>
+
+👤 <a href="tg://user?id={uid}">{name}</a>
+💰 Ставка: <code>{format_number(game['bet'])}$</code>
+
+🎴 <b>Дилер:</b>
+{format_hand(game['dealer_hand'], game['status']=="playing")}
+📊 {hand_value([game['dealer_hand'][0]]) if game['status']=="playing" else game['dealer_value']}
+
+🃏 <b>Ты:</b>
+{format_hand(game['player_hand'])}
+📊 {game['player_value']}
+
+🎯 <b>Статус:</b>
+"""
+
+    status_map = {
+        "playing": "Твой ход",
+        "blackjack": "🎯 BLACKJACK!",
+        "bust": "💥 ПЕРЕБОР",
+        "win": "✅ ПОБЕДА",
+        "lose": "❌ ПОРАЖЕНИЕ",
+        "push": "🤝 НИЧЬЯ",
+        "surrender": "🏳️ СДАЧА"
+    }
+
+    text += status_map.get(game["status"], "")
+
+    if game["status"] in ["win", "blackjack"]:
+        mult = 2.5 if game["status"] == "blackjack" else 2
+        text += f"\n\n💰 Выигрыш: <code>{format_number(int(game['bet'] * mult))}$</code>"
+
+    if game["status"] == "push":
+        text += f"\n\n💰 Возврат: <code>{format_number(game['bet'])}$</code>"
+
+    if game["status"] == "surrender":
+        text += f"\n\n💰 Возврат: <code>{format_number(game['bet']//2)}$</code>"
+
+    return text
+
+# ================== CALLBACK ==================
+@bot.callback_query_handler(func=lambda call: call.data.startswith("bj_"))
+def handle_blackjack_action(call):
+    _, action, uid, gid = call.data.split("_")
+    uid = int(uid)
+
+    if call.from_user.id != uid:
+        bot.answer_callback_query(call.id, "❌ Не твоя игра", show_alert=True)
+        return
+
+    game = active_blackjack_games.get(gid)
+    if not game or game["status"] != "playing":
+        bot.answer_callback_query(call.id, "❌ Игра окончена")
+        return
+
+    user_data = get_user_data(uid)
+
+    if action == "hit":
+        card = game["deck"].pop()
+        game["player_hand"].append(card)
+        game["player_value"] = hand_value(game["player_hand"])
+
+        if game["player_value"] > 21:
+            game["status"] = "bust"
+            complete_blackjack_game(gid)
+
+        elif game["player_value"] == 21:
+            game["status"] = "blackjack"
+            user_data["balance"] += int(game["bet"] * 2.5)
+            save_casino_data()
+
+    elif action == "stand":
+        dealer_turn(gid)
+        complete_blackjack_game(gid)
+
+    elif action == "surrender":
+        game["status"] = "surrender"
+        user_data["balance"] += game["bet"] // 2
+        save_casino_data()
+
+    elif action == "double":
+        if len(game["player_hand"]) != 2:
+            bot.answer_callback_query(call.id, "❌ Только на первых картах", show_alert=True)
+            return
+        if user_data["balance"] < game["bet"]:
+            bot.answer_callback_query(call.id, "❌ Недостаточно средств", show_alert=True)
+            return
+
+        user_data["balance"] -= game["bet"]
+        game["bet"] *= 2
+
+        game["player_hand"].append(game["deck"].pop())
+        game["player_value"] = hand_value(game["player_hand"])
+
+        dealer_turn(gid)
+        complete_blackjack_game(gid)
+
+    bot.edit_message_text(
+        format_blackjack_message(gid),
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=bj_action_keyboard(uid, gid) if game["status"] == "playing" else None
+    )
+
+# ================== ДИЛЕР ==================
+def dealer_turn(game_id):
+    game = active_blackjack_games[game_id]
+    game["dealer_value"] = hand_value(game["dealer_hand"])
+    while game["dealer_value"] < 17:
+        game["dealer_hand"].append(game["deck"].pop())
+        game["dealer_value"] = hand_value(game["dealer_hand"])
+
+# ================== ФИНАЛ ==================
+def complete_blackjack_game(game_id):
+    game = active_blackjack_games[game_id]
+    user_data = get_user_data(game["user_id"])
+
+    if game["status"] in ["bust", "surrender", "blackjack"]:
+        return
+
+    p = game["player_value"]
+    d = game["dealer_value"]
+
+    if d > 21 or p > d:
+        game["status"] = "win"
+        user_data["balance"] += game["bet"] * 2
+    elif p < d:
+        game["status"] = "lose"
+    else:
+        game["status"] = "push"
+        user_data["balance"] += game["bet"]
+
+    save_casino_data()
+
+# ================== НОВАЯ КОМАНДА: ИГРАТЬ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("играть"))
+def play_blackjack_command(message):
+    try:
+        user_id = message.from_user.id
+        user_data = get_user_data(user_id)
+        
+        # Получаем ставку из текста сообщения
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.send_message(
+                message.chat.id,
+                "🎰 <b>Игра в Blackjack</b>\n\n"
+                "📝 <b>Использование:</b>\n"
+                "<code>играть [ставка]</code>\n\n"
+                "📊 <b>Примеры:</b>\n"
+                "<code>играть 1000</code>\n"
+                "<code>играть 5000</code>\n\n"
+                "💰 <b>Минимальная ставка:</b> 100$\n"
+                f"💵 <b>Твой баланс:</b> {format_number(user_data['balance'])}$",
+                parse_mode="HTML"
+            )
+            return
+        
+        try:
+            bet = int(parts[1])
+        except ValueError:
+            bot.send_message(
+                message.chat.id,
+                "❌ <b>Ошибка!</b>\nСтавка должна быть числом!\n\n"
+                "📝 <b>Пример:</b> <code>играть 3000</code>",
+                parse_mode="HTML"
+            )
+            return
+        
+        # Проверяем минимальную ставку
+        if bet < 100:
+            bot.send_message(
+                message.chat.id,
+                "❌ <b>Ошибка!</b>\nМинимальная ставка 100$!",
+                parse_mode="HTML"
+            )
+            return
+        
+        # Проверяем баланс
+        if user_data["balance"] < bet:
+            bot.send_message(
+                message.chat.id,
+                f"❌ <b>Недостаточно средств!</b>\n\n"
+                f"💰 Нужно: <code>{format_number(bet)}$</code>\n"
+                f"💵 Твой баланс: <code>{format_number(user_data['balance'])}$</code>",
+                parse_mode="HTML"
+            )
+            return
+        
+        # Запускаем игру
+        game_id, result = start_blackjack_game(user_id, bet)
+        
+        if result != "OK":
+            bot.send_message(message.chat.id, result, parse_mode="HTML")
+            return
+        
+        # Получаем информацию об игре
+        game = active_blackjack_games[game_id]
+        
+        # Формируем сообщение с клавиатурой
+        text = format_blackjack_message(game_id)
+        kb = bj_action_keyboard(user_id, game_id)
+        
+        # Отправляем сообщение с клавиатурой
+        bot.send_message(
+            message.chat.id,
+            text,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка в команде 'играть': {e}")
+        bot.send_message(
+            message.chat.id,
+            "❌ <b>Ошибка при запуске игры!</b>\nПопробуйте позже.",
+            parse_mode="HTML"
+        )
+
+# ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
+# (Добавьте эти функции, если их нет в вашем коде)
+
+def get_user_data(user_id):
+    """Получает данные пользователя из casino_data"""
+    # Эта функция должна быть в вашем основном коде
+    # Если нет, добавьте её:
+    if not hasattr(get_user_data, 'cache'):
+        get_user_data.cache = {}
+    
+    if user_id not in get_user_data.cache:
+        # Загрузка данных из файла или базы данных
+        # Здесь должна быть ваша логика загрузки данных
+        pass
+    
+    return get_user_data.cache.get(user_id, {"balance": 0})
+
+def save_casino_data():
+    """Сохраняет данные казино"""
+    # Ваша логика сохранения данных
+    pass
+
+def format_number(num):
+    """Форматирует число с разделителями"""
+    return f"{num:,}".replace(",", ".")
 
 
 
@@ -9167,41 +9453,7 @@ def mines_config_handler(call):
         bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
         logger.error(f"Ошибка mines_config_handler: {e}")
 
-# ================== КОМАНДЫ КАЗИНО ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("играть "))
-def blackjack_cmd(message):
-    try:
-        user_id = message.from_user.id
-        user_data = get_user_data(user_id)
-        
-        bet = int(message.text.split()[1])
-        if bet <= 0:
-            bot.send_message(message.chat.id, "❌ Ставка должна быть положительной!")
-            return
-            
-        if user_data["balance"] < bet:
-            bot.send_message(message.chat.id, "❌ Недостаточно средств!")
-            return
-            
-        if start_blackjack(user_id, bet):
-            bot.send_photo(
-                message.chat.id,
-                BLACKJACK_IMAGE_URL,
-                caption=(
-                    f"🎯 Ваша ставка: {format_number(bet)}\n\n"
-                    f"Ваши карты: {format_hand(user_data['player'])} ({hand_value(user_data['player'])})\n"
-                    f"Карты дилера: {format_hand(user_data['dealer'], True)}"
-                ),
-                reply_markup=bj_action_keyboard()
-            )
-        else:
-            bot.send_message(message.chat.id, "❌ Ошибка начала игры!")
-            
-    except (IndexError, ValueError):
-        bot.send_message(message.chat.id, "❌ Используйте: играть [ставка]")
-    except Exception as e:
-        bot.send_message(message.chat.id, "❌ Ошибка начала игры!")
-        logger.error(f"Ошибка в игре блэкджек: {e}")
+
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("рулетка "))
 def roulette_cmd(message):
@@ -12644,158 +12896,6 @@ def callback_roulette(call):
     save_casino_data()
     bot.answer_callback_query(call.id)
 
-# ================== ОБРАБОТКА БЛЭКДЖЕКА ==================
-@bot.callback_query_handler(func=lambda call: call.data.startswith('bj_'))
-def callback_blackjack(call):
-    user_id = call.from_user.id
-    user_data = get_user_data(user_id)
-    
-    if user_data["stage"] != "playing":
-        bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
-        return
-        
-    action = call.data.replace('bj_', '')
-    player_hand = user_data["player"]
-    dealer_hand = user_data["dealer"]
-    deck = user_data["deck"]
-    bet = user_data["bet"]
-    
-    if action == "hit":
-        player_hand.append(deck.pop())
-        player_value = hand_value(player_hand)
-        
-        if player_value > 21:
-            text = f"💥 Перебор! Ваши карты: {format_hand(player_hand)} ({player_value})\nВы проиграли {format_number(bet)}"
-            user_data["stage"] = "finished"
-        else:
-            text = f"🎯 Ваши карты: {format_hand(player_hand)} ({player_value})\nКарты дилера: {format_hand(dealer_hand, True)}"
-            bot.edit_message_caption(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                caption=text,
-                reply_markup=bj_action_keyboard()
-            )
-            bot.answer_callback_query(call.id)
-            save_casino_data()
-            return
-            
-    elif action == "stand":
-        dealer_value = hand_value(dealer_hand)
-        while dealer_value < 17:
-            dealer_hand.append(deck.pop())
-            dealer_value = hand_value(dealer_hand)
-            
-        player_value = hand_value(player_hand)
-        
-        if dealer_value > 21 or player_value > dealer_value:
-            payout = bet * config["blackjack_win_multiplier"]
-            actual_payout = add_income(user_id, payout, "blackjack")
-            if actual_payout > 0:
-                text = f"🎉 Победа!\nВаши карты: {format_hand(player_hand)} ({player_value})\nКарты дилера: {format_hand(dealer_hand)} ({dealer_value})\nВыигрыш: {format_number(actual_payout)}"
-            else:
-                text = f"🎉 Победа! Но достигнут дневной лимит дохода.\nВаши карты: {format_hand(player_hand)} ({player_value})\nКарты дилера: {format_hand(dealer_hand)} ({dealer_value})"
-        elif player_value == dealer_value:
-            user_data["balance"] += bet
-            text = f"🤝 Ничья!\nВаши карты: {format_hand(player_hand)} ({player_value})\nКарты дилера: {format_hand(dealer_hand)} ({dealer_value})\nСтавка возвращена"
-        else:
-            text = f"❌ Проигрыш!\nВаши карты: {format_hand(player_hand)} ({player_value})\nКарты дилера: {format_hand(dealer_hand)} ({dealer_value})\nПотеряно: {format_number(bet)}"
-            
-        user_data["stage"] = "finished"
-        
-    elif action == "surrender":
-        user_data["balance"] += bet // 2
-        text = f"🏳️ Вы сдались! Возвращено {format_number(bet // 2)}"
-        user_data["stage"] = "finished"
-        
-    bot.edit_message_caption(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        caption=text
-    )
-    save_casino_data()
-    bot.answer_callback_query(call.id)
-
-# ================== ОБРАБОТКА МИН ==================
-@bot.callback_query_handler(func=lambda call: call.data.startswith('mines_'))
-def callback_mines(call):
-    user_id = call.from_user.id
-    user_data = get_user_data(user_id)
-    
-    if user_data["stage"] != "mines_playing":
-        bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
-        return
-        
-    if call.data == "mines_cashout":
-        win_amount = int(user_data["mines_bet"] * user_data["mines_multiplier"])
-        actual_win = add_income(user_id, win_amount, "mines")
-        
-        if actual_win > 0:
-            text = f"💰 Вы забрали {format_number(actual_win)}$! Множитель: {user_data['mines_multiplier']}x"
-        else:
-            text = f"💰 Вы забрали выигрыш, но достигнут дневной лимит дохода!"
-            
-        user_data["stage"] = "finished"
-        bot.edit_message_text(
-            chat_id=call.message.chat.id,
-            message_id=call.message.message_id,
-            text=text
-        )
-        save_casino_data()
-        bot.answer_callback_query(call.id)
-        return
-        
-    cell_index = int(call.data.split('_')[1])
-    mines = user_data["mines_positions"]
-    revealed = user_data.get("mines_revealed", [])
-    
-    if cell_index in revealed:
-        bot.answer_callback_query(call.id, "❌ Эта клетка уже открыта!")
-        return
-        
-    revealed.append(cell_index)
-    user_data["mines_revealed"] = revealed
-    
-    if cell_index in mines:
-        # Игрок наступил на мину
-        user_data["stage"] = "finished"
-        bot.edit_message_text(
-            chat_id=call.message.chat.id,
-            message_id=call.message.message_id,
-            text=f"А все - деньги твои тютю, начни заново: мины (ставка) {format_number(user_data['mines_bet'])}"
-        )
-    else:
-        # Игрок выбрал безопасную клетку
-        user_data["mines_multiplier"] += config["mines_multiplier_increment"]
-        safe_cells = config["mines_cells"] - config["mines_count"]
-        revealed_safe = len([c for c in revealed if c not in mines])
-        
-        if revealed_safe >= safe_cells:
-            # Все безопасные клетки открыты
-            win_amount = int(user_data["mines_bet"] * user_data["mines_multiplier"])
-            actual_win = add_income(user_id, win_amount, "mines")
-            
-            if actual_win > 0:
-                text = f"🎉 Вы открыли все безопасные клетки! Выигрыш: {format_number(actual_win)}$"
-            else:
-                text = f"🎉 Вы открыли все безопасные клетки, но достигнут дневной лимит дохода!"
-                
-            user_data["stage"] = "finished"
-            bot.edit_message_text(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                text=text
-            )
-        else:
-            # Продолжаем игру
-            bot.edit_message_text(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                text=f"💣 Текущий множитель: {user_data['mines_multiplier']}x\nВыберите клетку:",
-                reply_markup=mines_keyboard(user_id)
-            )
-            
-    save_casino_data()
-    bot.answer_callback_query(call.id)
 
 # ================== АДМИН ПАНЕЛЬ ==================
 @bot.message_handler(commands=['admin'])
