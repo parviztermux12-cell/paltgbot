@@ -6343,7 +6343,7 @@ def format_blackjack_message(game_id):
         name = str(uid)
 
     text = f"""
-🎰 <b>BLACKJACK</b>
+🎰 <b>Мини-игра в BLACKJACK</b>
 
 👤 <a href="tg://user?id={uid}">{name}</a>
 💰 Ставка: <code>{format_number(game['bet'])}$</code>
