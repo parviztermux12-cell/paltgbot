@@ -6287,11 +6287,10 @@ def bj_action_keyboard(user_id, game_id):
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
         InlineKeyboardButton("🎴 Взять карту", callback_data=f"bj_hit_{user_id}_{game_id}"),
-        InlineKeyboardButton("✋ Остановиться", callback_data=f"bj_stand_{user_id}_{game_id}")
+        InlineKeyboardButton("✋ Оставить", callback_data=f"bj_stand_{user_id}_{game_id}")
     )
     kb.add(
-        InlineKeyboardButton("🏳️ Сдаться", callback_data=f"bj_surrender_{user_id}_{game_id}"),
-        InlineKeyboardButton("💰 Удвоить", callback_data=f"bj_double_{user_id}_{game_id}")
+        InlineKeyboardButton("🏳️ Сдаться", callback_data=f"bj_surrender_{user_id}_{game_id}")
     )
     return kb
 
@@ -6343,7 +6342,7 @@ def format_blackjack_message(game_id):
         name = str(uid)
 
     text = f"""
-🎰 <b>Мини-игра в BLACKJACK</b>
+🎰 <b>Мини — игра в BLACKJACK</b>
 
 👤 <a href="tg://user?id={uid}">{name}</a>
 💰 Ставка: <code>{format_number(game['bet'])}$</code>
@@ -7599,32 +7598,33 @@ def callback_help_sections(call):
         # Остальные разделы
         if section == "games":
             text = (
-                "🎮 <b>ИГРЫ MEOW BOT</b>\n"
-                "━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "🎰 <b>КАЗИНО:</b>\n"
-                "<code>играть [ставка]</code> — Блэкджек\n"
-                "<code>рулетка [ставка]</code> — Рулетка\n"
-                "ставка к/ч (к - красное, ч - черное). ставка 1 - 36 (ставите ставку на числа от 1 до 36), команда го, начинает игру"
-                
-                "<code>мины [ставка]</code> — Мины\n\n"
-                
-                "🪙 <b>СПОРТИВНЫЕ:</b>\n"
-                "<code>рб [ставка] [орёл/решка]</code> — Монетка\n"
-                "<code>футбол [ставка]</code> — Футбол\n"
-                "<code>баскетбол [ставка]</code> — Баскетбол\n"
-                "<code>кнб ТОЛЬКО ответом на сообщение</code> — Крестики - Нолики"
-                
-                "💰 <b>ВЫИГРЫШИ:</b>\n"
-                "• Победа в казино: x2 ставки\n"
-                "• Спортивные: x2 ставки\n\n"
-                
-                "⚠️ <b>ПРАВИЛА:</b>\n"
-                "• Не играйте на последние деньги\n"
-                "• Начинайте с малых ставок\n"
-                "• Используйте стратегии\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
+    "🎮 <b>ИГРЫ MEOW BOT</b>\n"
+    "━━━━━━━━━━━━━━━━━━━\n\n"
+    
+    "🎰 <b>КАЗИНО:</b>\n"
+    "• <code>играть [ставка]</code> — Блэкджек\n"
+    "• <code>рулетка [ставка]</code> — Рулетка\n"
+    "   ├─ Ставка <b>к/ч</b> (к - красное, ч - черное)\n"
+    "   ├─ Ставка <b>1-36</b> (ставьте на числа от 1 до 36)\n"
+    "   └─ Команда <code>го</code> — начинает игру\n"
+    "• <code>мины [ставка]</code> — Мины\n\n"
+    
+    "🪙 <b>СПОРТИВНЫЕ:</b>\n"
+    "• <code>рб [ставка] [орёл/решка]</code> — Монетка\n"
+    "• <code>футбол [ставка]</code> — Футбол\n"
+    "• <code>баскетбол [ставка]</code> — Баскетбол\n"
+    "• <code>кнб</code> — Крестики-нолики (только ответом на сообщение)\n\n"
+    
+    "💰 <b>ВЫИГРЫШИ:</b>\n"
+    "• Победа в казино: ×2 ставки\n"
+    "• Спортивные игры: ×2 ставки\n\n"
+    
+    "⚠️ <b>ПРАВИЛА:</b>\n"
+    "• Не играйте на последние деньги\n"
+    "• Начинайте с малых ставок\n"
+    "• Используйте стратегии\n"
+    "━━━━━━━━━━━━━━━━━━━"
+)
             
         elif section == "vip":
             text = (
