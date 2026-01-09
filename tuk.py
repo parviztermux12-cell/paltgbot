@@ -1789,7 +1789,7 @@ def give_prize_to_user(user_id, prize):
     save_casino_data()
     return f"{prize['emoji']} <b>{prize.get('name', 'Подарок')}</b>"
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["новогодний календарь", "календарь", "нг", "новый год", "новогодний"])
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["новогодний калдсжвжчдсарь", "кжвдсдвжрь", "фэчбсдсж", "нжвжсжвжвж", "нйхвббфжсьжыжад"])
 def new_year_calendar(message):
     """Показывает новогодний календарь"""
     user_id = message.from_user.id
@@ -6935,7 +6935,7 @@ cleanup_thread.start()
 print("✅ Модуль рулетки загружен и готов к работе!")
     
     
-    # ================== ИГРА В РУЛЕТКУ (CASINO ROULETTE) ==================
+# ================== ИГРА В РУЛЕТКУ (CASINO ROULETTE) ==================
 
 # Глобальные переменные для хранения ставок
 color_bets = {}     # Для ставок на цвета
@@ -6944,6 +6944,13 @@ number_bets = {}    # Для ставок на числа
 def log_roulette(chat_id, result_number, result_color):
     """Логирование результатов рулетки"""
     logger.info(f"Рулетка в чате {chat_id}: выпало {result_number} ({result_color})")
+    
+    # Сохраняем в отдельный файл для команды лог
+    try:
+        with open("roulette_results.txt", "a", encoding="utf-8") as f:
+            f.write(f"{result_number}|{result_color}\n")
+    except Exception as e:
+        logger.error(f"Ошибка сохранения лога рулетки: {e}")
 
 # ================== ОБРАБОТКА СТАВОК НА ЦВЕТ ==================
 
@@ -7148,6 +7155,57 @@ def start_roulette(message):
     except Exception as e:
         logger.error(f"Ошибка запуска рулетки: {e}")
         bot.send_message(message.chat.id, "❌ Команда была отклонена, возможная причина: Игра ранее была запущена другим игроком")
+
+# ================== КОМАНДА ЛОГИ РУЛЕТКИ ==================
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["лог", "логи"])
+def show_roulette_logs(message):
+    """Показать последние 10 результатов рулетки"""
+    try:
+        if not os.path.exists("roulette_results.txt"):
+            bot.reply_to(message, "❗ Сегодня ещё никто не играл в рулетку - логи пустые")
+            return
+        
+        with open("roulette_results.txt", "r", encoding="utf-8") as f:
+            logs = f.readlines()
+        
+        # Берем последние 10 строк
+        recent_logs = logs[-10:] if len(logs) >= 10 else logs
+        
+        if not recent_logs:
+            bot.reply_to(message, "❗ Сегодня ещё никто не играл в рулетку - логи пустые")
+            return
+        
+        # Переворачиваем чтобы новые были сверху
+        recent_logs.reverse()
+        
+        text = "📝 <b>Логи:</b>\n\n"
+        
+        for log in recent_logs:
+            log = log.strip()
+            if "|" in log:
+                # Формат: число|цвет
+                parts = log.split("|")
+                if len(parts) >= 2:
+                    number = parts[0]
+                    color = parts[1]
+                    
+                    if color == 'з':
+                        emoji = '🟩'
+                    elif color == 'к':
+                        emoji = '🔴'
+                    elif color == 'ч':
+                        emoji = '⚫'
+                    else:
+                        continue
+                    
+                    text += f"{emoji} ({number})\n"
+        
+        bot.reply_to(message, text, parse_mode="HTML")
+        
+    except Exception as e:
+        logger.error(f"Ошибка показа логов рулетки: {e}")
+        bot.reply_to(message, "❌ Ошибка при получении логов!")
         
 # ================== ФУТБОЛ / БАСКЕТБОЛ ==================
 
