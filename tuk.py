@@ -179,7 +179,8 @@ def vip_list(message):
     if current_vip["level"] > 0:
         kb.row(InlineKeyboardButton("💰 Продать VIP", callback_data=f"sell_vip_{user_id}"))
     
-    kb.row(InlineKeyboardButton("⬅️ Назад", callback_data=f"menu_main_{user_id}"))
+    # Убрана кнопка "⬅️ Назад"
+    # kb.row(InlineKeyboardButton("⬅️ Назад", callback_data=f"menu_main_{user_id}"))
 
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
 
@@ -893,6 +894,123 @@ def list_cheques(message):
         text += f"• <code>{code}</code> — {amount} 💰 (осталось {left}/{max_acts})\n"
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
+    
+ANTI_MAT_CHAT_ID = -1003279681531
+MUTE_TIME_SECONDS = 3 * 60
+
+anti_filter_enabled = True
+
+BAD_WORDS = [
+    "блять",
+    "бля",
+    "сука",
+    "шлюха",
+    "ебал",
+    "ёбал",
+    "маму ебал",
+    "хуй",
+    "пизда",
+    "нахуй",
+]
+
+@bot.message_handler(commands=["fit"])
+def anti_filter_toggle_cmd(message):
+    if message.chat.id != ANTI_MAT_CHAT_ID:
+        return
+
+    try:
+        member = bot.get_chat_member(message.chat.id, message.from_user.id)
+        if member.status not in ("administrator", "creator"):
+            return
+    except:
+        return
+
+    text = "Анти-фильтр вкл ✅" if anti_filter_enabled else "Анти-фильтр выкл 🔴"
+
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton(text, callback_data="toggle_anti_filter"))
+
+    bot.reply_to(message, " ", reply_markup=kb)
+
+
+@bot.callback_query_handler(func=lambda c: c.data == "toggle_anti_filter")
+def toggle_anti_filter(call):
+    global anti_filter_enabled
+
+    if call.message.chat.id != ANTI_MAT_CHAT_ID:
+        return
+
+    try:
+        member = bot.get_chat_member(call.message.chat.id, call.from_user.id)
+        if member.status not in ("administrator", "creator"):
+            bot.answer_callback_query(call.id)
+            return
+    except:
+        return
+
+    anti_filter_enabled = not anti_filter_enabled
+
+    text = "Анти-фильтр вкл ✅" if anti_filter_enabled else "Анти-фильтр выкл 🔴"
+
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton(text, callback_data="toggle_anti_filter"))
+
+    bot.edit_message_reply_markup(
+        call.message.chat.id,
+        call.message.message_id,
+        reply_markup=kb
+    )
+
+    bot.answer_callback_query(call.id)
+
+
+@bot.message_handler(func=lambda m: m.text and m.chat.id == ANTI_MAT_CHAT_ID)
+def anti_mat_handler(message):
+    if not anti_filter_enabled:
+        return
+
+    text = message.text.lower()
+    if not any(word in text for word in BAD_WORDS):
+        return
+
+    try:
+        member = bot.get_chat_member(message.chat.id, message.from_user.id)
+        if member.status in ("administrator", "creator"):
+            return
+    except:
+        pass
+
+    try:
+        bot_member = bot.get_chat_member(message.chat.id, bot.get_me().id)
+        if bot_member.status not in ("administrator", "creator"):
+            return
+    except:
+        return
+
+    try:
+        bot.delete_message(message.chat.id, message.message_id)
+    except:
+        pass
+
+    user = message.from_user
+    mention = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+
+    until_time = int(time.time()) + MUTE_TIME_SECONDS
+
+    bot.restrict_chat_member(
+        chat_id=message.chat.id,
+        user_id=user.id,
+        until_date=until_time,
+        can_send_messages=False
+    )
+
+    bot.send_message(
+        message.chat.id,
+        f"❗ {mention}, нарушение правил бота.\n"
+        f"🛑 Причина: Оскорбления\n"
+        f"🔇 Мут: 3 минуты",
+        parse_mode="HTML"
+    )
         
 # ================== РЕФЕРАЛЬНАЯ СИСТЕМА (SQLite) ==================
 REFERRAL_BONUS = 2500
@@ -7502,7 +7620,7 @@ def cmd_pomosh(message):
     mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
 
     text = (
-        "📖 <b>ПАНЕЛЬ ПОМОЩИ MEOW BOT</b>\n"
+        "📖 <b>ПАНЕЛЬ ПОМОЩИ</b>\n"
         
         f"👤 <b>Пользователь:</b> {mention}\n"
         f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
@@ -7839,11 +7957,6 @@ def callback_help_sections(call):
                 "• Ежедневная награда\n"
                 "• Обмен в профиле\n\n"
                 
-                "🎁 <b>НОВОГОДНИЙ КАЛЕНДАРЬ:</b>\n"
-                "<code>календарь</code>, <code>нг</code>\n"
-                "• Ежедневный подарок\n"
-                "• Случайные призы\n"
-                "• Новогодняя тематика\n"
                 "━━━━━━━━━━━━━━━━━━━"
             )
             
@@ -7912,7 +8025,7 @@ def callback_back_to_help_main(call):
     mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
 
     text = (
-        "📖 <b>ПАНЕЛЬ ПОМОЩИ MEOW BOT</b>\n"
+        "📖 <b>ПАНЕЛЬ ПОМОЩИ</b>\n"
         "━━━━━━━━━━━━━━━━━━━\n\n"
         f"👤 <b>Пользователь:</b> {mention}\n"
         f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
