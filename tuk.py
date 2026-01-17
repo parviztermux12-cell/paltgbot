@@ -895,10 +895,19 @@ def list_cheques(message):
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
     
-ANTI_MAT_CHAT_ID = -1003279681531
+# ================== АНТИ-МАТ СИСТЕМА (ДЛЯ ВСЕХ ЧАТОВ) ==================
 MUTE_TIME_SECONDS = 3 * 60
 
-anti_filter_enabled = True
+# Храним состояние для каждого чата отдельно
+anti_filter_status = {}
+
+def get_chat_status(chat_id):
+    """Получает статус анти-фильтра для чата"""
+    return anti_filter_status.get(chat_id, True)  # По умолчанию включен
+
+def set_chat_status(chat_id, status):
+    """Устанавливает статус анти-фильтра для чата"""
+    anti_filter_status[chat_id] = status
 
 BAD_WORDS = [
     "блять",
@@ -913,67 +922,122 @@ BAD_WORDS = [
     "нахуй",
 ]
 
-@bot.message_handler(commands=["ft"])
+@bot.message_handler(commands=["anti"])
 def anti_filter_toggle_cmd(message):
-    if message.chat.id != ANTI_MAT_CHAT_ID:
-        return
-
+    # Работает в ЛЮБОМ чате, но только для админов чата
+    
+    # Проверяем, является ли пользователь администратором чата
     try:
         member = bot.get_chat_member(message.chat.id, message.from_user.id)
         if member.status not in ("administrator", "creator"):
+            bot.reply_to(message, "❌ <b>Только администраторы чата могут управлять анти-фильтром!</b>", parse_mode="HTML")
             return
-    except:
+    except Exception as e:
+        bot.reply_to(message, f"❌ <b>Ошибка проверки прав:</b> {e}", parse_mode="HTML")
         return
 
-    text = "Анти-фильтр вкл ✅" if anti_filter_enabled else "Анти-фильтр выкл 🔴"
-
-    kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton(text, callback_data="toggle_anti_filter"))
-
-    bot.reply_to(message, "🔴Атата, тебе нельзя ещё такое", reply_markup=kb)
-
-
-@bot.callback_query_handler(func=lambda c: c.data == "toggle_anti_filter")
-def toggle_anti_filter(call):
-    global anti_filter_enabled
-
-    if call.message.chat.id != ANTI_MAT_CHAT_ID:
-        return
-
+    # Проверяем, является ли бот администратором чата
     try:
-        member = bot.get_chat_member(call.message.chat.id, call.from_user.id)
-        if member.status not in ("administrator", "creator"):
-            bot.answer_callback_query(call.id)
+        bot_member = bot.get_chat_member(message.chat.id, bot.get_me().id)
+        if bot_member.status not in ("administrator", "creator"):
+            bot.reply_to(message, 
+                "❌ <b>Бот не является администратором!</b>\n\n"
+                "Для работы анти-фильтра нужно:\n"
+                "1. Сделать бота администратором\n"
+                "2. Дать права на удаление сообщений\n"
+                "3. Дать права на ограничение участников", 
+                parse_mode="HTML")
             return
-    except:
+    except Exception as e:
+        bot.reply_to(message, f"❌ <b>Ошибка проверки прав бота:</b> {e}", parse_mode="HTML")
         return
 
-    anti_filter_enabled = not anti_filter_enabled
-
-    text = "Анти-фильтр вкл ✅" if anti_filter_enabled else "Анти-фильтр выкл 🔴"
+    # Получаем текущий статус для этого чата
+    current_status = get_chat_status(message.chat.id)
+    status_text = "вкл ✅" if current_status else "выкл 🔴"
+    next_status_text = "выключить" if current_status else "включить"
 
     kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton(text, callback_data="toggle_anti_filter"))
+    kb.add(InlineKeyboardButton(f"🔄 {next_status_text.capitalize()} анти-фильтр", callback_data=f"toggle_anti_filter_{message.chat.id}"))
 
-    bot.edit_message_reply_markup(
-        call.message.chat.id,
-        call.message.message_id,
+    bot.reply_to(message, 
+        f"⚙️ <b>Управление анти-фильтром чата</b>\n\n"
+        f"📊 <b>Текущий статус:</b> {status_text}\n"
+        f"💬 <b>Чат:</b> {message.chat.title or 'ЛС'}\n"
+        f"👮 <b>Администратор:</b> {message.from_user.first_name}\n\n"
+        f"Нажми на кнопку ниже, чтобы {next_status_text} анти-фильтр в этом чате:", 
+        parse_mode="HTML", 
         reply_markup=kb
     )
 
-    bot.answer_callback_query(call.id)
+@bot.callback_query_handler(func=lambda c: c.data.startswith("toggle_anti_filter_"))
+def toggle_anti_filter(call):
+    # Извлекаем ID чата из callback_data
+    try:
+        chat_id = int(call.data.split("_")[3])
+    except:
+        bot.answer_callback_query(call.id, "❌ Ошибка данных!", show_alert=True)
+        return
 
+    # Проверяем, является ли пользователь администратором чата
+    try:
+        member = bot.get_chat_member(chat_id, call.from_user.id)
+        if member.status not in ("administrator", "creator"):
+            bot.answer_callback_query(call.id, "❌ Только администраторы чата могут управлять анти-фильтром!", show_alert=True)
+            return
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка проверки прав: {e}", show_alert=True)
+        return
 
-@bot.message_handler(func=lambda m: m.text and m.chat.id == ANTI_MAT_CHAT_ID)
+    # Переключаем статус для этого чата
+    current_status = get_chat_status(chat_id)
+    new_status = not current_status
+    set_chat_status(chat_id, new_status)
+
+    status_text = "вкл ✅" if new_status else "выкл 🔴"
+    action_text = "включен" if new_status else "выключен"
+    
+    try:
+        # Получаем название чата для сообщения
+        chat = bot.get_chat(chat_id)
+        chat_name = chat.title or f"чат {chat_id}"
+    except:
+        chat_name = f"чат {chat_id}"
+
+    # Обновляем сообщение
+    kb = InlineKeyboardMarkup()
+    next_status_text = "выключить" if new_status else "включить"
+    kb.add(InlineKeyboardButton(f"🔄 {next_status_text.capitalize()} анти-фильтр", callback_data=f"toggle_anti_filter_{chat_id}"))
+
+    bot.edit_message_text(
+        f"⚙️ <b>Управление анти-фильтром чата</b>\n\n"
+        f"📊 <b>Текущий статус:</b> {status_text}\n"
+        f"💬 <b>Чат:</b> {chat_name}\n"
+        f"👮 <b>Администратор:</b> {call.from_user.first_name}\n\n"
+        f"✅ <b>Анти-фильтр {action_text}!</b>\n\n"
+        f"Нажми на кнопку ниже, чтобы {next_status_text} анти-фильтр в этом чате:",
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
+
+    bot.answer_callback_query(call.id, f"✅ Анти-фильтр {action_text} в чате {chat_name}!")
+
+@bot.message_handler(func=lambda m: m.text and m.chat.type in ["group", "supergroup"])
 def anti_mat_handler(message):
-    if not anti_filter_enabled:
+    # Проверяем, включен ли анти-фильтр в этом чате
+    if not get_chat_status(message.chat.id):
         return
 
     text = message.text.lower()
+    
+    # Проверяем наличие плохих слов
     if not any(word in text for word in BAD_WORDS):
         return
 
     try:
+        # Пропускаем администраторов чата
         member = bot.get_chat_member(message.chat.id, message.from_user.id)
         if member.status in ("administrator", "creator"):
             return
@@ -981,12 +1045,15 @@ def anti_mat_handler(message):
         pass
 
     try:
+        # Проверяем, является ли бот администратором чата
         bot_member = bot.get_chat_member(message.chat.id, bot.get_me().id)
         if bot_member.status not in ("administrator", "creator"):
+            # Бот не админ - не может удалять сообщения и выдавать муты
             return
     except:
         return
 
+    # Удаляем сообщение с матом
     try:
         bot.delete_message(message.chat.id, message.message_id)
     except:
@@ -997,20 +1064,26 @@ def anti_mat_handler(message):
 
     until_time = int(time.time()) + MUTE_TIME_SECONDS
 
-    bot.restrict_chat_member(
-        chat_id=message.chat.id,
-        user_id=user.id,
-        until_date=until_time,
-        can_send_messages=False
-    )
-
-    bot.send_message(
-        message.chat.id,
-        f"❗ {mention}, нарушение правил бота.\n"
-        f"🛑 Причина: Оскорбления\n"
-        f"🔇 Мут: 3 минуты",
-        parse_mode="HTML"
-    )
+    try:
+        # Выдаем мут пользователю
+        bot.restrict_chat_member(
+            chat_id=message.chat.id,
+            user_id=user.id,
+            until_date=until_time,
+            can_send_messages=False
+        )
+        
+        # Отправляем сообщение о муте с инструкцией
+        bot.send_message(
+            message.chat.id,
+            f"❗ {mention}, нарушение правил чата.\n"
+            f"🛑 <b>Причина:</b> Использование запрещенных слов\n"
+            f"🔇 <b>Мут:</b> 3 минуты\n\n"
+            f"<code>Если хотите выключить Анти-фильтр, попросите админов чата написать /anti</code>",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        logger.error(f"Ошибка при муте пользователя: {e}")
         
 # ================== РЕФЕРАЛЬНАЯ СИСТЕМА (SQLite) ==================
 REFERRAL_BONUS = 2500
