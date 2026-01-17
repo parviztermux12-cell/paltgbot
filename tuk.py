@@ -913,7 +913,7 @@ BAD_WORDS = [
     "нахуй",
 ]
 
-@bot.message_handler(commands=["fit"])
+@bot.message_handler(commands=["ft"])
 def anti_filter_toggle_cmd(message):
     if message.chat.id != ANTI_MAT_CHAT_ID:
         return
@@ -930,7 +930,7 @@ def anti_filter_toggle_cmd(message):
     kb = InlineKeyboardMarkup()
     kb.add(InlineKeyboardButton(text, callback_data="toggle_anti_filter"))
 
-    bot.reply_to(message, " ", reply_markup=kb)
+    bot.reply_to(message, "🔴Атата, тебе нельзя ещё такое", reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda c: c.data == "toggle_anti_filter")
