@@ -20,7 +20,7 @@
   "новенький": {
     "amount": 25000,
     "max_activations": 10000,
-    "current_activations": 11,
+    "current_activations": 19,
     "activated_by": [
       7526512670,
       8293448450,
@@ -32,7 +32,15 @@
       7060923750,
       8483733925,
       7696828602,
-      5427760996
+      5427760996,
+      6397134706,
+      1448932943,
+      8480318977,
+      7307656251,
+      5317756229,
+      8452337057,
+      6794415080,
+      8340514324
     ]
   },
   "I47Z29V4": {
@@ -158,6 +166,229 @@
       6098334332,
       7483481136,
       7526512670
+    ]
+  },
+  "5M0LSTTI": {
+    "amount": 4358,
+    "max_activations": 10,
+    "current_activations": 1,
+    "activated_by": [
+      7694717699
+    ]
+  },
+  "LDRLCBI1": {
+    "amount": 848,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7985048553
+    ]
+  },
+  "394WMCOR": {
+    "amount": 2445,
+    "max_activations": 17,
+    "current_activations": 2,
+    "activated_by": [
+      7696828602,
+      8452337057
+    ]
+  },
+  "5S7SFJOK": {
+    "amount": 4012,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7696828602
+    ]
+  },
+  "I6AE4U2N": {
+    "amount": 4984,
+    "max_activations": 5,
+    "current_activations": 3,
+    "activated_by": [
+      7696828602,
+      8452337057,
+      7526512670
+    ]
+  },
+  "9TQRYS5W": {
+    "amount": 3404,
+    "max_activations": 14,
+    "current_activations": 3,
+    "activated_by": [
+      7696828602,
+      7526512670,
+      8452337057
+    ]
+  },
+  "D7SU137D": {
+    "amount": 4932,
+    "max_activations": 8,
+    "current_activations": 2,
+    "activated_by": [
+      8452337057,
+      7526512670
+    ]
+  },
+  "YBXDHSJE": {
+    "amount": 4821,
+    "max_activations": 13,
+    "current_activations": 3,
+    "activated_by": [
+      7696828602,
+      7526512670,
+      8452337057
+    ]
+  },
+  "O3KXULG0": {
+    "amount": 178,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      6512241065,
+      1248832437,
+      7696828602,
+      8480318977
+    ]
+  },
+  "JWECQTG6": {
+    "amount": 4500,
+    "max_activations": 8,
+    "current_activations": 4,
+    "activated_by": [
+      1248832437,
+      6512241065,
+      7696828602,
+      8480318977
+    ]
+  },
+  "SLDTVPII": {
+    "amount": 1624,
+    "max_activations": 7,
+    "current_activations": 4,
+    "activated_by": [
+      1248832437,
+      6512241065,
+      7696828602,
+      8480318977
+    ]
+  },
+  "2ATP34K3": {
+    "amount": 3871,
+    "max_activations": 14,
+    "current_activations": 4,
+    "activated_by": [
+      1248832437,
+      6512241065,
+      7696828602,
+      8480318977
+    ]
+  },
+  "M8IMTYCG": {
+    "amount": 1083,
+    "max_activations": 13,
+    "current_activations": 4,
+    "activated_by": [
+      1248832437,
+      6512241065,
+      8480318977,
+      7696828602
+    ]
+  },
+  "Q8FHE431": {
+    "amount": 608,
+    "max_activations": 13,
+    "current_activations": 8,
+    "activated_by": [
+      8452337057,
+      6512241065,
+      7696828602,
+      8168027201,
+      8483733925,
+      7060923750,
+      8346413591,
+      1248832437
+    ]
+  },
+  "58": {
+    "amount": 40000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      6492371047
+    ]
+  },
+  "2": {
+    "amount": 40000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7880878734
+    ]
+  },
+  "97": {
+    "amount": 40000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5862775750
+    ]
+  },
+  "3": {
+    "amount": 40000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7307656251
+    ]
+  },
+  "C48THZ2G": {
+    "amount": 1123,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7696828602,
+      7457101105
+    ]
+  },
+  "27": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5815880196
+    ]
+  },
+  "82": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7696828602
+    ]
+  },
+  "99": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8168027201
+    ]
+  },
+  "1": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7696828602
+    ]
+  },
+  "67": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5815880196
     ]
   }
 }

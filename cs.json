@@ -1,17 +1,11 @@
 {
   "7526512670": {
-    "balance": 5057,
-    "last_bonus": "2026-01-26",
+    "balance": 15650,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
-    "business": {
-      "name": "отель",
-      "profit_per_hour": 10000,
-      "materials": 100,
-      "last_update": "2026-01-26T09:49:30.708088",
-      "profit_accumulated": 0
-    },
+    "business": null,
     "house": null,
     "car": null,
     "pet": {
@@ -23,11 +17,11 @@
     },
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 101,
@@ -37,17 +31,17 @@
       "expires": null
     },
     "_user_id": 7526512670,
-    "mines_bet": 2000000,
+    "mines_bet": 143,
     "mines_positions": [
-      10,
+      3,
       17,
-      21,
-      16,
-      18
+      12,
+      5,
+      23
     ],
     "mines_revealed": [],
-    "mines_multiplier": 2.4000000000000004,
-    "last_farm": "2026-01-26T05:01:04.337438",
+    "mines_multiplier": 2.5999999999999996,
+    "last_farm": "2026-01-29T06:53:45.644699",
     "mines_message_id": 9046,
     "mines_chat_id": -1003058891966,
     "deck": [
@@ -276,14 +270,14 @@
     "first_move": true,
     "mines_open": [
       0,
-      4,
+      24,
       20,
-      24
+      4
     ],
     "mines_started": true
   },
   "8293824305": {
-    "balance": 158071,
+    "balance": 164504,
     "last_bonus": null,
     "stage": null,
     "game": null,
@@ -294,11 +288,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -311,9 +305,9 @@
     "_first_name": "𝙈𝙚𝙤𝙬 𝙂𝙖𝙢𝙚"
   },
   "1375612102": {
-    "balance": 40890262,
-    "last_bonus": "2026-01-21",
-    "stage": "none",
+    "balance": 51607378,
+    "last_bonus": "2026-01-28",
+    "stage": "finished",
     "game": "mines",
     "tyanka": null,
     "business": {
@@ -326,9 +320,9 @@
     "house": null,
     "car": {
       "name": "Mercedes Maybac",
-      "last_update": "2026-01-21T18:45:23.524678",
+      "last_update": "2026-01-28T13:21:46.308649",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-21T18:45:25.993177"
+      "last_wash": "2026-01-28T13:21:49.682656"
     },
     "pet": {
       "id": 7,
@@ -339,11 +333,11 @@
     },
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -353,20 +347,20 @@
       "expires": "2025-11-12T11:38:47.474450"
     },
     "_user_id": 1375612102,
-    "mines_bet": 123,
+    "mines_bet": 500000,
     "mines_positions": [
-      26,
-      6,
-      27,
-      7,
-      23
+      3,
+      14,
+      15,
+      2,
+      21
     ],
     "mines_revealed": [
       25,
       26
     ],
-    "mines_multiplier": 1.25,
-    "last_farm": "2026-01-21T18:45:32.036827",
+    "mines_multiplier": 2.1999999999999997,
+    "last_farm": "2026-01-28T19:30:59.679706",
     "bet": 1000,
     "choice": "red",
     "deck": [
@@ -585,10 +579,17 @@
     ],
     "mines_message_id": 428841,
     "mines_chat_id": -1002265170153,
-    "_first_name": "...WΞIRLD..."
+    "_first_name": "...WΞIRLD...",
+    "mines_owner": 1375612102,
+    "mines_open": [
+      6,
+      11,
+      16
+    ],
+    "mines_started": true
   },
   "5694141752": {
-    "balance": 11535927,
+    "balance": 1166514,
     "last_bonus": "2026-01-22",
     "stage": "none",
     "game": "mines",
@@ -597,19 +598,19 @@
       "name": "автосалон",
       "profit_per_hour": 5000,
       "materials": 100,
-      "last_update": "2026-01-26T11:47:12.922261",
-      "profit_accumulated": 270242
+      "last_update": "2026-01-29T11:32:27.863758",
+      "profit_accumulated": 0
     },
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -632,7 +633,7 @@
       0
     ],
     "mines_multiplier": 1.0,
-    "last_farm": "2026-01-26T11:47:16.921901",
+    "last_farm": "2026-01-29T11:32:18.058581",
     "deck": [
       [
         "A",
@@ -854,8 +855,8 @@
     "mines_msg_id": 464516
   },
   "5203713503": {
-    "balance": 1539,
-    "last_bonus": "2026-01-26",
+    "balance": 4219,
+    "last_bonus": "2026-01-27",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -865,11 +866,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -1241,8 +1242,8 @@
     "_user_id": 1219078664
   },
   "7457101105": {
-    "balance": 6902,
-    "last_bonus": "2026-01-26",
+    "balance": 1905,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -1252,11 +1253,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -1266,14 +1267,14 @@
       "expires": null
     },
     "_user_id": 7457101105,
-    "last_farm": "2026-01-26T09:49:45.465028",
-    "mines_bet": 1000000,
+    "last_farm": "2026-01-29T15:20:15.660915",
+    "mines_bet": 250,
     "mines_positions": [
-      23,
-      2,
-      1,
-      13,
-      20
+      4,
+      11,
+      14,
+      10,
+      3
     ],
     "mines_revealed": [
       18,
@@ -1281,7 +1282,7 @@
       15,
       2
     ],
-    "mines_multiplier": 1.7000000000000002,
+    "mines_multiplier": 1.6,
     "deck": [
       [
         "10",
@@ -1504,9 +1505,9 @@
     "mines_owner": 7457101105,
     "mines_msg_id": 15025,
     "mines_open": [
-      5,
-      21,
-      1
+      23,
+      17,
+      11
     ],
     "mines_started": true
   },
@@ -1571,11 +1572,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -1647,11 +1648,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2244,11 +2245,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2314,11 +2315,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2381,11 +2382,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2508,11 +2509,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2817,33 +2818,29 @@
     "mines_started": true
   },
   "7996158432": {
-    "balance": 6204755,
+    "balance": 5000,
     "last_bonus": null,
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
     "business": null,
     "house": null,
-    "car": {
-      "name": "Bmw M8",
-      "last_update": "2025-10-20T02:21:13.562016",
-      "profit_accumulated": 0
-    },
+    "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
     "last_interest_date": "2025-10-12",
     "vip": {
-      "level": 7,
-      "expires": "2025-11-11T11:25:58.446343"
+      "level": 0,
+      "expires": null
     },
     "_user_id": 7996158432,
     "last_farm": "2025-10-20T02:20:53.949672",
@@ -2919,7 +2916,7 @@
     "_user_id": 933269156
   },
   "7985048553": {
-    "balance": 2988095,
+    "balance": 1181522,
     "last_bonus": "2025-12-30",
     "stage": "finished",
     "game": "mines",
@@ -2931,32 +2928,32 @@
       "rarity": "🟡 Сверх Легендарная",
       "satiety": 100,
       "last_income": "2025-11-29T11:18:22.706753",
-      "mood": 15,
+      "mood": 73,
       "profit_accumulated": 0,
-      "last_update": "2026-01-25T14:28:53.334655"
+      "last_update": "2026-01-29T09:03:00.492804"
     },
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
       "materials": 100,
-      "last_update": "2026-01-26T09:26:10.718260",
+      "last_update": "2026-01-29T09:03:10.252697",
       "profit_accumulated": 0
     },
     "house": null,
     "car": {
       "name": "Mercedes Maybac",
-      "last_update": "2026-01-24T07:53:12.853047",
+      "last_update": "2026-01-29T09:03:25.534317",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-24T07:53:18.530868"
+      "last_wash": "2026-01-29T09:03:29.155803"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -2966,19 +2963,19 @@
       "expires": "2025-12-15T06:51:36.691331"
     },
     "_user_id": 7985048553,
-    "mines_bet": 30000000,
+    "mines_bet": 400000,
     "mines_positions": [
-      4,
-      21,
-      7,
-      13,
-      12
+      16,
+      12,
+      3,
+      17,
+      5
     ],
     "mines_revealed": [
       13
     ],
-    "mines_multiplier": 2.2,
-    "last_farm": "2026-01-24T10:16:29.633672",
+    "mines_multiplier": 1.0,
+    "last_farm": "2026-01-29T09:02:47.244716",
     "mines_message_id": 209359,
     "mines_chat_id": -1002486374757,
     "deck": [
@@ -3200,10 +3197,7 @@
     "mines_msg_id": 215834,
     "mines_owner": 7985048553,
     "mines_open": [
-      8,
-      11,
-      19,
-      1
+      17
     ],
     "mines_started": true
   },
@@ -3546,11 +3540,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -4353,11 +4347,11 @@
     },
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-20",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-20",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -6032,11 +6026,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -6304,11 +6298,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2025-12-16",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2025-12-16",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -15396,11 +15390,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -15785,8 +15779,8 @@
     "_user_id": 5491753170
   },
   "5646570650": {
-    "balance": 4062588,
-    "last_bonus": "2026-01-22",
+    "balance": 4058434,
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": {
@@ -15798,31 +15792,31 @@
       "satiety": 100,
       "last_income": "2026-01-09T10:02:54.356149",
       "mood": 100,
-      "profit_accumulated": 0,
-      "last_update": "2026-01-26T10:28:44.981273"
+      "profit_accumulated": 265900,
+      "last_update": "2026-01-29T14:27:03.958568"
     },
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
-      "materials": 99,
-      "last_update": "2026-01-26T10:28:41.772677",
-      "profit_accumulated": 0
+      "materials": 100,
+      "last_update": "2026-01-29T14:26:59.115691",
+      "profit_accumulated": 759713
     },
     "house": null,
     "car": {
       "name": "Mercedes Maybac",
-      "last_update": "2026-01-26T10:28:55.582218",
-      "profit_accumulated": 0,
-      "last_wash": "2026-01-26T10:28:58.340271"
+      "last_update": "2026-01-28T13:22:26.164177",
+      "profit_accumulated": 203566,
+      "last_wash": "2026-01-28T13:22:27.983934"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -18112,11 +18106,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -20665,28 +20659,39 @@
     "_user_id": 5909310401
   },
   "8293448450": {
-    "balance": 1093767,
+    "balance": 336114,
     "last_bonus": "2025-12-31",
     "stage": "finished",
     "game": "mines",
-    "tyanka": null,
+    "tyanka": {
+      "name": "даша",
+      "price": 2500000,
+      "profit_per_hour": 3500,
+      "feed_cost": 300,
+      "rarity": "🟡 Сверх Легендарная",
+      "satiety": 100,
+      "last_income": "2026-01-27T08:49:18.695685",
+      "mood": 100,
+      "profit_accumulated": 148,
+      "last_update": "2026-01-29T07:06:32.222969"
+    },
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
       "materials": 100,
-      "last_update": "2026-01-26T09:48:14.216995",
-      "profit_accumulated": 1564061
+      "last_update": "2026-01-29T07:08:50.893670",
+      "profit_accumulated": 463268
     },
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -21748,22 +21753,28 @@
     "_user_id": 8438421753
   },
   "7696828602": {
-    "balance": 111706,
-    "last_bonus": "2026-01-25",
+    "balance": 1000000,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
-    "business": null,
+    "business": {
+      "name": "отель",
+      "profit_per_hour": 10000,
+      "materials": 100,
+      "last_update": "2026-01-29T19:18:01.935598",
+      "profit_accumulated": 20773
+    },
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -21773,13 +21784,13 @@
       "expires": null
     },
     "_user_id": 7696828602,
-    "mines_bet": 959,
+    "mines_bet": 16000,
     "mines_positions": [
-      3,
-      6,
-      4,
-      18,
-      22
+      8,
+      1,
+      16,
+      5,
+      12
     ],
     "mines_revealed": [
       19
@@ -21788,7 +21799,7 @@
     "mines_msg_id": 32976,
     "mines_chat_id": -1003058891966,
     "_first_name": "•Викса",
-    "last_farm": "2026-01-25T17:10:52.144739",
+    "last_farm": "2026-01-29T17:26:03.024222",
     "bet": 671,
     "choice": "black",
     "roulette_message_id": 38149,
@@ -21798,7 +21809,7 @@
     "transferred_today": 50000,
     "last_transfer_date": "2025-12-18",
     "mines_open": [
-      6
+      5
     ],
     "mines_started": true
   },
@@ -22239,8 +22250,8 @@
     "last_farm": "2025-11-25T17:22:30.851499"
   },
   "8568012798": {
-    "balance": 14225,
-    "last_bonus": "2026-01-25",
+    "balance": 0,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -22250,11 +22261,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -22496,7 +22507,7 @@
     "mines_multiplier": 1.1,
     "mines_msg_id": 31524,
     "mines_chat_id": -1003058891966,
-    "last_farm": "2026-01-25T16:34:06.634252",
+    "last_farm": "2026-01-29T04:42:01.884517",
     "_first_name": "Вα∂υɱ🧿",
     "mines_owner": 8568012798,
     "mines_open": [
@@ -22529,11 +22540,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-11",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-11",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -23397,8 +23408,8 @@
     "_user_id": 5095607272
   },
   "6689877443": {
-    "balance": 1382842,
-    "last_bonus": "2026-01-25",
+    "balance": 78078,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": {
@@ -23417,18 +23428,18 @@
     "house": null,
     "car": {
       "name": "Mercedes Maybac",
-      "last_update": "2026-01-25T08:42:06.969376",
+      "last_update": "2026-01-29T15:28:37.294347",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-25T08:42:11.091142"
+      "last_wash": "2026-01-29T15:28:38.720648"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -23459,7 +23470,7 @@
     "mines_msg_id": 23987,
     "mines_chat_id": -1003058891966,
     "_first_name": "ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ👨‍🦽ㅤㅤㅤ🚓🚑🚓🚓",
-    "last_farm": "2026-01-25T08:41:42.986720",
+    "last_farm": "2026-01-29T15:28:30.774209",
     "transferred_today": 10000,
     "last_transfer_date": "2025-12-17",
     "mines_owner": 6689877443,
@@ -26003,11 +26014,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -28078,11 +28089,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "bank_balance": 0,
@@ -29667,10 +29678,10 @@
     "_user_id": 6326855447
   },
   "136817688": {
-    "balance": 6001,
-    "last_bonus": null,
-    "stage": null,
-    "game": null,
+    "balance": 0,
+    "last_bonus": "2026-01-27",
+    "stage": "mines",
+    "game": "mines",
     "tyanka": null,
     "business": null,
     "house": null,
@@ -29678,11 +29689,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -29691,7 +29702,20 @@
       "level": 0,
       "expires": null
     },
-    "_user_id": 136817688
+    "_user_id": 136817688,
+    "last_farm": "2026-01-27T08:50:07.417456",
+    "mines_owner": 136817688,
+    "mines_bet": 14977,
+    "mines_positions": [
+      18,
+      5,
+      19,
+      10,
+      12
+    ],
+    "mines_open": [],
+    "mines_multiplier": 1.0,
+    "mines_started": false
   },
   "6939750387": {
     "balance": 976,
@@ -30832,11 +30856,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -32363,22 +32387,28 @@
     "_user_id": 6009149979
   },
   "1448932943": {
-    "balance": 818596,
-    "last_bonus": "2026-01-26",
+    "balance": 16085,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
-    "business": null,
+    "business": {
+      "name": "автосалон",
+      "profit_per_hour": 5000,
+      "materials": 99,
+      "last_update": "2026-01-29T14:45:15.472930",
+      "profit_accumulated": 124346
+    },
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -32388,21 +32418,21 @@
       "expires": null
     },
     "_user_id": 1448932943,
-    "last_farm": "2026-01-26T06:52:20.057138",
+    "last_farm": "2026-01-29T16:56:35.706852",
     "_first_name": "Даврон",
     "mines_owner": 1448932943,
-    "mines_bet": 200000,
+    "mines_bet": 50000,
     "mines_positions": [
-      14,
-      23,
-      3,
-      9,
-      6
+      19,
+      0,
+      2,
+      4,
+      21
     ],
     "mines_open": [
-      0
+      4
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "7625671037": {
@@ -32423,11 +32453,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -32467,33 +32497,22 @@
     "_user_id": 7528507564
   },
   "6858353780": {
-    "balance": 7555,
+    "balance": 7435,
     "last_bonus": null,
     "stage": null,
     "game": null,
-    "tyanka": {
-      "name": "катя",
-      "price": 60000,
-      "profit_per_hour": 600,
-      "feed_cost": 120,
-      "rarity": "⚪ Обычная",
-      "satiety": 100,
-      "last_income": "2026-01-19T22:45:02.175134",
-      "mood": 100,
-      "profit_accumulated": 0,
-      "last_update": "2026-01-19T22:46:01.422159"
-    },
+    "tyanka": null,
     "business": null,
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-19",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-19",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -33497,8 +33516,8 @@
     "_user_id": 8333707735
   },
   "8232024665": {
-    "balance": 876120,
-    "last_bonus": "2026-01-25",
+    "balance": 1322000,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -33506,18 +33525,18 @@
     "house": null,
     "car": {
       "name": "Toyota Camry 3.5",
-      "last_update": "2026-01-25T07:15:39.072619",
+      "last_update": "2026-01-29T14:56:06.231984",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-25T04:18:08.329607"
+      "last_wash": "2026-01-29T12:34:31.187939"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -33529,21 +33548,21 @@
     "_user_id": 8232024665,
     "_first_name": "Азым",
     "mines_owner": 8232024665,
-    "mines_bet": 707,
+    "mines_bet": 145,
     "mines_positions": [
-      11,
-      0,
-      19,
-      9,
-      2
-    ],
-    "mines_open": [
-      20,
+      5,
+      4,
+      2,
+      23,
       9
     ],
-    "mines_multiplier": 1.3,
+    "mines_open": [
+      11,
+      4
+    ],
+    "mines_multiplier": 1.4,
     "mines_started": true,
-    "last_farm": "2026-01-25T07:16:10.198013"
+    "last_farm": "2026-01-29T14:56:13.101701"
   },
   "7294582624": {
     "balance": 5000,
@@ -34197,7 +34216,7 @@
   },
   "5815880196": {
     "balance": 0,
-    "last_bonus": "2026-01-26",
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -34207,11 +34226,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -34221,20 +34240,20 @@
       "expires": null
     },
     "_user_id": 5815880196,
-    "last_farm": "2026-01-26T13:19:40.311262",
+    "last_farm": "2026-01-29T16:31:04.364182",
     "mines_owner": 5815880196,
-    "mines_bet": 650,
+    "mines_bet": 100000,
     "mines_positions": [
       12,
-      0,
-      2,
-      9,
-      15
+      11,
+      16,
+      21,
+      4
     ],
     "mines_open": [
-      2
+      8
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.3,
     "mines_started": true,
     "_first_name": "ꕤ"
   },
@@ -34489,31 +34508,31 @@
       "satiety": 100,
       "last_income": "2026-01-25T21:28:10.432950",
       "mood": 100,
-      "profit_accumulated": 15793,
-      "last_update": "2026-01-26T13:17:55.286987"
+      "profit_accumulated": 0,
+      "last_update": "2026-01-29T18:23:23.556821"
     },
     "business": {
       "name": "магазин оружия",
       "profit_per_hour": 500,
       "materials": 100,
-      "last_update": "2026-01-26T13:17:46.461884",
+      "last_update": "2026-01-29T18:23:58.741148",
       "profit_accumulated": 0
     },
     "house": null,
     "car": {
       "name": "Tesla",
-      "last_update": "2026-01-26T06:42:20.468521",
+      "last_update": "2026-01-29T18:23:39.085232",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-26T06:42:30.391887"
+      "last_wash": "2026-01-29T13:03:06.392341"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -34523,21 +34542,20 @@
       "expires": null
     },
     "_user_id": 8377902920,
-    "last_farm": "2026-01-26T13:17:35.289027",
+    "last_farm": "2026-01-29T18:23:19.977556",
     "mines_owner": 8377902920,
-    "mines_bet": 13399,
+    "mines_bet": 22758,
     "mines_positions": [
-      13,
-      11,
-      17,
-      9,
-      23
+      4,
+      0,
+      15,
+      18,
+      5
     ],
     "mines_open": [
-      8,
-      13
+      18
     ],
-    "mines_multiplier": 1.35,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "8111695132": {
@@ -34838,8 +34856,8 @@
     "_user_id": 8575851836
   },
   "6744738378": {
-    "balance": 0,
-    "last_bonus": "2026-01-23",
+    "balance": 6453,
+    "last_bonus": "2026-01-28",
     "stage": null,
     "game": null,
     "tyanka": null,
@@ -34849,11 +34867,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -35164,8 +35182,8 @@
     "_user_id": 8335308191
   },
   "8168027201": {
-    "balance": 0,
-    "last_bonus": "2026-01-26",
+    "balance": 88724,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -35173,7 +35191,7 @@
       "name": "отель",
       "profit_per_hour": 10000,
       "materials": 100,
-      "last_update": "2026-01-26T12:42:53.542930",
+      "last_update": "2026-01-29T19:25:14.490033",
       "profit_accumulated": 0
     },
     "house": null,
@@ -35181,11 +35199,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -35195,26 +35213,25 @@
       "expires": null
     },
     "_user_id": 8168027201,
-    "last_farm": "2026-01-26T11:51:09.838449",
+    "last_farm": "2026-01-29T17:48:15.288739",
     "mines_owner": 8168027201,
-    "mines_bet": 7360,
+    "mines_bet": 2200,
     "mines_positions": [
-      11,
-      23,
-      18,
-      20,
-      7
+      19,
+      1,
+      10,
+      24,
+      13
     ],
     "mines_open": [
-      1,
-      23
+      1
     ],
-    "mines_multiplier": 1.35,
+    "mines_multiplier": 1.0,
     "mines_started": true,
     "_first_name": "Злой Columbus"
   },
   "8340941030": {
-    "balance": 194,
+    "balance": 25009,
     "last_bonus": "2026-01-23",
     "stage": "finished",
     "game": "mines",
@@ -35222,8 +35239,8 @@
     "business": {
       "name": "автосалон",
       "profit_per_hour": 5000,
-      "materials": 100,
-      "last_update": "2026-01-25T09:45:40.299838",
+      "materials": 72,
+      "last_update": "2026-01-28T13:46:18.225910",
       "profit_accumulated": 0
     },
     "house": null,
@@ -35231,11 +35248,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -35248,22 +35265,23 @@
     "_first_name": "❤‍🩹[Rea💀lly]_⅝†«»",
     "last_farm": "2026-01-23T11:35:38.852868",
     "mines_owner": 8340941030,
-    "mines_bet": 1000,
+    "mines_bet": 200000,
     "mines_positions": [
-      17,
-      6,
-      14,
-      23,
-      22
+      8,
+      3,
+      16,
+      19,
+      21
     ],
     "mines_open": [
-      4
+      4,
+      21
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.4,
     "mines_started": true
   },
   "7718571895": {
-    "balance": 243762,
+    "balance": 45878,
     "last_bonus": "2026-01-15",
     "stage": "finished",
     "game": "mines",
@@ -35279,11 +35297,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -35307,7 +35325,7 @@
     ],
     "mines_multiplier": 1.0,
     "mines_started": true,
-    "last_farm": "2026-01-26T05:49:09.135756",
+    "last_farm": "2026-01-28T13:38:38.472350",
     "_first_name": "Sotka"
   },
   "8311288661": {
@@ -35794,11 +35812,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36016,8 +36034,8 @@
     "_user_id": 5134314017
   },
   "6492371047": {
-    "balance": 3204,
-    "last_bonus": "2026-01-26",
+    "balance": 260,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -36027,11 +36045,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36041,19 +36059,19 @@
       "expires": null
     },
     "_user_id": 6492371047,
-    "last_farm": "2026-01-26T13:08:10.194883",
+    "last_farm": "2026-01-29T15:29:29.184624",
     "_first_name": "︎ ︎ ︎ ︎ ᅠ ︎ ︎ ︎ ︎ ᅠ ︎ ︎",
     "mines_owner": 6492371047,
-    "mines_bet": 700000,
+    "mines_bet": 500000,
     "mines_positions": [
-      7,
-      24,
+      22,
+      12,
       17,
-      10,
-      12
+      7,
+      0
     ],
     "mines_open": [
-      24
+      0
     ],
     "mines_multiplier": 1.0,
     "mines_started": true
@@ -36506,8 +36524,8 @@
     "_user_id": 8484270994
   },
   "8483733925": {
-    "balance": 2126,
-    "last_bonus": "2026-01-26",
+    "balance": 19229,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -36517,11 +36535,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36531,26 +36549,25 @@
       "expires": null
     },
     "_user_id": 8483733925,
-    "last_farm": "2026-01-26T12:38:32.943142",
+    "last_farm": "2026-01-29T14:59:25.673943",
     "mines_owner": 8483733925,
-    "mines_bet": 218,
+    "mines_bet": 6763,
     "mines_positions": [
-      10,
       5,
-      12,
-      22,
-      21
+      2,
+      0,
+      18,
+      10
     ],
     "mines_open": [
-      0,
-      14
+      0
     ],
-    "mines_multiplier": 1.6,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "7060923750": {
-    "balance": 6899,
-    "last_bonus": "2026-01-26",
+    "balance": 0,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -36560,11 +36577,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36574,46 +36591,40 @@
       "expires": null
     },
     "_user_id": 7060923750,
-    "last_farm": "2026-01-26T12:38:40.162324",
+    "last_farm": "2026-01-29T14:59:19.576463",
     "_first_name": "Макака злая",
     "mines_owner": 7060923750,
-    "mines_bet": 32000,
+    "mines_bet": 550,
     "mines_positions": [
-      2,
-      9,
-      16,
-      8,
-      4
+      0,
+      21,
+      17,
+      14,
+      11
     ],
     "mines_open": [
-      5
+      0
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "8346413591": {
-    "balance": 573,
-    "last_bonus": "2026-01-25",
+    "balance": 721,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
-    "business": {
-      "name": "автосалон",
-      "profit_per_hour": 5000,
-      "materials": 100,
-      "last_update": "2026-01-26T09:42:38.831698",
-      "profit_accumulated": 0
-    },
+    "business": null,
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36624,25 +36635,25 @@
     },
     "_user_id": 8346413591,
     "mines_owner": 8346413591,
-    "mines_bet": 24000,
+    "mines_bet": 28000,
     "mines_positions": [
+      11,
       19,
-      20,
-      18,
-      1,
-      13
+      3,
+      21,
+      14
     ],
     "mines_open": [
-      19
+      22
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.3,
     "mines_started": true,
     "_first_name": "Vitalyi",
-    "last_farm": "2026-01-25T18:11:23.959051"
+    "last_farm": "2026-01-29T16:44:46.186188"
   },
   "5277533011": {
-    "balance": 22337,
-    "last_bonus": "2026-01-25",
+    "balance": 49805,
+    "last_bonus": "2026-01-28",
     "stage": null,
     "game": null,
     "tyanka": null,
@@ -36652,11 +36663,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -36666,7 +36677,7 @@
       "expires": null
     },
     "_user_id": 5277533011,
-    "last_farm": "2026-01-25T21:12:33.498970"
+    "last_farm": "2026-01-28T20:17:44.033897"
   },
   "5701006903": {
     "balance": 5000,
@@ -39453,8 +39464,8 @@
     "_user_id": 5208208051
   },
   "8452337057": {
-    "balance": 0,
-    "last_bonus": "2026-01-26",
+    "balance": 9,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -39464,11 +39475,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -39478,21 +39489,21 @@
       "expires": null
     },
     "_user_id": 8452337057,
-    "last_farm": "2026-01-26T09:48:08.676352",
+    "last_farm": "2026-01-29T17:25:38.174888",
     "mines_owner": 8452337057,
-    "mines_bet": 6500,
+    "mines_bet": 20000,
     "mines_positions": [
-      13,
-      3,
       14,
-      6,
-      15
+      20,
+      3,
+      18,
+      11
     ],
     "mines_open": [
-      16,
-      7
+      21,
+      14
     ],
-    "mines_multiplier": 1.6,
+    "mines_multiplier": 1.3,
     "mines_started": true
   },
   "6232520450": {
@@ -39594,8 +39605,8 @@
     "last_farm": "2026-01-24T15:46:15.997416"
   },
   "8323498717": {
-    "balance": 0,
-    "last_bonus": "2026-01-24",
+    "balance": 270,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -39605,11 +39616,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -39620,24 +39631,24 @@
     },
     "_user_id": 8323498717,
     "mines_owner": 8323498717,
-    "mines_bet": 12000,
+    "mines_bet": 7000,
     "mines_positions": [
-      21,
-      0,
-      14,
-      20,
-      23
+      10,
+      6,
+      15,
+      2,
+      13
     ],
     "mines_open": [
-      4
+      13
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.0,
     "mines_started": true,
-    "last_farm": "2026-01-24T11:05:06.317926"
+    "last_farm": "2026-01-29T15:29:23.487913"
   },
   "8480318977": {
-    "balance": 69,
-    "last_bonus": "2026-01-26",
+    "balance": 3538,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -39647,11 +39658,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -39661,19 +39672,19 @@
       "expires": null
     },
     "_user_id": 8480318977,
-    "last_farm": "2026-01-26T12:53:40.308991",
+    "last_farm": "2026-01-29T13:42:56.406209",
     "mines_owner": 8480318977,
-    "mines_bet": 32000,
+    "mines_bet": 300000,
     "mines_positions": [
-      5,
-      15,
-      1,
-      6,
-      4
+      20,
+      22,
+      24,
+      0,
+      17
     ],
     "mines_open": [
-      3,
-      10
+      9,
+      6
     ],
     "mines_multiplier": 1.6,
     "mines_started": true,
@@ -39722,7 +39733,7 @@
     "mines_started": true
   },
   "5418820516": {
-    "balance": 101484,
+    "balance": 619409,
     "last_bonus": null,
     "stage": null,
     "game": null,
@@ -39731,24 +39742,24 @@
       "name": "автосалон",
       "profit_per_hour": 5000,
       "materials": 100,
-      "last_update": "2026-01-25T16:11:31.866425",
-      "profit_accumulated": 3238
+      "last_update": "2026-01-29T13:54:58.169513",
+      "profit_accumulated": 0
     },
     "house": null,
     "car": {
       "name": "Toyota Camry 3.5",
-      "last_update": "2026-01-25T15:32:51.664101",
+      "last_update": "2026-01-29T13:56:12.588281",
       "profit_accumulated": 0,
-      "last_wash": "2026-01-25T15:33:00.913733"
+      "last_wash": "2026-01-29T13:56:24.148933"
     },
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -40250,7 +40261,7 @@
   },
   "7715164218": {
     "balance": 0,
-    "last_bonus": "2026-01-24",
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -40260,11 +40271,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -40274,7 +40285,7 @@
       "expires": null
     },
     "_user_id": 7715164218,
-    "last_farm": "2026-01-24T05:36:51.102480",
+    "last_farm": "2026-01-28T23:08:00.948254",
     "mines_owner": 7715164218,
     "mines_bet": 782,
     "mines_positions": [
@@ -40401,64 +40412,55 @@
     "_user_id": 8582868729
   },
   "5862775750": {
-    "balance": 20720395,
-    "last_bonus": "2026-01-24",
+    "balance": 0,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
-    "tyanka": {
-      "name": "эля",
-      "satiety": 100,
-      "last_update": "2026-01-26T13:17:47.943231",
-      "profit_accumulated": 0,
-      "mood": 100
-    },
-    "business": {
-      "name": "отель",
-      "profit_per_hour": 10000,
-      "materials": 100,
-      "last_update": "2026-01-26T13:17:36.381641",
-      "profit_accumulated": 0
-    },
+    "tyanka": null,
+    "business": null,
     "house": null,
-    "car": {
-      "name": "Mercedes Maybac",
-      "last_update": "2026-01-26T13:17:39.846202",
-      "profit_accumulated": 0,
-      "last_wash": "2026-01-26T13:17:44.570644"
-    },
+    "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
     "last_interest_date": "2026-01-14",
     "vip": {
-      "level": 7,
-      "expires": "2026-02-22T08:12:58.535187",
-      "purchase_price": 1750000,
-      "last_income": "2026-01-23T08:12:58.535197"
+      "level": 0,
+      "expires": null
     },
     "_user_id": 5862775750,
-    "last_farm": "2026-01-24T06:05:51.647264",
+    "last_farm": "2026-01-29T14:05:05.256578",
     "mines_owner": 5862775750,
-    "mines_bet": 1000000,
+    "mines_bet": 97,
     "mines_positions": [
-      15,
-      13,
-      20,
-      2,
-      8
+      9,
+      8,
+      12,
+      7,
+      4
     ],
     "mines_open": [
-      10
+      17,
+      16,
+      15,
+      22,
+      18,
+      24,
+      23,
+      20,
+      21,
+      19,
+      8
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 3.999999999999999,
     "mines_started": true,
     "_first_name": "❤️‍🩹𝙴𝙲𝙾𝙸𝚂𝚃❤️‍🩹"
   },
@@ -40491,8 +40493,8 @@
     "last_farm": "2026-01-20T04:04:54.340994"
   },
   "7483481136": {
-    "balance": 581,
-    "last_bonus": "2026-01-25",
+    "balance": 7199,
+    "last_bonus": "2026-01-27",
     "stage": null,
     "game": null,
     "tyanka": null,
@@ -40502,11 +40504,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -40516,11 +40518,11 @@
       "expires": null
     },
     "_user_id": 7483481136,
-    "last_farm": "2026-01-25T10:18:00.978448"
+    "last_farm": "2026-01-27T10:18:31.338141"
   },
   "7742511593": {
-    "balance": 39,
-    "last_bonus": "2026-01-26",
+    "balance": 0,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -40530,11 +40532,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -40544,22 +40546,28 @@
       "expires": null
     },
     "_user_id": 7742511593,
-    "last_farm": "2026-01-26T11:41:57.877898",
+    "last_farm": "2026-01-29T14:00:49.190086",
     "mines_owner": 7742511593,
-    "mines_bet": 6405,
+    "mines_bet": 425,
     "mines_positions": [
-      17,
-      9,
-      18,
-      20,
-      6
+      12,
+      13,
+      21,
+      19,
+      8
     ],
     "mines_open": [
-      10,
       0,
-      2
+      1,
+      3,
+      4,
+      2,
+      22,
+      24,
+      23,
+      12
     ],
-    "mines_multiplier": 1.9000000000000001,
+    "mines_multiplier": 3.3999999999999995,
     "mines_started": true
   },
   "7808976345": {
@@ -40822,10 +40830,10 @@
     "_user_id": 7985134594
   },
   "7694717699": {
-    "balance": 5000,
-    "last_bonus": null,
-    "stage": null,
-    "game": null,
+    "balance": 37429,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
     "tyanka": null,
     "business": null,
     "house": null,
@@ -40833,11 +40841,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-14",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-14",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -40846,7 +40854,26 @@
       "level": 0,
       "expires": null
     },
-    "_user_id": 7694717699
+    "_user_id": 7694717699,
+    "last_farm": "2026-01-29T10:05:05.204884",
+    "mines_owner": 7694717699,
+    "mines_bet": 5000,
+    "mines_positions": [
+      4,
+      8,
+      10,
+      18,
+      13
+    ],
+    "mines_open": [
+      11,
+      3,
+      0,
+      4
+    ],
+    "mines_multiplier": 1.9000000000000001,
+    "mines_started": true,
+    "_first_name": "⛓️ NIKOTIN ⛓️"
   },
   "8243787184": {
     "balance": 5000,
@@ -41092,28 +41119,28 @@
     "_user_id": 7830321833
   },
   "6401913458": {
-    "balance": 4373,
-    "last_bonus": "2026-01-25",
+    "balance": 1512384,
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
-      "materials": 32,
-      "last_update": "2026-01-26T13:21:47.063617",
-      "profit_accumulated": 697146
+      "materials": 100,
+      "last_update": "2026-01-29T19:24:53.178202",
+      "profit_accumulated": 0
     },
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -41123,20 +41150,21 @@
       "expires": null
     },
     "_user_id": 6401913458,
-    "last_farm": "2026-01-21T17:17:41.086191",
+    "last_farm": "2026-01-28T19:55:18.720628",
     "mines_owner": 6401913458,
-    "mines_bet": 320692,
+    "mines_bet": 50000,
     "mines_positions": [
-      20,
-      1,
-      12,
-      22,
-      13
+      19,
+      2,
+      21,
+      23,
+      17
     ],
     "mines_open": [
-      1
+      4,
+      15
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.6,
     "mines_started": true,
     "_first_name": "Исрафил"
   },
@@ -41692,8 +41720,8 @@
     "_user_id": 6991907722
   },
   "8093410556": {
-    "balance": 84,
-    "last_bonus": "2026-01-26",
+    "balance": 1110,
+    "last_bonus": "2026-01-29",
     "stage": null,
     "game": null,
     "tyanka": null,
@@ -41703,11 +41731,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -41717,7 +41745,7 @@
       "expires": null
     },
     "_user_id": 8093410556,
-    "last_farm": "2026-01-26T11:48:26.509360"
+    "last_farm": "2026-01-29T13:55:27.330316"
   },
   "8200789140": {
     "balance": 5000,
@@ -41747,8 +41775,8 @@
     "_user_id": 8200789140
   },
   "6397134706": {
-    "balance": 0,
-    "last_bonus": null,
+    "balance": 34259,
+    "last_bonus": "2026-01-27",
     "stage": null,
     "game": null,
     "tyanka": null,
@@ -41758,11 +41786,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-17",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-17",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -41771,7 +41799,8 @@
       "level": 0,
       "expires": null
     },
-    "_user_id": 6397134706
+    "_user_id": 6397134706,
+    "last_farm": "2026-01-27T16:59:47.600149"
   },
   "8523930610": {
     "balance": 5000,
@@ -41801,8 +41830,8 @@
     "_user_id": 8523930610
   },
   "7351694051": {
-    "balance": 0,
-    "last_bonus": "2026-01-25",
+    "balance": 22144,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -41812,11 +41841,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -41845,7 +41874,7 @@
     ],
     "mines_multiplier": 2.8,
     "mines_started": true,
-    "last_farm": "2026-01-25T00:42:18.829087"
+    "last_farm": "2026-01-29T07:32:32.093320"
   },
   "8264120319": {
     "balance": 8086,
@@ -42145,9 +42174,9 @@
     "_user_id": 7196523735
   },
   "8084177547": {
-    "balance": 1113678,
-    "last_bonus": "2026-01-24",
-    "stage": "mines",
+    "balance": 0,
+    "last_bonus": "2026-01-27",
+    "stage": "finished",
     "game": "mines",
     "tyanka": null,
     "business": null,
@@ -42156,11 +42185,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -42170,19 +42199,21 @@
       "expires": null
     },
     "_user_id": 8084177547,
-    "last_farm": "2026-01-26T09:49:49.392028",
+    "last_farm": "2026-01-27T09:08:45.661664",
     "mines_owner": 8084177547,
-    "mines_bet": 20000,
+    "mines_bet": 1000000,
     "mines_positions": [
-      21,
-      9,
-      8,
-      19,
-      15
+      2,
+      18,
+      4,
+      24,
+      6
     ],
-    "mines_open": [],
+    "mines_open": [
+      2
+    ],
     "mines_multiplier": 1.0,
-    "mines_started": false,
+    "mines_started": true,
     "_first_name": "『W』『a』『r』『C』『r』『y』『"
   },
   "8514987827": {
@@ -42376,11 +42407,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-23",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-23",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -42403,7 +42434,8 @@
       17
     ],
     "mines_multiplier": 1.0,
-    "mines_started": true
+    "mines_started": true,
+    "_first_name": "#rizeriru... #kewazzosex"
   },
   "5040638298": {
     "balance": 5000,
@@ -42582,7 +42614,7 @@
   },
   "5204844722": {
     "balance": 0,
-    "last_bonus": "2026-01-25",
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -42592,11 +42624,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -42606,7 +42638,7 @@
       "expires": null
     },
     "_user_id": 5204844722,
-    "last_farm": "2026-01-25T14:21:54.654258",
+    "last_farm": "2026-01-29T12:55:35.458489",
     "mines_owner": 5204844722,
     "mines_bet": 1000,
     "mines_positions": [
@@ -43039,7 +43071,7 @@
     "_user_id": 5888581410
   },
   "8022987920": {
-    "balance": 887070,
+    "balance": 5000,
     "last_bonus": null,
     "stage": null,
     "game": null,
@@ -43050,11 +43082,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43176,8 +43208,8 @@
     "_user_id": 1079880144
   },
   "7703526827": {
-    "balance": 146,
-    "last_bonus": "2026-01-26",
+    "balance": 7615,
+    "last_bonus": "2026-01-27",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -43187,11 +43219,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43201,7 +43233,7 @@
       "expires": null
     },
     "_user_id": 7703526827,
-    "last_farm": "2026-01-26T10:52:04.590807",
+    "last_farm": "2026-01-27T05:43:52.862068",
     "mines_owner": 7703526827,
     "mines_bet": 41000,
     "mines_positions": [
@@ -43219,8 +43251,8 @@
     "mines_started": true
   },
   "8168269828": {
-    "balance": 0,
-    "last_bonus": "2026-01-26",
+    "balance": 8810,
+    "last_bonus": "2026-01-27",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -43230,11 +43262,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43244,7 +43276,7 @@
       "expires": null
     },
     "_user_id": 8168269828,
-    "last_farm": "2026-01-26T10:53:08.212813",
+    "last_farm": "2026-01-27T05:44:12.510188",
     "mines_owner": 8168269828,
     "mines_bet": 6263,
     "mines_positions": [
@@ -43462,11 +43494,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43587,8 +43619,8 @@
     "last_farm": "2026-01-19T13:42:47.371872"
   },
   "7583825447": {
-    "balance": 401,
-    "last_bonus": "2026-01-26",
+    "balance": 168,
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -43598,11 +43630,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43612,21 +43644,20 @@
       "expires": null
     },
     "_user_id": 7583825447,
-    "last_farm": "2026-01-26T10:46:31.648150",
+    "last_farm": "2026-01-28T14:02:19.037867",
     "mines_owner": 7583825447,
-    "mines_bet": 3000,
+    "mines_bet": 10000,
     "mines_positions": [
-      1,
-      20,
-      19,
+      24,
+      4,
+      6,
       17,
-      8
+      22
     ],
     "mines_open": [
-      16,
-      8
+      22
     ],
-    "mines_multiplier": 1.35,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "8308635818": {
@@ -43901,8 +43932,8 @@
     "_user_id": 7967003543
   },
   "7307656251": {
-    "balance": 1812,
-    "last_bonus": "2026-01-26",
+    "balance": 67,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -43912,11 +43943,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -43926,24 +43957,21 @@
       "expires": null
     },
     "_user_id": 7307656251,
-    "last_farm": "2026-01-26T12:10:01.610921",
+    "last_farm": "2026-01-29T18:49:54.056439",
     "mines_owner": 7307656251,
-    "mines_bet": 3000,
+    "mines_bet": 900,
     "mines_positions": [
-      13,
+      1,
+      5,
       22,
-      9,
-      20,
-      21
+      23,
+      10
     ],
     "mines_open": [
-      6,
-      12,
       11,
-      24,
-      20
+      10
     ],
-    "mines_multiplier": 2.4000000000000004,
+    "mines_multiplier": 1.3,
     "mines_started": true
   },
   "7006061964": {
@@ -44422,11 +44450,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44537,8 +44565,8 @@
     "last_farm": "2026-01-25T21:24:01.221243"
   },
   "6419615112": {
-    "balance": 142,
-    "last_bonus": "2026-01-26",
+    "balance": 0,
+    "last_bonus": "2026-01-27",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -44548,11 +44576,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44562,20 +44590,24 @@
       "expires": null
     },
     "_user_id": 6419615112,
-    "last_farm": "2026-01-26T04:48:08.825951",
+    "last_farm": "2026-01-27T05:42:17.806447",
     "mines_owner": 6419615112,
-    "mines_bet": 6200,
+    "mines_bet": 164,
     "mines_positions": [
-      14,
-      10,
-      6,
-      24,
-      21
+      16,
+      17,
+      20,
+      2,
+      6
     ],
     "mines_open": [
-      14
+      0,
+      5,
+      10,
+      15,
+      20
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.4000000000000004,
     "mines_started": true
   },
   "5682268444": {
@@ -44687,11 +44719,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-22",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-22",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44714,11 +44746,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44730,7 +44762,7 @@
     "_user_id": 7875561630
   },
   "6042757664": {
-    "balance": 700000,
+    "balance": 79155,
     "last_bonus": "2026-01-24",
     "stage": "finished",
     "game": "mines",
@@ -44747,38 +44779,37 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
     "last_interest_date": "2026-01-22",
     "vip": {
-      "level": 3,
-      "expires": "2026-01-31T06:23:21.484568",
-      "purchase_price": 750000,
-      "last_income": "2026-01-26T06:23:21.484575"
+      "level": 0,
+      "expires": null
     },
     "_user_id": 6042757664,
     "mines_owner": 6042757664,
-    "mines_bet": 11931,
+    "mines_bet": 10000,
     "mines_positions": [
-      8,
-      19,
-      6,
-      14,
-      22
+      5,
+      0,
+      22,
+      7,
+      8
     ],
     "mines_open": [
+      4,
       22
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.3,
     "mines_started": true,
     "_first_name": ".",
-    "last_farm": "2026-01-26T06:26:15.223084"
+    "last_farm": "2026-01-27T15:50:36.312009"
   },
   "6899878422": {
     "balance": 5000,
@@ -44819,11 +44850,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44974,28 +45005,22 @@
     "mines_started": true
   },
   "8584730383": {
-    "balance": 743,
-    "last_bonus": "2026-01-26",
+    "balance": 868,
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
-    "business": {
-      "name": "ресторан",
-      "profit_per_hour": 2000,
-      "materials": 94,
-      "last_update": "2026-01-26T03:10:08.758865",
-      "profit_accumulated": 0
-    },
+    "business": null,
     "house": null,
     "car": null,
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45005,21 +45030,21 @@
       "expires": null
     },
     "_user_id": 8584730383,
-    "last_farm": "2026-01-26T03:09:55.262042",
+    "last_farm": "2026-01-28T08:10:28.737478",
     "mines_owner": 8584730383,
-    "mines_bet": 22000,
+    "mines_bet": 24009,
     "mines_positions": [
-      18,
-      11,
+      13,
       8,
-      22,
-      24
+      2,
+      12,
+      17
     ],
     "mines_open": [
-      10,
-      24
+      22,
+      2
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.4,
     "mines_started": true
   },
   "8282357265": {
@@ -45104,11 +45129,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-22",
+      "date": "2026-01-26",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-22",
+      "date": "2026-01-26",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45131,11 +45156,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45146,22 +45171,20 @@
     },
     "_user_id": 8276388973,
     "mines_owner": 8276388973,
-    "mines_bet": 550,
+    "mines_bet": 4149,
     "mines_positions": [
-      15,
-      16,
-      9,
-      6,
-      3
+      19,
+      21,
+      23,
+      18,
+      12
     ],
     "mines_open": [
-      11,
-      7,
-      6
+      21
     ],
-    "mines_multiplier": 1.6,
+    "mines_multiplier": 1.0,
     "mines_started": true,
-    "last_farm": "2026-01-25T20:18:24.220111"
+    "last_farm": "2026-01-27T14:24:50.348773"
   },
   "1158787432": {
     "balance": 5000,
@@ -45229,11 +45252,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45246,7 +45269,7 @@
   },
   "8120067935": {
     "balance": 0,
-    "last_bonus": "2026-01-26",
+    "last_bonus": "2026-01-27",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -45256,11 +45279,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45271,27 +45294,23 @@
     },
     "_user_id": 8120067935,
     "mines_owner": 8120067935,
-    "mines_bet": 35000,
+    "mines_bet": 1616,
     "mines_positions": [
-      14,
-      6,
-      12,
-      10,
-      24
+      20,
+      5,
+      15,
+      2,
+      23
     ],
     "mines_open": [
-      2,
-      7,
-      22,
-      17,
-      12
+      2
     ],
-    "mines_multiplier": 2.2,
+    "mines_multiplier": 1.0,
     "mines_started": true,
-    "last_farm": "2026-01-26T05:50:31.964091"
+    "last_farm": "2026-01-29T07:23:40.580793"
   },
   "7485426420": {
-    "balance": 150,
+    "balance": 2000,
     "last_bonus": null,
     "stage": null,
     "game": null,
@@ -45302,11 +45321,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45383,11 +45402,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45573,11 +45592,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45654,11 +45673,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-26",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-26",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45735,11 +45754,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45762,11 +45781,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-24",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45859,8 +45878,8 @@
     "_user_id": 8034274149
   },
   "7865817563": {
-    "balance": 21773,
-    "last_bonus": "2026-01-25",
+    "balance": 27019,
+    "last_bonus": "2026-01-26",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -45954,8 +45973,8 @@
     "_first_name": "alinkarrzz"
   },
   "7013298686": {
-    "balance": 51299,
-    "last_bonus": null,
+    "balance": 69550,
+    "last_bonus": "2026-01-28",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -45965,11 +45984,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -45979,30 +45998,25 @@
       "expires": null
     },
     "_user_id": 7013298686,
-    "last_farm": "2026-01-26T12:55:21.119753",
+    "last_farm": "2026-01-28T14:02:52.563543",
     "mines_owner": 7013298686,
-    "mines_bet": 100,
+    "mines_bet": 1000,
     "mines_positions": [
-      12,
-      20,
-      2,
-      9,
-      16
+      0,
+      10,
+      22,
+      4,
+      17
     ],
     "mines_open": [
-      23,
-      24,
-      22,
-      18,
-      19,
-      14
+      0
     ],
-    "mines_multiplier": 3.1000000000000005,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "6794415080": {
-    "balance": 0,
-    "last_bonus": "2026-01-25",
+    "balance": 97019,
+    "last_bonus": "2026-01-29",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -46012,11 +46026,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46026,21 +46040,20 @@
       "expires": null
     },
     "_user_id": 6794415080,
-    "last_farm": "2026-01-25T19:39:22.183861",
+    "last_farm": "2026-01-29T17:38:25.617634",
     "mines_owner": 6794415080,
-    "mines_bet": 400,
+    "mines_bet": 100,
     "mines_positions": [
-      1,
-      23,
-      4,
+      8,
+      10,
+      7,
       2,
-      9
+      4
     ],
     "mines_open": [
-      12,
-      2
+      7
     ],
-    "mines_multiplier": 1.3,
+    "mines_multiplier": 1.0,
     "mines_started": true
   },
   "5538017301": {
@@ -46055,11 +46068,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46109,11 +46122,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-26",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46136,11 +46149,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-27",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46163,11 +46176,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-25",
+      "date": "2026-01-28",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46179,7 +46192,7 @@
     "_user_id": 8523716937
   },
   "7078999581": {
-    "balance": 184700,
+    "balance": 184500,
     "last_bonus": null,
     "stage": "finished",
     "game": "mines",
@@ -46190,11 +46203,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46205,22 +46218,29 @@
     },
     "_user_id": 7078999581,
     "mines_owner": 7078999581,
-    "mines_bet": 150,
+    "mines_bet": 200,
     "mines_positions": [
-      24,
-      10,
-      4,
-      2,
+      12,
+      21,
+      17,
+      1,
       11
     ],
     "mines_open": [
-      2
+      0,
+      24,
+      4,
+      20,
+      22,
+      23,
+      21
     ],
-    "mines_multiplier": 1.0,
-    "mines_started": true
+    "mines_multiplier": 1.6000000000000005,
+    "mines_started": true,
+    "_first_name": "🎀كيروشكا🎀"
   },
   "6686693003": {
-    "balance": 0,
+    "balance": 65,
     "last_bonus": null,
     "stage": "finished",
     "game": "mines",
@@ -46231,11 +46251,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46245,24 +46265,21 @@
       "expires": null
     },
     "_user_id": 6686693003,
-    "last_farm": "2026-01-26T07:59:44.247828",
+    "last_farm": "2026-01-29T18:49:03.530307",
     "mines_owner": 6686693003,
-    "mines_bet": 3485,
+    "mines_bet": 300,
     "mines_positions": [
-      24,
-      14,
-      18,
-      9,
-      16
+      23,
+      0,
+      12,
+      11,
+      4
     ],
     "mines_open": [
-      12,
-      8,
-      4,
-      20,
-      16
+      24,
+      23
     ],
-    "mines_multiplier": 2.2,
+    "mines_multiplier": 1.3,
     "mines_started": true
   },
   "2068678372": {
@@ -46320,10 +46337,10 @@
     "_user_id": 6942852281
   },
   "8002888052": {
-    "balance": 5300,
-    "last_bonus": null,
-    "stage": null,
-    "game": null,
+    "balance": 4551,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
     "tyanka": null,
     "business": null,
     "house": null,
@@ -46331,11 +46348,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-26",
+      "date": "2026-01-29",
       "amount": 0
     },
     "bank_balance": 0,
@@ -46344,7 +46361,24 @@
       "level": 0,
       "expires": null
     },
-    "_user_id": 8002888052
+    "_user_id": 8002888052,
+    "mines_owner": 8002888052,
+    "mines_bet": 3919,
+    "mines_positions": [
+      1,
+      23,
+      11,
+      0,
+      4
+    ],
+    "mines_open": [
+      24,
+      12,
+      11
+    ],
+    "mines_multiplier": 1.6,
+    "mines_started": true,
+    "last_farm": "2026-01-29T12:20:42.298959"
   },
   "7219387670": {
     "balance": 5000,
@@ -46426,5 +46460,2989 @@
       "expires": null
     },
     "_user_id": 6322567740
+  },
+  "8267439340": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8267439340
+  },
+  "6796461419": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6796461419
+  },
+  "7699600026": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7699600026
+  },
+  "7082052215": {
+    "balance": 0,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7082052215,
+    "mines_owner": 7082052215,
+    "mines_bet": 50000,
+    "mines_positions": [
+      13,
+      23,
+      24,
+      20,
+      10
+    ],
+    "mines_open": [
+      15,
+      9,
+      4,
+      19,
+      0
+    ],
+    "mines_multiplier": 1.5000000000000004,
+    "mines_started": true
+  },
+  "6002612443": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6002612443
+  },
+  "8345500778": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8345500778
+  },
+  "5733080724": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5733080724
+  },
+  "8400784691": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8400784691
+  },
+  "6520367741": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6520367741
+  },
+  "8104065238": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8104065238
+  },
+  "7079296499": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7079296499
+  },
+  "7794988243": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7794988243
+  },
+  "5061144222": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-26",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-26",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5061144222
+  },
+  "5935125135": {
+    "balance": 15998,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5935125135,
+    "last_farm": "2026-01-29T15:23:59.901592"
+  },
+  "5646705657": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5646705657
+  },
+  "8279733739": {
+    "balance": 41560,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8279733739,
+    "mines_owner": 8279733739,
+    "mines_bet": 2000,
+    "mines_positions": [
+      23,
+      16,
+      20,
+      15,
+      4
+    ],
+    "mines_open": [
+      5,
+      20
+    ],
+    "mines_multiplier": 1.3,
+    "mines_started": true,
+    "last_farm": "2026-01-29T16:07:15.041919"
+  },
+  "5246751715": {
+    "balance": 6406,
+    "last_bonus": "2026-01-27",
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5246751715
+  },
+  "7407754048": {
+    "balance": 0,
+    "last_bonus": "2026-01-27",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7407754048,
+    "mines_owner": 7407754048,
+    "mines_bet": 1000,
+    "mines_positions": [
+      14,
+      9,
+      2,
+      7,
+      16
+    ],
+    "mines_open": [
+      3,
+      20,
+      4,
+      0
+    ],
+    "mines_multiplier": 1.4000000000000004,
+    "mines_started": true,
+    "last_farm": "2026-01-27T11:28:32.357463"
+  },
+  "6512241065": {
+    "balance": 0,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": {
+      "name": "соня",
+      "satiety": 100,
+      "mood": 98,
+      "last_update": "2026-01-29T15:17:38.532775",
+      "profit_accumulated": 0
+    },
+    "business": {
+      "name": "отель",
+      "profit_per_hour": 10000,
+      "materials": 99,
+      "last_update": "2026-01-29T17:33:59.867683",
+      "profit_accumulated": 123120
+    },
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6512241065,
+    "last_farm": "2026-01-29T16:10:33.191334",
+    "mines_owner": 6512241065,
+    "mines_bet": 36453,
+    "mines_positions": [
+      4,
+      5,
+      16,
+      11,
+      6
+    ],
+    "mines_open": [
+      6
+    ],
+    "mines_multiplier": 1.0,
+    "mines_started": true
+  },
+  "8201500496": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8201500496
+  },
+  "6555520079": {
+    "balance": 6000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6555520079
+  },
+  "7190982755": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7190982755
+  },
+  "8346376990": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8346376990
+  },
+  "5634713529": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5634713529
+  },
+  "6560404216": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6560404216
+  },
+  "7245953490": {
+    "balance": 10907,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7245953490,
+    "last_farm": "2026-01-27T21:20:32.793103"
+  },
+  "6561340828": {
+    "balance": 7112,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6561340828,
+    "last_farm": "2026-01-27T10:17:18.983371"
+  },
+  "8405923661": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8405923661
+  },
+  "7899926582": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7899926582
+  },
+  "7267718598": {
+    "balance": 8647,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7267718598,
+    "last_farm": "2026-01-27T12:37:06.010345"
+  },
+  "1459026164": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1459026164
+  },
+  "8074311202": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8074311202
+  },
+  "5532802112": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5532802112
+  },
+  "1470615979": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1470615979
+  },
+  "6928791683": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6928791683
+  },
+  "5140884087": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5140884087
+  },
+  "8573010921": {
+    "balance": 7214,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8573010921,
+    "last_farm": "2026-01-27T14:08:18.425614"
+  },
+  "8536284588": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8536284588
+  },
+  "8128715983": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8128715983
+  },
+  "7865123345": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7865123345
+  },
+  "8245143707": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8245143707
+  },
+  "7825344797": {
+    "balance": 45000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7825344797
+  },
+  "851029764": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 851029764
+  },
+  "5486691779": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5486691779
+  },
+  "1755872027": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1755872027
+  },
+  "6534598773": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6534598773
+  },
+  "5093266650": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5093266650
+  },
+  "5241611593": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5241611593
+  },
+  "7808355529": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7808355529
+  },
+  "5516384736": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5516384736
+  },
+  "6953707509": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6953707509
+  },
+  "8528653558": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8528653558
+  },
+  "1818042794": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1818042794
+  },
+  "7948906545": {
+    "balance": 4900,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7948906545,
+    "mines_owner": 7948906545,
+    "mines_bet": 100,
+    "mines_positions": [
+      13,
+      7,
+      17,
+      23,
+      24
+    ],
+    "mines_open": [
+      15,
+      9,
+      0,
+      1,
+      17
+    ],
+    "mines_multiplier": 2.5999999999999996,
+    "mines_started": true
+  },
+  "6338738355": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6338738355
+  },
+  "5686500171": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5686500171
+  },
+  "7757493472": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7757493472
+  },
+  "8573365993": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8573365993
+  },
+  "2034187373": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 2034187373
+  },
+  "1248832437": {
+    "balance": 30147,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": {
+      "name": "соня",
+      "satiety": 98,
+      "mood": 99,
+      "last_update": "2026-01-29T12:01:06.413058",
+      "profit_accumulated": 0
+    },
+    "business": {
+      "name": "отель",
+      "profit_per_hour": 10000,
+      "materials": 95,
+      "last_update": "2026-01-29T17:15:45.845112",
+      "profit_accumulated": 52422
+    },
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1248832437,
+    "mines_owner": 1248832437,
+    "mines_bet": 23190,
+    "mines_positions": [
+      19,
+      16,
+      9,
+      6,
+      5
+    ],
+    "mines_open": [
+      14
+    ],
+    "mines_multiplier": 1.3,
+    "mines_started": true,
+    "last_farm": "2026-01-29T12:02:07.990107",
+    "_first_name": "Принц"
+  },
+  "5787460521": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5787460521
+  },
+  "8224491211": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-27",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-27",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8224491211
+  },
+  "5170886806": {
+    "balance": 8635,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5170886806,
+    "last_farm": "2026-01-29T16:07:00.255317"
+  },
+  "2045497129": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 2045497129
+  },
+  "6505224742": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6505224742
+  },
+  "5315784826": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5315784826
+  },
+  "7554517032": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7554517032
+  },
+  "7503839777": {
+    "balance": 5600,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7503839777,
+    "mines_owner": 7503839777,
+    "mines_bet": 1000,
+    "mines_positions": [
+      14,
+      0,
+      8,
+      24,
+      15
+    ],
+    "mines_open": [
+      4,
+      12
+    ],
+    "mines_multiplier": 1.6,
+    "mines_started": true
+  },
+  "7403151177": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7403151177
+  },
+  "8102090379": {
+    "balance": 7624,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8102090379,
+    "last_farm": "2026-01-29T15:15:41.610168"
+  },
+  "5585466884": {
+    "balance": 9783,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5585466884,
+    "last_farm": "2026-01-29T15:19:07.523919"
+  },
+  "5471081633": {
+    "balance": 12283,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5471081633,
+    "last_farm": "2026-01-29T11:52:57.653555"
+  },
+  "8213619760": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8213619760
+  },
+  "5757468963": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5757468963
+  },
+  "5139852592": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5139852592
+  },
+  "1183936756": {
+    "balance": 177777,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": {
+      "name": "соня",
+      "price": 100000,
+      "profit_per_hour": 1000,
+      "feed_cost": 200,
+      "rarity": "🟢 Средняя",
+      "satiety": 100,
+      "last_income": "2026-01-29T10:59:56.303574",
+      "mood": 100,
+      "profit_accumulated": 0,
+      "last_update": "2026-01-29T11:02:52.411690"
+    },
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1183936756,
+    "mines_owner": 1183936756,
+    "mines_bet": 50000,
+    "mines_positions": [
+      2,
+      17,
+      12,
+      10,
+      0
+    ],
+    "mines_open": [
+      12
+    ],
+    "mines_multiplier": 1.0,
+    "mines_started": true,
+    "last_farm": "2026-01-29T10:52:21.895349"
+  },
+  "6839242292": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6839242292
+  },
+  "8553832579": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8553832579
+  },
+  "8515528435": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8515528435
+  },
+  "7879671191": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7879671191
+  },
+  "1504871013": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 1504871013
+  },
+  "6655577955": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6655577955
+  },
+  "7252739388": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7252739388
+  },
+  "8128433095": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8128433095
+  },
+  "8496038019": {
+    "balance": 3400,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8496038019,
+    "mines_owner": 8496038019,
+    "mines_bet": 1000,
+    "mines_positions": [
+      16,
+      24,
+      9,
+      13,
+      11
+    ],
+    "mines_open": [
+      3,
+      16
+    ],
+    "mines_multiplier": 1.4,
+    "mines_started": true
+  },
+  "7880878734": {
+    "balance": 45000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-28",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7880878734
+  },
+  "5666351914": {
+    "balance": 12670,
+    "last_bonus": "2026-01-29",
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-28",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5666351914
+  },
+  "5715787139": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5715787139
+  },
+  "7128151088": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7128151088
+  },
+  "6856834238": {
+    "balance": 9772,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6856834238,
+    "last_farm": "2026-01-29T05:15:59.210700"
+  },
+  "7358834378": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7358834378
+  },
+  "7436031878": {
+    "balance": 934,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 7436031878,
+    "last_farm": "2026-01-29T11:52:56.113159",
+    "mines_owner": 7436031878,
+    "mines_bet": 50,
+    "mines_positions": [
+      20,
+      23,
+      10,
+      18,
+      5
+    ],
+    "mines_open": [
+      0
+    ],
+    "mines_multiplier": 1.3,
+    "mines_started": true
+  },
+  "5597573267": {
+    "balance": 0,
+    "last_bonus": "2026-01-29",
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5597573267,
+    "last_farm": "2026-01-29T11:53:53.582718"
+  },
+  "5317756229": {
+    "balance": 1488,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 5317756229,
+    "mines_owner": 5317756229,
+    "mines_bet": 2808,
+    "mines_positions": [
+      6,
+      2,
+      24,
+      21,
+      9
+    ],
+    "mines_open": [
+      0,
+      24
+    ],
+    "mines_multiplier": 1.3,
+    "mines_started": true
+  },
+  "8340514324": {
+    "balance": 12,
+    "last_bonus": null,
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8340514324,
+    "last_farm": "2026-01-29T16:51:49.615428",
+    "mines_owner": 8340514324,
+    "mines_bet": 1824,
+    "mines_positions": [
+      14,
+      23,
+      2,
+      16,
+      12
+    ],
+    "mines_open": [
+      17,
+      6,
+      8,
+      7
+    ],
+    "mines_multiplier": 2.2,
+    "mines_started": true
+  },
+  "867990947": {
+    "balance": 10797,
+    "last_bonus": "2026-01-29",
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 867990947,
+    "last_farm": "2026-01-29T16:11:02.353801"
+  },
+  "6174562939": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6174562939
+  },
+  "6655979210": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 6655979210
+  },
+  "8121785280": {
+    "balance": 87,
+    "last_bonus": "2026-01-29",
+    "stage": "finished",
+    "game": "mines",
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8121785280,
+    "last_farm": "2026-01-29T17:43:06.432018",
+    "mines_owner": 8121785280,
+    "mines_bet": 100,
+    "mines_positions": [
+      9,
+      20,
+      14,
+      22,
+      21
+    ],
+    "mines_open": [
+      17,
+      22
+    ],
+    "mines_multiplier": 1.3,
+    "mines_started": true
+  },
+  "8015110447": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8015110447
+  },
+  "8390121958": {
+    "balance": 5000,
+    "last_bonus": null,
+    "stage": null,
+    "game": null,
+    "tyanka": null,
+    "business": null,
+    "house": null,
+    "car": null,
+    "pet": null,
+    "activated_promos": [],
+    "daily_income": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "daily_transfers": {
+      "date": "2026-01-29",
+      "amount": 0
+    },
+    "bank_balance": 0,
+    "last_interest_date": "2026-01-29",
+    "vip": {
+      "level": 0,
+      "expires": null
+    },
+    "_user_id": 8390121958
   }
 }
