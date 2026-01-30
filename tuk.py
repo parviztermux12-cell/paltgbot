@@ -434,7 +434,21 @@ def process_vip_income():
         users_updated = False
         
         # Загружаем данные казино
-        load_casino_data()  # Добавляем загрузку данных
+        if casino_data == {}:  # Если данные не загружены
+            load_casino_data()
+        
+        # Инициализируем vip_income_timers если пустой
+        if not vip_income_timers:
+            for user_id_str in casino_data.keys():
+                try:
+                    user_id = int(user_id_str)
+                    vip_data = casino_data[user_id_str].get("vip", {})
+                    if vip_data.get("level", 0) > 0:
+                        # Устанавливаем текущее время если таймера нет
+                        if user_id not in vip_income_timers:
+                            vip_income_timers[user_id] = current_time
+                except:
+                    continue
         
         for user_id_str, user_data in casino_data.items():
             try:
@@ -442,27 +456,73 @@ def process_vip_income():
                 vip_data = user_data.get("vip", {})
                 
                 if vip_data.get("level", 0) > 0:
-                    # Проверяем, прошло ли 3 часа с последнего начисления
-                    last_income = vip_income_timers.get(user_id, 0)
-                    if current_time - last_income >= 10800:  # 3 часа в секундах
-                        
+                    # Получаем или инициализируем таймер для пользователя
+                    last_income = vip_income_timers.get(user_id)
+                    
+                    # Если таймера нет, устанавливаем текущее время
+                    if last_income is None:
+                        vip_income_timers[user_id] = current_time
+                        last_income = current_time
+                    
+                    # Проверяем, прошло ли 3 часа с последнего начисления (10800 секунд)
+                    if current_time - last_income >= 10800:
                         vip_info = VIP_LEVELS[vip_data["level"]]
                         income_amount = vip_info["income"]
                         
                         # Тихое начисление дохода (без уведомлений)
                         user_data["balance"] += income_amount
-                        vip_income_timers[user_id] = current_time
-                        users_updated = True
                         
-            except Exception:
+                        # Обновляем время последнего начисления
+                        vip_income_timers[user_id] = current_time
+                        
+                        # Обновляем в базе данных
+                        if "last_income" not in vip_data:
+                            vip_data["last_income"] = datetime.now().isoformat()
+                            user_data["vip"] = vip_data
+                        
+                        users_updated = True
+                        logger.info(f"💰 VIP доход начислен: {user_id} +{income_amount}$")
+                        
+            except Exception as e:
+                logger.error(f"Ошибка обработки VIP дохода для {user_id_str}: {e}")
                 continue
         
         # Сохраняем только если были изменения
         if users_updated:
             save_casino_data()
+            logger.info("💾 VIP доход: данные сохранены")
         
     except Exception as e:
-        logger.error(f"Ошибка в процессе VIP дохода: {e}")
+        logger.error(f"Критическая ошибка в процессе VIP дохода: {e}")
+
+# ================== ЗАПУСК АВТОМАТИЧЕСКОГО ДОХОДА ==================
+
+def start_vip_income_loop():
+    """Запускает бесконечный цикл для начисления VIP дохода"""
+    def income_loop():
+        while True:
+            try:
+                # Ждем 3 часа (10800 секунд) перед первой проверкой
+                time.sleep(10800)
+                
+                # Выполняем начисление дохода
+                process_vip_income()
+                
+                # Ждем еще 3 часа до следующей проверки
+                # Фактически будет проверять каждые 3 часа
+                time.sleep(10800)
+                
+            except Exception as e:
+                logger.error(f"Ошибка в цикле VIP дохода: {e}")
+                time.sleep(300)  # Ждем 5 минут при ошибке
+    
+    # Запускаем в отдельном потоке
+    income_thread = threading.Thread(target=income_loop, daemon=True)
+    income_thread.start()
+    logger.info("✅ Система пассивного VIP дохода запущена (интервал: 3 часа)")
+
+# Запускаем систему дохода при старте бота
+start_vip_income_loop()
 
 # ================== ОБНОВЛЁННЫЙ START ДЛЯ VIP ==================
 
@@ -2105,6 +2165,193 @@ def already_claimed_today(call):
 
 print("✅ Новогодний календарь загружен и готов к работе! 🎄")
 
+PREFIX_DB = "prefixes.db"
+
+# ======================================================
+# УЛУЧШЕННАЯ СИСТЕМА ПРЕФИКСОВ (БЕЗОПАСНАЯ ДЛЯ СУЩЕСТВУЮЩЕЙ БАЗЫ)
+# ======================================================
+
+def init_prefix_db():
+    """Инициализация базы с защитой от ошибок при миграции"""
+    conn = sqlite3.connect(PREFIX_DB, check_same_thread=False)
+    c = conn.cursor()
+    
+    try:
+        # Создаем таблицу префиксов если не существует
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS prefixes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            price INTEGER NOT NULL
+        )
+        """)
+        
+        # Создаем таблицу префиксов пользователей если не существует
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS user_prefixes (
+            user_id INTEGER PRIMARY KEY,
+            prefix_id INTEGER NOT NULL,
+            price_paid INTEGER NOT NULL,
+            FOREIGN KEY (prefix_id) REFERENCES prefixes(id)
+        )
+        """)
+        
+        conn.commit()
+        
+        # Проверяем наличие префиксов
+        c.execute("SELECT COUNT(*) FROM prefixes")
+        count = c.fetchone()[0]
+        
+        if count == 0:
+            # Обновленный список префиксов с новыми ценами
+            default_prefixes = [
+                ("🔰 Новичок", 500000),        # 500к
+                ("🔥 Огонь", 1500000),         # 1.5M
+                ("⚡ Молния", 3000000),        # 3M (новый)
+                ("🌟 Звезда", 5000000),        # 5M (новый)
+                ("👑 Король", 10000000),       # 10M
+                ("💎 Алмаз", 25000000),        # 25M
+                ("🐲 Дракон", 50000000),       # 50M
+                ("🌙 Луна", 75000000),         # 75M (новый)
+                ("☀️ Солнце", 100000000),      # 100M (новый)
+                ("✨ Божественный", 250000000), # 250M (новый)
+            ]
+            c.executemany("INSERT INTO prefixes (name, price) VALUES (?, ?)", default_prefixes)
+            conn.commit()
+            logger.info(f"✅ Создано {len(default_prefixes)} префиксов по умолчанию")
+        else:
+            logger.info(f"✅ В базе уже есть {count} префиксов")
+            
+    except Exception as e:
+        logger.error(f"❌ Ошибка инициализации базы префиксов: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
+def get_all_prefixes():
+    """Получить все префиксы"""
+    try:
+        conn = sqlite3.connect(PREFIX_DB)
+        c = conn.cursor()
+        c.execute("SELECT id, name, price FROM prefixes ORDER BY price ASC")
+        rows = c.fetchall()
+        conn.close()
+        return [{"id": r[0], "name": r[1], "price": r[2]} for r in rows]
+    except Exception as e:
+        logger.error(f"❌ Ошибка получения списка префиксов: {e}")
+        return []
+
+
+def get_prefix(prefix_id):
+    """Получить префикс по ID"""
+    try:
+        conn = sqlite3.connect(PREFIX_DB)
+        c = conn.cursor()
+        c.execute("SELECT id, name, price FROM prefixes WHERE id = ?", (prefix_id,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            return {"id": row[0], "name": row[1], "price": row[2]}
+        return None
+    except Exception as e:
+        logger.error(f"❌ Ошибка получения префикса {prefix_id}: {e}")
+        return None
+
+
+def get_user_prefix(user_id):
+    """Безопасное получение префикса пользователя (без ошибок если нет данных)"""
+    try:
+        conn = sqlite3.connect(PREFIX_DB)
+        c = conn.cursor()
+        
+        # Проверяем существование таблицы
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_prefixes'")
+        if not c.fetchone():
+            conn.close()
+            return None
+            
+        c.execute("""
+            SELECT p.id, p.name, p.price, up.price_paid
+            FROM user_prefixes up
+            JOIN prefixes p ON p.id = up.prefix_id
+            WHERE up.user_id = ?
+        """, (user_id,))
+        row = c.fetchone()
+        conn.close()
+        
+        if not row:
+            return None
+        return {"id": row[0], "name": row[1], "price": row[2], "price_paid": row[3]}
+        
+    except sqlite3.OperationalError as e:
+        # Таблица не существует или другая SQL ошибка
+        logger.warning(f"⚠️ Таблица префиксов не найдена для пользователя {user_id}: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"❌ Ошибка получения префикса пользователя {user_id}: {e}")
+        return None
+
+
+def set_user_prefix(user_id, prefix_id, price_paid):
+    """Установить префикс пользователю (безопасно)"""
+    try:
+        conn = sqlite3.connect(PREFIX_DB)
+        c = conn.cursor()
+        
+        # Проверяем существование таблицы
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_prefixes'")
+        if not c.fetchone():
+            # Создаем таблицу если не существует
+            c.execute("""
+                CREATE TABLE IF NOT EXISTS user_prefixes (
+                    user_id INTEGER PRIMARY KEY,
+                    prefix_id INTEGER NOT NULL,
+                    price_paid INTEGER NOT NULL,
+                    FOREIGN KEY (prefix_id) REFERENCES prefixes(id)
+                )
+            """)
+        
+        c.execute("INSERT OR REPLACE INTO user_prefixes (user_id, prefix_id, price_paid) VALUES (?, ?, ?)",
+                  (user_id, prefix_id, price_paid))
+        conn.commit()
+        logger.info(f"✅ Установлен префикс {prefix_id} для пользователя {user_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Ошибка установки префикса для {user_id}: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
+def remove_user_prefix(user_id):
+    """Удалить префикс пользователя (безопасно)"""
+    try:
+        conn = sqlite3.connect(PREFIX_DB)
+        c = conn.cursor()
+        
+        # Проверяем существование таблицы
+        c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_prefixes'")
+        if not c.fetchone():
+            conn.close()
+            return
+            
+        c.execute("DELETE FROM user_prefixes WHERE user_id = ?", (user_id,))
+        conn.commit()
+        logger.info(f"✅ Удален префикс пользователя {user_id}")
+        
+    except Exception as e:
+        logger.error(f"❌ Ошибка удаления префикса у {user_id}: {e}")
+    finally:
+        conn.close()
+
+
+# Инициализируем базу при старте
+init_prefix_db()
+
+print("✅ Улучшенная система префиксов загружена и готова к работе")
+
+
 # ================== КОМАНДА ПРАВИЛА ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["правила бота", "правила", "правило"])
 def rules_command(message):
@@ -2237,6 +2484,7 @@ def start_bonus(message):
 
 
 # ======================================================
+# ======================================================
 #    ПОЛНАЯ КОМАНДА: б / баланс
 # ======================================================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["б", "баланс"])
@@ -2261,30 +2509,49 @@ def balance_cmd(message):
     else:
         vip_display = "Нет"
 
+    # Имя + префикс
     clickable = f"<a href='tg://user?id={user_id}'>{user.first_name}</a>"
     if prefix_data:
-        clickable = f"{prefix_data['name']} {clickable}"
+        prefix_emoji = (
+            prefix_data["name"].split()[0]
+            if " " in prefix_data["name"]
+            else prefix_data["name"]
+        )
+        clickable = f"{prefix_emoji} {clickable}"
 
     # Текст
     text = (
-        f"✓⃝   <b>БАЛАНС</b>\n\n"
+        f"➤ <b>БАЛАНС</b>\n\n"
         f"👤 <b>Имя:</b> {clickable}\n"
         f"💰 <b>Баланс:</b> <code>{format_number(data['balance'])}$</code>\n"
         f"🔰 <b>Префикс:</b> {prefix_display}\n"
         f"💎 <b>VIP:</b> {vip_display}"
     )
 
+    # Кнопки
     kb = types.InlineKeyboardMarkup()
 
-    # Первый ряд: кнопки префикса
     if prefix_data:
-        # Если есть префикс - показываем кнопку продажи
-        kb.row(types.InlineKeyboardButton("💸 Продать префикс", callback_data=f"sell_prefix_{user_id}"))
+        kb.row(
+            types.InlineKeyboardButton(
+                "💸 Продать префикс",
+                callback_data=f"sell_prefix_{user_id}"
+            )
+        )
     else:
-        # Если нет префикса - показываем кнопку покупки
-        kb.row(types.InlineKeyboardButton("🛒 Купить префикс", callback_data=f"buy_prefix_menu_{user_id}"))
+        kb.row(
+            types.InlineKeyboardButton(
+                "🛒 Купить префикс",
+                callback_data=f"buy_prefix_menu_{user_id}"
+            )
+        )
 
-    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+    bot.send_message(
+        message.chat.id,
+        text,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "панель рассылки")
 def broadcast_panel(message):
@@ -5009,103 +5276,7 @@ def ignore_blocked_chat(message):
     return
 
 
-PREFIX_DB = "prefixes.db"
 
-# ======================================================
-# ПРЕФИКСЫ (SQLite)
-# ======================================================
-
-def init_prefix_db():
-    conn = sqlite3.connect(PREFIX_DB, check_same_thread=False)
-    c = conn.cursor()
-
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS prefixes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        price INTEGER NOT NULL
-    )
-    """)
-
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS user_prefixes (
-        user_id INTEGER PRIMARY KEY,
-        prefix_id INTEGER NOT NULL,
-        price_paid INTEGER NOT NULL,
-        FOREIGN KEY (prefix_id) REFERENCES prefixes(id)
-    )
-    """)
-
-    conn.commit()
-
-    c.execute("SELECT COUNT(*) FROM prefixes")
-    if c.fetchone()[0] == 0:
-        default_prefixes = [
-            ("🔰 Новичок", 500000),
-            ("🔥 Огонь", 1000000),
-            ("👑 Король", 5000000),
-            ("💎 Алмаз", 10000000),
-            ("🐲 Дракон", 25000000),
-        ]
-        c.executemany("INSERT INTO prefixes (name, price) VALUES (?, ?)", default_prefixes)
-        conn.commit()
-
-    conn.close()
-
-
-def get_all_prefixes():
-    conn = sqlite3.connect(PREFIX_DB)
-    c = conn.cursor()
-    c.execute("SELECT id, name, price FROM prefixes ORDER BY price ASC")
-    rows = c.fetchall()
-    conn.close()
-    return [{"id": r[0], "name": r[1], "price": r[2]} for r in rows]
-
-
-def get_prefix(prefix_id):
-    conn = sqlite3.connect(PREFIX_DB)
-    c = conn.cursor()
-    c.execute("SELECT id, name, price FROM prefixes WHERE id = ?", (prefix_id,))
-    row = c.fetchone()
-    conn.close()
-    if row:
-        return {"id": row[0], "name": row[1], "price": row[2]}
-
-
-def get_user_prefix(user_id):
-    conn = sqlite3.connect(PREFIX_DB)
-    c = conn.cursor()
-    c.execute("""
-        SELECT p.id, p.name, p.price, up.price_paid
-        FROM user_prefixes up
-        JOIN prefixes p ON p.id = up.prefix_id
-        WHERE up.user_id = ?
-    """, (user_id,))
-    row = c.fetchone()
-    conn.close()
-    if not row:
-        return None
-    return {"id": row[0], "name": row[1], "price": row[2], "price_paid": row[3]}
-
-
-def set_user_prefix(user_id, prefix_id, price_paid):
-    conn = sqlite3.connect(PREFIX_DB)
-    c = conn.cursor()
-    c.execute("INSERT OR REPLACE INTO user_prefixes (user_id, prefix_id, price_paid) VALUES (?, ?, ?)",
-              (user_id, prefix_id, price_paid))
-    conn.commit()
-    conn.close()
-
-
-def remove_user_prefix(user_id):
-    conn = sqlite3.connect(PREFIX_DB)
-    c = conn.cursor()
-    c.execute("DELETE FROM user_prefixes WHERE user_id = ?", (user_id,))
-    conn.commit()
-    conn.close()
-
-
-init_prefix_db()
 
 # ======================================================
 # БОНУС
@@ -5164,9 +5335,9 @@ def start_bonus(message):
 
 
 # ======================================================
-# БАЛАНС (С VIP)
 # ======================================================
-
+#    БАЛАНС (С VIP)
+# ======================================================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["б", "баланс"])
 def balance_cmd(message):
     user_id = message.from_user.id
@@ -5174,8 +5345,8 @@ def balance_cmd(message):
     data = get_user_data(user_id)
 
     # Префикс
-    prefix = get_user_prefix(user_id)
-    prefix_display = prefix["name"] if prefix else "Нет"
+    prefix_data = get_user_prefix(user_id)
+    prefix_display = prefix_data["name"] if prefix_data else "Нет"
 
     # VIP статус
     vip_data = data.get("vip", {})
@@ -5186,30 +5357,49 @@ def balance_cmd(message):
     else:
         vip_display = "Нет"
 
-    # Упоминание
+    # Имя с префиксом
     clickable = f"<a href='tg://user?id={user_id}'>{user.first_name}</a>"
-    if prefix:
-        clickable = f"{prefix['name']} {clickable}"
+    if prefix_data:
+        prefix_emoji = (
+            prefix_data["name"].split()[0]
+            if " " in prefix_data["name"]
+            else prefix_data["name"]
+        )
+        clickable = f"{prefix_emoji} {clickable}"
 
     # Текст
     text = (
-        f"🏦 <b>БАЛАНС</b>\n\n"
-        f"👤 Имя: {clickable}\n"
-        f"💰 Баланс: <code>{format_number(data['balance'])}$</code>\n"
-        f"🔰 Префикс: {prefix_display}\n"
-        f"💎 VIP: {vip_display}"
+        f"➤ <b>БАЛАНС</b>\n\n"
+        f"👤 <b>Имя:</b> {clickable}\n"
+        f"💰 <b>Баланс:</b> <code>{format_number(data['balance'])}$</code>\n"
+        f"🔰 <b>Префикс:</b> {prefix_display}\n"
+        f"💎 <b>VIP:</b> {vip_display}"
     )
 
+    # Кнопки
     kb = types.InlineKeyboardMarkup()
 
-    # Купить префикс
-    kb.add(types.InlineKeyboardButton("🛒 Купить префикс", callback_data=f"buy_prefix_menu_{user_id}"))
+    if prefix_data:
+        kb.add(
+            types.InlineKeyboardButton(
+                "💸 Продать префикс",
+                callback_data=f"sell_prefix_{user_id}"
+            )
+        )
+    else:
+        kb.add(
+            types.InlineKeyboardButton(
+                "🛒 Купить префикс",
+                callback_data=f"buy_prefix_menu_{user_id}"
+            )
+        )
 
-    # Продать префикс
-    if prefix:
-        kb.add(types.InlineKeyboardButton("💸 Продать префикс", callback_data=f"sell_prefix_{user_id}"))
-
-    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+    bot.send_message(
+        message.chat.id,
+        text,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
 
 
 # ======================================================
@@ -5610,8 +5800,14 @@ BUSINESS_DATA = {
 # Данные домов (5 штук)
 HOUSE_DATA = {}
 
-# Данные машин (5 штук)
+# Данные машин (9 штук)
 CAR_DATA = {
+    "Zhiguli": {
+        "price": 50000,
+        "profit_per_hour": 200,
+        "image": "https://avatars.mds.yandex.net/i?id=321f5469a7649d65f9be8e1e8dbbb8a4_l-12486332-images-thumbs&n=33&w=1280&h=720",  # Замените на реальную ссылку
+        "upkeep_cost": 20
+    },
     "Tesla": {
         "price": 100000,
         "profit_per_hour": 300,
@@ -5624,9 +5820,21 @@ CAR_DATA = {
         "image": "https://avatars.yandex.net/get-music-content/14270105/c0e2d3f4.a.36766958-1/m1000x1000",
         "upkeep_cost": 100
     },
+    "Lexus": {
+        "price": 800000,
+        "profit_per_hour": 900,
+        "image": "https://carsweek.ru/upload/medialibrary/7cb/7cb01468d2623b3691d408bc36335bd0.jpg",  # Замените на реальную ссылку
+        "upkeep_cost": 150
+    },
+    "Audi": {
+        "price": 1200000,
+        "profit_per_hour": 1100,
+        "image": "https://avatars.mds.yandex.net/i?id=39a501a19248fa5c57c2e1772baecf30_l-5710176-images-thumbs&n=13",
+        "upkeep_cost": 180
+    },
     "Bmw M8": {
         "price": 1500000,
-        "profit_per_hour": 1000,
+        "profit_per_hour": 1300,
         "image": "https://avatars.mds.yandex.net/i?id=7531fa35c137db91df18107ecf47ddb8_l-5234178-images-thumbs&n=13",
         "upkeep_cost": 200
     },
@@ -5636,8 +5844,14 @@ CAR_DATA = {
         "image": "https://avatars.mds.yandex.net/i?id=168522fc4baeb489f9881bdf32eea6678cd9777b-3717621-images-thumbs&n=13",
         "upkeep_cost": 400
     },
-    "Mercedes Maybac": {
-        "price": 4000000,
+    "Toyota Land Cruiser 300": {
+        "price": 3500000,
+        "profit_per_hour": 2800,
+        "image": "https://a.d-cd.net/gggEUIqvkTy-EMvt5A6cNUZ1EG8-1920.jpg",  # Замените на реальную ссылку
+        "upkeep_cost": 450
+    },
+    "Mercedes Maybach": {
+        "price": 5000000,
         "profit_per_hour": 4000,
         "image": "https://i.ytimg.com/vi/9zIz78K0ZWU/maxresdefault.jpg",
         "upkeep_cost": 600
@@ -10755,36 +10969,157 @@ def update_tyanka_stats(user_data):
         user_data["tyanka"] = None
         logger.info(f"Тянка автоматически ушла (сытость: {tyanka['satiety']}, настроение: {tyanka.get('mood', 100)})")
 
-# ================== КРАСИВЫЙ МАГАЗИН ТЯНОК ==================
+# ================== МАГАЗИН ТЯНОК С ПАГИНАЦИЕЙ ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["магазин тянок", "тянки"])
 def tyanka_shop(message):
-    text = "💖 <b>✨ Магазин тянок ✨</b>\n\n"
+    user_id = message.from_user.id
     
-    for name, data in TYANKA_DATA.items():
-        emoji = "👩" if name in ["катя", "соня", "даша"] else "👸" if name in ["полина", "анна"] else "👰"
+    # Разделяем тянок на две страницы
+    tyanka_list = list(TYANKA_DATA.keys())
+    half = len(tyanka_list) // 2
+    page1_tyanki = tyanka_list[:half]
+    page2_tyanki = tyanka_list[half:]
+    
+    text = "💖 <b>Магазин тянок</b>\n\n"
+    
+    # Показываем первую страницу тянок
+    for name in page1_tyanki:
+        data = TYANKA_DATA[name]
         text += (
-            f"{emoji} <b>{name.upper()}</b>\n"
-            f"💰 Цена: <code>{format_number(data['price'])}$</code>\n"
-            f"💵 Доход/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
-            f"🍪 Кормление: <code>{format_number(data['feed_cost'])}$</code>\n"
-            f"⭐ {data['rarity']}\n\n"
+            f"<b>{name.capitalize()}</b>\n"
+            f"Цена: <code>{format_number(data['price'])}$</code>\n"
+            f"Доход/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
+            f"Кормление: <code>{format_number(data['feed_cost'])}$</code>\n"
+            f"{data['rarity']}\n\n"
         )
 
-    text += "📝 <i>Нажми на кнопку ниже чтобы купить тянку</i>"
+    text += "<i>Нажми на кнопку ниже чтобы купить тянку</i>"
 
+    # Создаем клавиатуру для первой страницы
     kb = InlineKeyboardMarkup(row_width=2)
-    buttons = []
-    for name in TYANKA_DATA.keys():
-        buttons.append(InlineKeyboardButton(f" {name.capitalize()}", callback_data=f"tyanka_buy_{name}"))
     
-    # Распределяем кнопки по 2 в ряд
-    for i in range(0, len(buttons), 2):
-        if i + 1 < len(buttons):
-            kb.row(buttons[i], buttons[i + 1])
+    # Создаем кнопки для первой страницы
+    buttons_row1 = []
+    for name in page1_tyanki[:2]:  # Первые 2 тянки в первом ряду
+        buttons_row1.append(InlineKeyboardButton(name.capitalize(), callback_data=f"tyanka_buy_{name}"))
+    
+    if buttons_row1:
+        if len(buttons_row1) == 2:
+            kb.row(buttons_row1[0], buttons_row1[1])
         else:
-            kb.row(buttons[i])
+            kb.row(buttons_row1[0])
+    
+    # Второй ряд для первой страницы (если есть)
+    if len(page1_tyanki) > 2:
+        buttons_row2 = []
+        for name in page1_tyanki[2:4]:  # Следующие 2 тянки
+            buttons_row2.append(InlineKeyboardButton(name.capitalize(), callback_data=f"tyanka_buy_{name}"))
+        
+        if len(buttons_row2) == 2:
+            kb.row(buttons_row2[0], buttons_row2[1])
+        elif buttons_row2:
+            kb.row(buttons_row2[0])
+    
+    # Если есть вторая страница - кнопка "Далее"
+    if page2_tyanki:
+        kb.add(InlineKeyboardButton("Далее →", callback_data=f"tyanka_page_2_{user_id}"))
 
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+
+# ================== ОБРАБОТЧИК ПАГИНАЦИИ ТЯНОК ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_page_"))
+def callback_tyanka_pagination(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        page_num = int(call.data.split("_")[2])
+        show_tyanka_page(call, page_num, user_id)
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в пагинации тянок: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+def show_tyanka_page(call, page_num, user_id):
+    """Показывает страницу с тянками"""
+    # Разделяем тянок на две страницы
+    tyanka_list = list(TYANKA_DATA.keys())
+    half = len(tyanka_list) // 2
+    page1_tyanki = tyanka_list[:half]
+    page2_tyanki = tyanka_list[half:]
+    
+    text = "💖 <b>Магазин тянок</b>\n\n"
+    
+    # Показываем тянок в зависимости от страницы
+    if page_num == 2 and page2_tyanki:
+        current_tyanki = page2_tyanki
+    else:
+        current_tyanki = page1_tyanki
+        page_num = 1
+    
+    for name in current_tyanki:
+        data = TYANKA_DATA[name]
+        text += (
+            f"<b>{name.capitalize()}</b>\n"
+            f"Цена: <code>{format_number(data['price'])}$</code>\n"
+            f"Доход/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
+            f"Кормление: <code>{format_number(data['feed_cost'])}$</code>\n"
+            f"{data['rarity']}\n\n"
+        )
+
+    text += "<i>Нажми на кнопку ниже чтобы купить тянку</i>"
+
+    # Создаем клавиатуру
+    kb = InlineKeyboardMarkup(row_width=2)
+
+    # Создаем кнопки для текущей страницы
+    for i in range(0, len(current_tyanki), 2):
+        row_buttons = []
+        # Первая кнопка в ряду
+        name1 = current_tyanki[i]
+        row_buttons.append(InlineKeyboardButton(name1.capitalize(), callback_data=f"tyanka_buy_{name1}"))
+        
+        # Вторая кнопка в ряду (если есть)
+        if i + 1 < len(current_tyanki):
+            name2 = current_tyanki[i + 1]
+            row_buttons.append(InlineKeyboardButton(name2.capitalize(), callback_data=f"tyanka_buy_{name2}"))
+        
+        if len(row_buttons) == 2:
+            kb.row(row_buttons[0], row_buttons[1])
+        else:
+            kb.row(row_buttons[0])
+
+    # Кнопки навигации
+    nav_buttons = []
+
+    if page_num == 2 and page1_tyanki:
+        # На второй странице - только кнопка "Назад"
+        nav_buttons.append(InlineKeyboardButton("← Назад", callback_data=f"tyanka_page_1_{user_id}"))
+    elif page_num == 1 and page2_tyanki:
+        # На первой странице - только кнопка "Далее"
+        nav_buttons.append(InlineKeyboardButton("Далее →", callback_data=f"tyanka_page_2_{user_id}"))
+    elif page1_tyanki and page2_tyanki:
+        # Если есть обе страницы - обе кнопки
+        nav_buttons.append(InlineKeyboardButton("← Назад", callback_data=f"tyanka_page_1_{user_id}"))
+        nav_buttons.append(InlineKeyboardButton("Далее →", callback_data=f"tyanka_page_2_{user_id}"))
+
+    if nav_buttons:
+        kb.row(*nav_buttons)
+
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
 
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_buy_"))
@@ -11969,37 +12304,153 @@ def stylize_text(text):
     )
     return text.translate(fancy)
 
-# ================== 🏪 МАГАЗИН МАШИН ==================
+# ================== 🏪 МАГАЗИН МАШИН С ПАГИНАЦИЕЙ ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["магазин машин", "машины"])
 def car_shop(message):
     user = message.from_user
     mention = f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+    
+    # Разделяем машины на две страницы
+    car_list = list(CAR_DATA.keys())
+    half = len(car_list) // 2
+    page1_cars = car_list[:half]
+    page2_cars = car_list[half:]
+    
     text = (
         f"🚗 <b>Магазин машин</b>\n"
         f"━━━━━━━━━━━━━━━━━━━\n"
         f"👤 Покупатель: {mention}\n\n"
         f"<i>Выбери машину своей мечты:</i>\n\n"
     )
-    for name, data in CAR_DATA.items():
+    
+    # Показываем первую страницу машин
+    for name in page1_cars:
+        data = CAR_DATA[name]
         text += (
-            f"🏎 <b>{stylize_text(name.title())}</b>\n"
-            f"💵 Цена: <code>{format_number(data['price'])}$</code>\n"
-            f"💲 Прибыль/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
-            f"⛽Топливо стоит: <code>{format_number(data['upkeep_cost'])}$</code>\n"
+            f"<b>{name}</b>\n"
+            f"Цена: <code>{format_number(data['price'])}$</code>\n"
+            f"Прибыль/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
+            f"Обслуживание: <code>{format_number(data['upkeep_cost'])}$</code>\n"
             f"━━━━━━━━━━━━━━━━━━━\n"
         )
+    
     text += (
-        "📘 <b>Как купить:</b>\n"
-        "Напиши: <code>купить машину [название]</code>\n"
-        "Например: <code>купить машину Mercedes</code>\n\n"
+        "\n<b>Как купить:</b>\n"
+        "<code>купить машину [название]</code>\n"
         "<i>Можно иметь только одну машину!</i>"
     )
-    markup = InlineKeyboardMarkup()
-    for name in CAR_DATA.keys():
-        markup.add(InlineKeyboardButton(f"🛒 Купить {name}", callback_data=f"car_buy_{user.id}_{name}"))
-    markup.add(InlineKeyboardButton("🚘 Моя машина", callback_data=f"car_info_{user.id}"))
+    
+    # Создаем клавиатуру для первой страницы
+    markup = InlineKeyboardMarkup(row_width=1)
+    
+    # Кнопки покупки машин с первой страницы
+    for name in page1_cars:
+        markup.add(InlineKeyboardButton(f"Купить {name}", callback_data=f"car_buy_{user.id}_{name}"))
+    
+    # Если есть вторая страница - кнопка "Далее"
+    if page2_cars:
+        markup.add(InlineKeyboardButton("Далее →", callback_data=f"car_page_2_{user.id}"))
+    
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=markup)
-    logger.info(f"{user.username} открыл магазин машин")
+    logger.info(f"{user.username} открыл магазин машин (страница 1)")
+
+
+# ================== ОБРАБОТЧИК ПАГИНАЦИИ МАШИН ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("car_page_"))
+def callback_car_pagination(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        page_num = int(call.data.split("_")[2])
+        show_car_page(call, page_num)
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в пагинации машин: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+def show_car_page(call, page_num):
+    """Показывает страницу с машинами"""
+    user_id = int(call.data.split("_")[3])
+    user = call.from_user
+    
+    mention = f'<a href="tg://user?id={user_id}">{user.first_name}</a>'
+    
+    # Разделяем машины на две страницы
+    car_list = list(CAR_DATA.keys())
+    half = len(car_list) // 2
+    page1_cars = car_list[:half]
+    page2_cars = car_list[half:]
+    
+    text = (
+        f"🚗 <b>Магазин машин</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━\n"
+        f"👤 Покупатель: {mention}\n\n"
+        f"<i>Выбери машину своей мечты:</i>\n\n"
+    )
+    
+    # Показываем машины в зависимости от страницы
+    if page_num == 2 and page2_cars:
+        current_cars = page2_cars
+    else:
+        current_cars = page1_cars
+        page_num = 1
+    
+    for name in current_cars:
+        data = CAR_DATA[name]
+        text += (
+            f"<b>{name}</b>\n"
+            f"Цена: <code>{format_number(data['price'])}$</code>\n"
+            f"Прибыль/час: <code>{format_number(data['profit_per_hour'])}$</code>\n"
+            f"Обслуживание: <code>{format_number(data['upkeep_cost'])}$</code>\n"
+            f"━━━━━━━━━━━━━━━━━━━\n"
+        )
+    
+    text += (
+        "\n<b>Как купить:</b>\n"
+        "<code>купить машину [название]</code>\n"
+        "<i>Можно иметь только одну машину!</i>"
+    )
+    
+    # Создаем клавиатуру
+    markup = InlineKeyboardMarkup(row_width=1)
+    
+    # Кнопки покупки машин
+    for name in current_cars:
+        markup.add(InlineKeyboardButton(f"Купить {name}", callback_data=f"car_buy_{user_id}_{name}"))
+    
+    # Кнопки навигации
+    nav_buttons = []
+    
+    if page_num == 2 and page1_cars:
+        # На второй странице - только кнопка "Назад"
+        nav_buttons.append(InlineKeyboardButton("← Назад", callback_data=f"car_page_1_{user_id}"))
+    elif page_num == 1 and page2_cars:
+        # На первой странице - только кнопка "Далее"
+        nav_buttons.append(InlineKeyboardButton("Далее →", callback_data=f"car_page_2_{user_id}"))
+    elif page1_cars and page2_cars:
+        # Если есть обе страницы - обе кнопки
+        nav_buttons.append(InlineKeyboardButton("← Назад", callback_data=f"car_page_1_{user_id}"))
+        nav_buttons.append(InlineKeyboardButton("Далее →", callback_data=f"car_page_2_{user_id}"))
+    
+    if nav_buttons:
+        markup.row(*nav_buttons)
+    
+    bot.edit_message_text(
+        text,
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=markup
+    )
+    
+    logger.info(f"{user.username} перешел на страницу {page_num} машин")
 
 # ================== 💰 ПОКУПКА ==================
 @bot.callback_query_handler(func=lambda c: c.data.startswith("car_buy_"))

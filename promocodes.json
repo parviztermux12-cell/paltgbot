@@ -390,5 +390,16 @@
     "activated_by": [
       5815880196
     ]
+  },
+  "YDKENYWC": {
+    "amount": 4595,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      7696828602,
+      7060923750,
+      6401913458,
+      8168027201
+    ]
   }
 }
