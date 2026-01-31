@@ -954,7 +954,7 @@ def list_cheques(message):
 
         
 # ================== РЕФЕРАЛЬНАЯ СИСТЕМА (SQLite) ==================
-REFERRAL_BONUS = 2500
+REFERRAL_BONUS = 15000
 DB_FILE = "referrals.db"
 
 # Инициализация базы данных
@@ -1144,7 +1144,7 @@ def cmd_start(message):
     )
 
 # ================== КОМАНДЫ РЕФЕРАЛЬНОЙ СИСТЕМЫ ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["реф", "реферал", "мой реферал", "рефералка"])
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["реф", "реферал", "мой кабинет", "рефералка"])
 def referral_cabinet(message):
     user_id = message.from_user.id
     ref_data = get_user_referral_data(user_id)
@@ -2162,6 +2162,379 @@ def already_claimed_today(call):
     bot.answer_callback_query(call.id, "❄️ Ты уже получал подарок сегодня! Возвращайся завтра! 🎄", show_alert=True)
 
 print("✅ Новогодний календарь загружен и готов к работе! 🎄")
+
+
+# ================== СИСТЕМА СБОРА МУСОРА ==================
+TRASH_DB = "trash.db"
+
+# Инициализация базы данных для мусора
+def init_trash_db():
+    conn = sqlite3.connect(TRASH_DB)
+    c = conn.cursor()
+    
+    # Таблица для инвентаря пользователей
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS trash_inventory (
+            user_id INTEGER PRIMARY KEY,
+            items TEXT DEFAULT '{}',
+            last_collected_time REAL DEFAULT 0
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+
+init_trash_db()
+
+# Данные мусора
+TRASH_ITEMS = {
+    "🍂 Листья": {"price": 50, "emoji": "🍂"},
+    "🥤 Бутылка": {"price": 75, "emoji": "🥤"},
+    "📰 Бумага": {"price": 78, "emoji": "📰"},
+    "🍌 Банан": {"price": 95, "emoji": "🍌"},
+    "🚬 Окурок": {"price": 40, "emoji": "🚬"},
+    "🧦 Носок": {"price": 109, "emoji": "🧦"},
+    "🧴 Флакон": {"price": 201, "emoji": "🧴"},
+    "🍕 Пицца": {"price": 102, "emoji": "🍕"},
+    "🥫 Банка": {"price": 49, "emoji": "🥫"},
+    "📱 Телефон": {"price": 400, "emoji": "📱"},
+    "🧩 Игрушка": {"price": 200, "emoji": "🧩"},
+    "💄 Помада": {"price": 300, "emoji": "💄"},
+    "🧢 Кепка": {"price": 100, "emoji": "🧢"},
+    "🍬 Фантик": {"price": 85, "emoji": "🍬"},
+    "💍 Кольцо": {"price": 3000, "emoji": "💍"}
+}
+
+def get_user_trash_inventory(user_id):
+    """Получает инвентарь пользователя"""
+    conn = sqlite3.connect(TRASH_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT items, last_collected_time FROM trash_inventory WHERE user_id = ?", (user_id,))
+    result = c.fetchone()
+    
+    if not result:
+        # Создаем запись если нет
+        c.execute("INSERT INTO trash_inventory (user_id) VALUES (?)", (user_id,))
+        conn.commit()
+        conn.close()
+        return {"items": {}, "last_collected_time": 0}
+    
+    items_json, last_collected_time = result
+    
+    try:
+        items = json.loads(items_json) if items_json else {}
+    except:
+        items = {}
+    
+    conn.close()
+    return {"items": items, "last_collected_time": last_collected_time}
+
+def update_user_trash_inventory(user_id, items, last_collected_time):
+    """Обновляет инвентарь пользователя"""
+    conn = sqlite3.connect(TRASH_DB)
+    c = conn.cursor()
+    
+    items_json = json.dumps(items)
+    c.execute("""
+        INSERT OR REPLACE INTO trash_inventory 
+        (user_id, items, last_collected_time) 
+        VALUES (?, ?, ?)
+    """, (user_id, items_json, last_collected_time))
+    
+    conn.commit()
+    conn.close()
+
+def can_collect_trash(user_id):
+    """Проверяет, может ли пользователь собирать мусор"""
+    inventory = get_user_trash_inventory(user_id)
+    current_time = time.time()
+    return current_time - inventory["last_collected_time"] >= 2  # 2 секунды кулдаун
+
+def get_random_trash():
+    """Возвращает случайный мусор с учетом вероятностей"""
+    # 70% шанс найти что-то, 30% шанс ничего не найти
+    if random.random() > 0.8:
+        return None
+    
+    # Взвешенная вероятность: более дешевые предметы встречаются чаще
+    weighted_items = []
+    for item_name, item_data in TRASH_ITEMS.items():
+        weight = 10 if item_data["price"] < 100 else 5 if item_data["price"] < 500 else 2 if item_data["price"] < 1000 else 1
+        weighted_items.extend([item_name] * weight)
+    
+    return random.choice(weighted_items)
+
+def add_item_to_inventory(user_id, item_name):
+    """Добавляет предмет в инвентарь пользователя"""
+    inventory = get_user_trash_inventory(user_id)
+    items = inventory["items"]
+    
+    if item_name in items:
+        items[item_name] += 1
+    else:
+        items[item_name] = 1
+    
+    update_user_trash_inventory(user_id, items, time.time())
+    return items
+
+def calculate_total_value(items):
+    """Вычисляет общую стоимость всех предметов"""
+    total = 0
+    for item_name, count in items.items():
+        if item_name in TRASH_ITEMS:
+            total += TRASH_ITEMS[item_name]["price"] * count
+    return total
+
+# ================== КОМАНДА: НАЧАТЬ СБОРКУ МУСОРА ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["начать сборку мусора", "сборка мусора"])
+def start_trash_collection(message):
+    """Начинает сбор мусора"""
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    text = f"{mention}, Начни собирать мусор и зарабатывать на этом деньги по кнопке ниже ↓"
+    
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton("Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+    
+    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+# ================== КНОПКА: СОБРАТЬ МУСОР ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("collect_trash_"))
+def collect_trash_callback(call):
+    """Обработка сбора мусора"""
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        # Проверка: может ли нажимать только владелец кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "Чужие мусорные пакеты смотреть плохо - Атата 🫣", show_alert=True)
+            return
+        
+        # Проверка кулдауна
+        if not can_collect_trash(user_id):
+            bot.answer_callback_query(call.id, "⏳ Подожди 2 секунды перед следующим сбором!", show_alert=True)
+            return
+        
+        # Получаем случайный мусор
+        found_item = get_random_trash()
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        if found_item:
+            # Добавляем предмет в инвентарь
+            item_data = TRASH_ITEMS[found_item]
+            add_item_to_inventory(user_id, found_item)
+            
+            text = f"{mention}, собирая мусор ты нашёл <code>{found_item}</code>"
+            
+            # Обновляем сообщение с той же кнопкой
+            kb = InlineKeyboardMarkup()
+            kb.add(InlineKeyboardButton(" Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+            
+            bot.edit_message_text(
+                text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=kb
+            )
+            bot.answer_callback_query(call.id, f"✅ Найдено: {found_item}")
+        else:
+            text = f"{mention}, собирая мусор ты не нашёл ничего ценного."
+            
+            kb = InlineKeyboardMarkup()
+            kb.add(InlineKeyboardButton(" Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+            
+            bot.edit_message_text(
+                text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=kb
+            )
+            bot.answer_callback_query(call.id, "❌ Ничего не найдено")
+            
+    except Exception as e:
+        logger.error(f"Ошибка сбора мусора: {e}")
+        bot.answer_callback_query(call.id, "Не так быстро - скорострел", show_alert=True)
+
+# ================== КОМАНДА: МОЙ ИНВЕНТАРЬ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мой инвентарь", "мой инв", "инвентарь"])
+def show_trash_inventory(message):
+    """Показывает инвентарь пользователя"""
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    inventory = get_user_trash_inventory(user_id)
+    items = inventory["items"]
+    
+    if not items:
+        text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
+    else:
+        text = f"{mention}, в твоём мусорном пакете лежат:\n\n"
+        
+        for item_name, count in items.items():
+            if item_name in TRASH_ITEMS:
+                item_data = TRASH_ITEMS[item_name]
+                item_value = item_data["price"] * count
+                text += f"{item_data['emoji']} {item_name} ×{count} — {item_value}$\n"
+        
+        total_value = calculate_total_value(items)
+        text += f"\n💰 Продать все можно за <b>{format_number(total_value)}$</b>"
+    
+    kb = InlineKeyboardMarkup()
+    
+    if items:
+        kb.add(InlineKeyboardButton(" Продать всё", callback_data=f"sell_all_trash_{user_id}"))
+    
+    kb.add(InlineKeyboardButton(" Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+    
+    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+# ================== КНОПКА: ПРОДАТЬ ВСЁ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("sell_all_trash_"))
+def sell_all_trash_callback(call):
+    """Обработка продажи всего мусора"""
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        # Проверка: может ли нажимать только владелец кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твой мусорный пакет!", show_alert=True)
+            return
+        
+        inventory = get_user_trash_inventory(user_id)
+        items = inventory["items"]
+        
+        if not items:
+            bot.answer_callback_query(call.id, "❌ Твой мусорный пакет пуст!", show_alert=True)
+            return
+        
+        total_value = calculate_total_value(items)
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, ты хочешь продать все вещи за <b>{format_number(total_value)}$</b>?\n\nВы точно хотите продать все вещи?"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("Да", callback_data=f"confirm_sell_all_{user_id}"),
+            InlineKeyboardButton("Нет", callback_data=f"cancel_sell_all_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка продажи мусора: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
+
+# ================== КНОПКА: ПОДТВЕРДИТЬ ПРОДАЖУ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("confirm_sell_all_"))
+def confirm_sell_all_callback(call):
+    """Подтверждение продажи всего мусора"""
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        # Проверка: может ли нажимать только владелец кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твой мусорный пакет!", show_alert=True)
+            return
+        
+        # Получаем инвентарь и вычисляем стоимость
+        inventory = get_user_trash_inventory(user_id)
+        items = inventory["items"]
+        total_value = calculate_total_value(items)
+        
+        # Начисляем деньги на баланс
+        user_data = get_user_data(user_id)
+        user_data["balance"] += total_value
+        save_casino_data()
+        
+        # Очищаем инвентарь
+        update_user_trash_inventory(user_id, {}, inventory["last_collected_time"])
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, ты продал все найденные вещи за <b>{format_number(total_value)}$</b>. Деньги уже на твоём счёту работяга 😸"
+        
+        # Обновляем сообщение без кнопок
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML"
+        )
+        
+        bot.answer_callback_query(call.id, f"✅ Получено: {format_number(total_value)}$")
+        
+    except Exception as e:
+        logger.error(f"Ошибка подтверждения продажи: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
+
+# ================== КНОПКА: ОТМЕНИТЬ ПРОДАЖУ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("cancel_sell_all_"))
+def cancel_sell_all_callback(call):
+    """Отмена продажи всего мусора"""
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        # Проверка: может ли нажимать только владелец кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твой мусорный пакет!", show_alert=True)
+            return
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, ты отменил продажу всех найденных вещей, всё остаётся в твоём мусорном пакете"
+        
+        # Возвращаем к просмотру инвентаря
+        inventory = get_user_trash_inventory(user_id)
+        items = inventory["items"]
+        
+        if items:
+            text = f"{mention}, в твоём мусорном пакете лежат:\n\n"
+            
+            for item_name, count in items.items():
+                if item_name in TRASH_ITEMS:
+                    item_data = TRASH_ITEMS[item_name]
+                    item_value = item_data["price"] * count
+                    text += f"{item_data['emoji']} {item_name} ×{count} — {item_value}$\n"
+            
+            total_value = calculate_total_value(items)
+            text += f"\n💰 Продать все можно за <b>{format_number(total_value)}$</b>"
+            
+            kb = InlineKeyboardMarkup()
+            kb.add(InlineKeyboardButton(" Продать всё", callback_data=f"sell_all_trash_{user_id}"))
+            kb.add(InlineKeyboardButton(" Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+        else:
+            text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
+            kb = InlineKeyboardMarkup()
+            kb.add(InlineKeyboardButton(" Собрать мусор", callback_data=f"collect_trash_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id, "❌ Продажа отменена")
+        
+    except Exception as e:
+        logger.error(f"Ошибка отмены продажи: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при отмене!", show_alert=True)
+
+print("✅ Система сбора мусора загружена и готова к работе! 🗑️")
+
 
 PREFIX_DB = "prefixes.db"
 
@@ -7942,7 +8315,7 @@ def show_help_page(call, page_num):
         
     elif page_num == 3:
         # Страница 3: следующие 3 кнопки
-        kb.add(InlineKeyboardButton("Снежки", callback_data="help_snow"))
+        kb.add(InlineKeyboardButton("Ивенты", callback_data="help_snow"))
         kb.add(InlineKeyboardButton("Донат", callback_data="help_donate"))
         kb.add(InlineKeyboardButton("Поддержка", callback_data="help_support"))
         # Назад и вперед
@@ -7992,7 +8365,7 @@ COMMANDS_PAGES = [
 <code>п [ID] [сумма]</code> — перевод
 <code>промо [код]</code> — промокод
 <code>задонатить [сумма]</code> — пополнить
-<code>реф</code> — реферальная система
+<code>мой кабинет</code> — реферальная система
 
 <b>ВЗАИМОДЕЙСТВИЯ:</b>
 <code>рп</code> — список RP-команд
@@ -8178,19 +8551,38 @@ def callback_help_sections(call):
             
         elif section == "snow":
             text = (
-                "<b>СНЕЖКИ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>КОМАНДЫ:</b>\n"
-                "<code>снежок</code> — слепить снежок\n"
-                "<code>мой профиль</code> — статистика\n"
-                "<code>Узнать свое место в топе</code> — по команде: профиль, мой профиль\n\n"
-                
-                "<b>КУРС:</b>\n"
-                "• 1 снежок = 50$\n"
-                "• 1 золотой = 250$\n"
-                "• 5% шанс на золотой\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
+    "<b>🎮 ИГРЫ И ИВЕНТЫ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
+    
+    "<b>❄️ СНЕЖКИ (новогодний ивент):</b>\n"
+    "<code>снежок</code> — слепить снежок\n"
+    "<code>мой профиль</code> — статистика снежков\n"
+    "<code>ежедневный</code> — ежедневная награда\n"
+    "<code>топ снежков</code> — топ игроков\n"
+    "<code>снежный топ</code> — альтернативная команда\n\n"
+    
+    "<b>🗑️ СБОР МУСОРА (новый ивент):</b>\n"
+    "<code>начать сборку мусора</code> — начать сбор\n"
+    "<code>сборка мусора</code> — альтернативная команда\n"
+    "<code>мой инвентарь</code> — показать найденное\n"
+    "<code>мой инв</code> — краткая команда\n\n"
+    
+    "<b>📊 КУРС ОБМЕНА:</b>\n"
+    "• ❄️ 1 снежок = 50$\n"
+    "• 🌟 1 золотой снежок = 250$\n"
+    "• 🎯 5% шанс на золотой снежок\n\n"
+    
+    "<b>💰 НАЙТИ МОЖНО:</b>\n"
+    "• 🍂 Листья\n"
+    "• 🥤 Бутылка\n"
+    "• 📰 Бумага\n"
+    "• 📱 Телефон\n"
+    "• 💍 Кольцо\n"
+    "• и другие предметы...\n\n"
+    
+    "<i>💫 Каждые 2 секунды можно собирать мусор!\n"
+    "🎁 80% шанс найти что-то ценное!</i>\n"
+    "━━━━━━━━━━━━━━━━━━━"
+)
             
         elif section == "support":
             text = (
