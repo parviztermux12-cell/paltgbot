@@ -2166,7 +2166,7 @@ print("✅ Новогодний календарь загружен и гото�
 
 # ================== СИСТЕМА СБОРА МУСОРА С АВТО-СБОРОКОЙ ==================
 TRASH_DB = "trash.db"
-AUTO_TRASH_PRICE = 390000  # 240к за авто-сбор
+AUTO_TRASH_PRICE = 330000  # 240к за авто-сбор
 AUTO_TRASH_TIME = 40 * 60  # 40 минут
 AUTO_TRASH_USERS = {}
 
@@ -2435,7 +2435,7 @@ def collect_trash_callback(call):
             text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
         else:
             kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
+            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
             
             if found_item:
                 add_item_to_inventory(user_id, found_item)
@@ -2566,7 +2566,7 @@ def cancel_autotrash(call):
             text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
         else:
             kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
+            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
             text = f"{mention}, сборка мусора\n\nНажми кнопку ниже чтобы собрать мусор"
         
         bot.edit_message_text(
@@ -2626,7 +2626,7 @@ def show_trash_inventory(message):
     
     # Показываем кнопку покупки авто-сборки только если она не активна
     if not is_auto_trash_active(user_id):
-        kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
+        kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
     
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
 
@@ -2653,8 +2653,8 @@ def sell_all_trash_callback(call):
         
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("✅ Да", callback_data=f"confirm_sell_all_{user_id}"),
-            InlineKeyboardButton("❌ Нет", callback_data=f"cancel_sell_all_{user_id}")
+            InlineKeyboardButton("✅", callback_data=f"confirm_sell_all_{user_id}"),
+            InlineKeyboardButton("❌", callback_data=f"cancel_sell_all_{user_id}")
         )
         
         bot.edit_message_text(
@@ -2748,7 +2748,7 @@ def cancel_sell_all_callback(call):
             
             # Показываем кнопку покупки авто-сборки только если она не активна
             if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
+                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
         else:
             text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
             kb = InlineKeyboardMarkup()
@@ -2758,7 +2758,7 @@ def cancel_sell_all_callback(call):
                 kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
             
             if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
+                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
         
         bot.edit_message_text(
             text,
