@@ -2166,7 +2166,7 @@ print("✅ Новогодний календарь загружен и гото�
 
 # ================== СИСТЕМА СБОРА МУСОРА С АВТО-СБОРОКОЙ ==================
 TRASH_DB = "trash.db"
-AUTO_TRASH_PRICE = 240000  # 240к за авто-сбор
+AUTO_TRASH_PRICE = 390000  # 240к за авто-сбор
 AUTO_TRASH_TIME = 40 * 60  # 40 минут
 AUTO_TRASH_USERS = {}
 
@@ -2435,7 +2435,7 @@ def collect_trash_callback(call):
             text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
         else:
             kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (240.000$)", callback_data=f"buy_autotrash_{user_id}"))
+            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
             
             if found_item:
                 add_item_to_inventory(user_id, found_item)
@@ -2566,7 +2566,7 @@ def cancel_autotrash(call):
             text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
         else:
             kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (240.000$)", callback_data=f"buy_autotrash_{user_id}"))
+            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
             text = f"{mention}, сборка мусора\n\nНажми кнопку ниже чтобы собрать мусор"
         
         bot.edit_message_text(
@@ -2626,7 +2626,7 @@ def show_trash_inventory(message):
     
     # Показываем кнопку покупки авто-сборки только если она не активна
     if not is_auto_trash_active(user_id):
-        kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (240.000$)", callback_data=f"buy_autotrash_{user_id}"))
+        kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
     
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
 
@@ -2748,7 +2748,7 @@ def cancel_sell_all_callback(call):
             
             # Показываем кнопку покупки авто-сборки только если она не активна
             if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (240.000$)", callback_data=f"buy_autotrash_{user_id}"))
+                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
         else:
             text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
             kb = InlineKeyboardMarkup()
@@ -2758,7 +2758,7 @@ def cancel_sell_all_callback(call):
                 kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
             
             if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (240.000$)", callback_data=f"buy_autotrash_{user_id}"))
+                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку (390.000$)", callback_data=f"buy_autotrash_{user_id}"))
         
         bot.edit_message_text(
             text,
@@ -2777,9 +2777,796 @@ def cancel_sell_all_callback(call):
 print("✅ Система сбора мусора с авто-сборкой загружена и готова к работе! 🗑️🚗")
         
  
+# ================== СИСТЕМА ШАХТЫ (МАЙНИНГ) ==================
+MINING_DB = "mining.db"
 
+# Инициализация базы данных для шахты
+def init_mining_db():
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    # Таблица пользователей шахты
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS mining_users (
+            user_id INTEGER PRIMARY KEY,
+            pickaxe_id INTEGER DEFAULT 1,
+            energy INTEGER DEFAULT 50,
+            max_energy INTEGER DEFAULT 50,
+            pickaxe_durability INTEGER DEFAULT 100,
+            max_durability INTEGER DEFAULT 100,
+            total_ores_mined INTEGER DEFAULT 0,
+            last_energy_regen TEXT,
+            last_mining_time TEXT
+        )
+    """)
+    
+    # Таблица инвентаря руд
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS mining_ores (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            ore_name TEXT NOT NULL,
+            quantity INTEGER DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES mining_users(user_id)
+        )
+    """)
+    
+    # Таблица рекламы
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS mining_ads (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            text TEXT NOT NULL,
+            link TEXT NOT NULL,
+            active INTEGER DEFAULT 1,
+            created_at TEXT
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
 
+init_mining_db()
 
+# Конфигурация кирок
+PICKAXES = {
+    1: {"id": 1, "name": "⛏️ Деревянная кирка", "price": 15000, "rarity_bonus": 1.0, "durability": 100},
+    2: {"id": 2, "name": "🔨 Каменная кирка", "price": 40000, "rarity_bonus": 1.2, "durability": 150},
+    3: {"id": 3, "name": "⚒️ Железная кирка", "price": 65000, "rarity_bonus": 1.5, "durability": 200},
+    4: {"id": 4, "name": "⛓️ Стальная кирка", "price": 90000, "rarity_bonus": 1.8, "durability": 250},
+    5: {"id": 5, "name": "💎 Алмазная кирка", "price": 150000, "rarity_bonus": 2.2, "durability": 300},
+    6: {"id": 6, "name": "🔥 Огненная кирка", "price": 300000, "rarity_bonus": 2.7, "durability": 350},
+    7: {"id": 7, "name": "✨ Божественная кирка", "price": 600000, "rarity_bonus": 3.5, "durability": 500}
+}
+
+# Конфигурация руд (30 видов)
+ORES = {
+    "🪨 Камень": {"price": 50, "rarity": 30},
+    "🪵 Уголь": {"price": 100, "rarity": 25},
+    "🔶 Медь": {"price": 200, "rarity": 20},
+    "⚪ Олово": {"price": 350, "rarity": 18},
+    "🟡 Железо": {"price": 500, "rarity": 15},
+    "🔘 Свинец": {"price": 700, "rarity": 13},
+    "🟢 Цинк": {"price": 900, "rarity": 12},
+    "🟤 Никель": {"price": 1200, "rarity": 10},
+    "🔵 Алюминий": {"price": 1500, "rarity": 9},
+    "🟣 Магний": {"price": 1800, "rarity": 8},
+    "🔴 Титан": {"price": 2200, "rarity": 7},
+    "⚫ Вольфрам": {"price": 2700, "rarity": 6},
+    "🟠 Кобальт": {"price": 3200, "rarity": 5},
+    "🔷 Серебро": {"price": 4000, "rarity": 4},
+    "🟡 Золото": {"price": 5000, "rarity": 3.5},
+    "🔶 Платина": {"price": 6500, "rarity": 3},
+    "💎 Изумруд": {"price": 8500, "rarity": 2.0},
+    "🔵 Сапфир": {"price": 11000, "rarity": 2},
+    "🔴 Рубин": {"price": 14000, "rarity": 1.1},
+    "💎 Алмаз": {"price": 18000, "rarity": 1.0},
+    "✨ Кристалл": {"price": 23000, "rarity": 0.7},
+    "🌟 Звездная пыль": {"price": 29000, "rarity": 0.7},
+    "🌕 Лунный камень": {"price": 36000, "rarity": 0.6},
+    "☀️ Солнечный камень": {"price": 45000, "rarity": 0.3},
+    "⚡ Громовой камень": {"price": 55000, "rarity": 0.3},
+    "❄️ Ледяной кристалл": {"price": 68000, "rarity": 0.2},
+    "🔥 Огненный кристалл": {"price": 82000, "rarity": 0.2},
+    "💫 Космическая руда": {"price": 100000, "rarity": 0.19},
+    "🌈 Радужная руда": {"price": 120000, "rarity": 0.12},
+    "👑 Королевская руда": {"price": 150000, "rarity": 0.1}
+}
+
+def get_mining_user(user_id):
+    """Получает данные пользователя шахты"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT pickaxe_id, energy, max_energy, pickaxe_durability, max_durability, 
+               total_ores_mined, last_energy_regen, last_mining_time 
+        FROM mining_users WHERE user_id = ?
+    """, (user_id,))
+    
+    result = c.fetchone()
+    
+    if not result:
+        # Создаем нового пользователя
+        now = datetime.now().isoformat()
+        c.execute("""
+            INSERT INTO mining_users 
+            (user_id, pickaxe_id, energy, max_energy, pickaxe_durability, max_durability, 
+             total_ores_mined, last_energy_regen, last_mining_time) 
+            VALUES (?, 1, 50, 50, 100, 100, 0, ?, ?)
+        """, (user_id, now, now))
+        conn.commit()
+        
+        conn.close()
+        return {
+            "pickaxe_id": 1,
+            "energy": 50,
+            "max_energy": 50,
+            "pickaxe_durability": 100,
+            "max_durability": 100,
+            "total_ores_mined": 0,
+            "last_energy_regen": now,
+            "last_mining_time": now
+        }
+    
+    conn.close()
+    
+    return {
+        "pickaxe_id": result[0],
+        "energy": result[1],
+        "max_energy": result[2],
+        "pickaxe_durability": result[3],
+        "max_durability": result[4],
+        "total_ores_mined": result[5],
+        "last_energy_regen": result[6],
+        "last_mining_time": result[7]
+    }
+
+def update_mining_user(user_id, data):
+    """Обновляет данные пользователя шахты"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    c.execute("""
+        UPDATE mining_users SET 
+        pickaxe_id = ?, energy = ?, max_energy = ?, pickaxe_durability = ?, 
+        max_durability = ?, total_ores_mined = ?, last_energy_regen = ?, last_mining_time = ?
+        WHERE user_id = ?
+    """, (
+        data["pickaxe_id"], data["energy"], data["max_energy"], 
+        data["pickaxe_durability"], data["max_durability"], data["total_ores_mined"],
+        data["last_energy_regen"], data["last_mining_time"], user_id
+    ))
+    
+    conn.commit()
+    conn.close()
+
+def get_user_ores(user_id):
+    """Получает все руды пользователя"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT ore_name, quantity FROM mining_ores WHERE user_id = ?", (user_id,))
+    ores = c.fetchall()
+    
+    conn.close()
+    return {ore_name: quantity for ore_name, quantity in ores}
+
+def add_ore_to_user(user_id, ore_name, quantity=1):
+    """Добавляет руду пользователю"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    # Проверяем, есть ли уже такая руда
+    c.execute("SELECT quantity FROM mining_ores WHERE user_id = ? AND ore_name = ?", (user_id, ore_name))
+    result = c.fetchone()
+    
+    if result:
+        # Обновляем количество
+        new_quantity = result[0] + quantity
+        c.execute("UPDATE mining_ores SET quantity = ? WHERE user_id = ? AND ore_name = ?", 
+                 (new_quantity, user_id, ore_name))
+    else:
+        # Добавляем новую руду
+        c.execute("INSERT INTO mining_ores (user_id, ore_name, quantity) VALUES (?, ?, ?)", 
+                 (user_id, ore_name, quantity))
+    
+    conn.commit()
+    conn.close()
+
+def clear_user_ores(user_id):
+    """Очищает все руды пользователя"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    c.execute("DELETE FROM mining_ores WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+def calculate_ores_value(user_id):
+    """Вычисляет общую стоимость всех руд пользователя"""
+    ores = get_user_ores(user_id)
+    total_value = 0
+    
+    for ore_name, quantity in ores.items():
+        if ore_name in ORES:
+            total_value += ORES[ore_name]["price"] * quantity
+    
+    return total_value
+
+def get_total_ores_count(user_id):
+    """Получает общее количество всех руд"""
+    ores = get_user_ores(user_id)
+    return sum(quantity for quantity in ores.values())
+
+def regenerate_energy(user_id):
+    """Восстанавливает энергию (1 энергия каждые 2 минуты)"""
+    user_data = get_mining_user(user_id)
+    now = datetime.now()
+    
+    if user_data["last_energy_regen"]:
+        last_regen = datetime.fromisoformat(user_data["last_energy_regen"])
+        minutes_passed = (now - last_regen).total_seconds() / 60
+        
+        if minutes_passed >= 2 and user_data["energy"] < user_data["max_energy"]:
+            # Восстанавливаем энергию (1 за каждые 2 минуты)
+            energy_to_add = int(minutes_passed // 2)
+            user_data["energy"] = min(user_data["max_energy"], user_data["energy"] + energy_to_add)
+            user_data["last_energy_regen"] = now.isoformat()
+            update_mining_user(user_id, user_data)
+    
+    return user_data
+
+def can_mine(user_id):
+    """Проверяет, может ли пользователь копать"""
+    user_data = get_mining_user(user_id)
+    
+    # Регенерируем энергию
+    user_data = regenerate_energy(user_id)
+    
+    # Проверяем кулдаун (2 секунды)
+    if user_data["last_mining_time"]:
+        last_mine = datetime.fromisoformat(user_data["last_mining_time"])
+        if (datetime.now() - last_mine).total_seconds() < 2:
+            return False, "⏳ Подожди 2 секунды перед следующим копанием!"
+    
+    # Проверяем энергию
+    if user_data["energy"] <= 0:
+        return False, "⚡ У тебя закончилась энергия! Подожди пока восстановится."
+    
+    # Проверяем прочность кирки
+    if user_data["pickaxe_durability"] <= 0:
+        return False, "⛏️ Твоя кирка сломалась! Купи новую в магазине."
+    
+    return True, "✅ Можно копать"
+
+def get_random_ore(pickaxe_id):
+    """Получает случайную руду с учетом бонуса кирки"""
+    pickaxe = PICKAXES[pickaxe_id]
+    rarity_bonus = pickaxe["rarity_bonus"]
+    
+    # Создаем взвешенный список с учетом бонуса кирки
+    weighted_ores = []
+    for ore_name, ore_data in ORES.items():
+        # Улучшаем шансы на редкие руды в зависимости от кирки
+        weight = max(1, int(ore_data["rarity"] * rarity_bonus * 100))
+        weighted_ores.extend([ore_name] * weight)
+    
+    return random.choice(weighted_ores)
+
+def get_active_ad():
+    """Получает активную рекламу"""
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT text, link FROM mining_ads WHERE active = 1 ORDER BY id DESC LIMIT 1")
+    result = c.fetchone()
+    
+    conn.close()
+    
+    if result:
+        return {"text": result[0], "link": result[1]}
+    return None
+
+def check_button_owner(call, user_id):
+    """Проверяет владельца кнопки для шахты"""
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "⛏️ Это не твоя кнопка!", show_alert=True)
+        return False
+    return True
+    
+    # ================== КОМАНДА: МОЯ ШАХТА ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["моя шахта", "шахта"])
+def my_mine(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    # Получаем активную рекламу
+    ad = get_active_ad()
+    
+    text = f"⛏️ {mention}, это твоя шахта, зарабатывай и находи много редких видов руд 💎"
+    
+    # Добавляем рекламу если есть
+    if ad:
+        text += f"\n\n📢 {ad['text']}\n{ad['link']}"
+    
+    kb = InlineKeyboardMarkup(row_width=2)
+    kb.add(
+        InlineKeyboardButton("⛏️ Магазин кирок", callback_data=f"mine_pickaxe_shop_{user_id}"),
+        InlineKeyboardButton("🎒 Инвентарь", callback_data=f"mine_inventory_{user_id}")
+    )
+    kb.add(InlineKeyboardButton("👤 Мой профиль", callback_data=f"mine_profile_{user_id}"))
+    
+    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+# ================== МАГАЗИН КИРОК ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_pickaxe_shop_"))
+def pickaxe_shop(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        if not check_button_owner(call, user_id):
+            return
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"🛒 {mention}, магазин кирок:\n\n"
+        
+        for pick_id, pick_data in PICKAXES.items():
+            if pick_id == 1:
+                text += f"⛏️ <b>{pick_data['name']}</b> (Дешёвая)\n"
+            else:
+                text += f"⛏️ <b>{pick_data['name']}</b> - {format_number(pick_data['price'])}$\n"
+            text += f"   └─ Бонус: x{pick_data['rarity_bonus']} | Прочность: {pick_data['durability']}\n\n"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        
+        # Кнопки для покупки кирок (кроме деревянной)
+        for pick_id in range(2, 8):
+            pick_data = PICKAXES[pick_id]
+            kb.add(InlineKeyboardButton(
+                pick_data["name"], 
+                callback_data=f"mine_buy_pickaxe_{user_id}_{pick_id}"
+            ))
+        
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"mine_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка магазина кирок: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== ПОКУПКА КИРКИ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_buy_pickaxe_"))
+def buy_pickaxe(call):
+    try:
+        parts = call.data.split("_")
+        user_id = int(parts[3])
+        pickaxe_id = int(parts[4])
+        
+        if not check_button_owner(call, user_id):
+            return
+        
+        if pickaxe_id not in PICKAXES:
+            bot.answer_callback_query(call.id, "❌ Неверная кирка!", show_alert=True)
+            return
+        
+        pickaxe_data = PICKAXES[pickaxe_id]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, ты точно хочешь купить именно <b>{pickaxe_data['name']}</b>?"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("✅ Да", callback_data=f"mine_confirm_buy_{user_id}_{pickaxe_id}"),
+            InlineKeyboardButton("❌ Нет", callback_data=f"mine_pickaxe_shop_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка покупки кирки: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_confirm_buy_"))
+def confirm_buy_pickaxe(call):
+    try:
+        parts = call.data.split("_")
+        user_id = int(parts[3])
+        pickaxe_id = int(parts[4])
+        
+        if not check_button_owner(call, user_id):
+            return
+        
+        if pickaxe_id not in PICKAXES:
+            bot.answer_callback_query(call.id, "❌ Неверная кирка!", show_alert=True)
+            return
+        
+        pickaxe_data = PICKAXES[pickaxe_id]
+        
+        # Проверяем баланс
+        user_data = get_user_data(user_id)
+        
+        if user_data["balance"] < pickaxe_data["price"]:
+            bot.answer_callback_query(call.id, "❌ Недостаточно средств!", show_alert=True)
+            return
+        
+        # Списываем деньги
+        user_data["balance"] -= pickaxe_data["price"]
+        save_casino_data()
+        
+        # Обновляем кирку пользователя
+        mining_user = get_mining_user(user_id)
+        mining_user["pickaxe_id"] = pickaxe_id
+        mining_user["pickaxe_durability"] = pickaxe_data["durability"]
+        mining_user["max_durability"] = pickaxe_data["durability"]
+        update_mining_user(user_id, mining_user)
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"✅ {mention}, успешная покупка кирки <b>{pickaxe_data['name']}</b>!"
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ В шахту", callback_data=f"mine_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id, "✅ Кирка куплена!")
+        
+    except Exception as e:
+        logger.error(f"Ошибка подтверждения покупки: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== ИНВЕНТАРЬ ШАХТЫ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_inventory_"))
+def mine_inventory(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        if not check_button_owner(call, user_id):
+            return
+        
+        mining_user = get_mining_user(user_id)
+        pickaxe_data = PICKAXES[mining_user["pickaxe_id"]]
+        total_ores = get_total_ores_count(user_id)
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = (
+            f"🎒 {mention}, это твой инвентарь в шахте:\n\n"
+            f"⚡ Энергий: {mining_user['energy']}/{mining_user['max_energy']}\n"
+            f"⛏️ Твоя кирка: {pickaxe_data['name']}\n"
+            f"🎒 Всего найдено руд: {total_ores}"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("💱 Мои руды", callback_data=f"mine_my_ores_{user_id}"),
+            InlineKeyboardButton("⬅️ Назад", callback_data=f"mine_back_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка инвентаря: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== МОИ РУДЫ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_my_ores_"))
+def my_ores(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        if not check_button_owner(call, user_id):
+            return
+        
+        ores = get_user_ores(user_id)
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        if not ores:
+            text = f"{mention}, к сожалению ты ещё не добывал руду, начни добывать по команде: <code>копать</code> или <code>копать шахту</code>"
+        else:
+            text = f"{mention}, все твои руды:\n\n"
+            total_value = 0
+            
+            for ore_name, quantity in sorted(ores.items(), key=lambda x: ORES[x[0]]["price"], reverse=True):
+                ore_price = ORES[ore_name]["price"]
+                ore_value = ore_price * quantity
+                total_value += ore_value
+                text += f"{ore_name} ×{quantity} - {format_number(ore_value)}$\n"
+            
+            text += f"\n💰 Общая стоимость: {format_number(total_value)}$"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        
+        if ores:
+            kb.add(InlineKeyboardButton("💰 Продать все руды", callback_data=f"mine_sell_all_{user_id}"))
+        
+        kb.add(
+            InlineKeyboardButton("⬅️ Назад", callback_data=f"mine_inventory_{user_id}"),
+            InlineKeyboardButton("⛏️ В шахту", callback_data=f"mine_back_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка показа руд: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== ПРОДАЖА ВСЕХ РУД ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_sell_all_"))
+def sell_all_ores(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        if not check_button_owner(call, user_id):
+            return
+        
+        total_value = calculate_ores_value(user_id)
+        
+        if total_value == 0:
+            bot.answer_callback_query(call.id, "❌ Нет руд для продажи!", show_alert=True)
+            return
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, вы точно хотите продать все руды за <code>{format_number(total_value)}$</code>?"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("✅ Да", callback_data=f"mine_confirm_sell_{user_id}"),
+            InlineKeyboardButton("❌ Нет", callback_data=f"mine_my_ores_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка продажи руд: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_confirm_sell_"))
+def confirm_sell_all(call):
+    try:
+        user_id = int(call.data.split("_")[3])
+        if not check_button_owner(call, user_id):
+            return
+        
+        total_value = calculate_ores_value(user_id)
+        
+        if total_value == 0:
+            bot.answer_callback_query(call.id, "❌ Нет руд для продажи!", show_alert=True)
+            return
+        
+        # Начисляем деньги
+        user_data = get_user_data(user_id)
+        user_data["balance"] += total_value
+        save_casino_data()
+        
+        # Очищаем руды
+        clear_user_ores(user_id)
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"✅ {mention}, все руды проданы за <code>{format_number(total_value)}$</code>!"
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ В инвентарь", callback_data=f"mine_inventory_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id, f"✅ +{format_number(total_value)}$")
+        
+    except Exception as e:
+        logger.error(f"Ошибка подтверждения продажи: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+        
+        # ================== ПРОФИЛЬ ШАХТЫ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_profile_"))
+def mine_profile(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        if not check_button_owner(call, user_id):
+            return
+        
+        mining_user = get_mining_user(user_id)
+        pickaxe_data = PICKAXES[mining_user["pickaxe_id"]]
+        total_ores = get_total_ores_count(user_id)
+        user_data = get_user_data(user_id)
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = (
+            f"👤 {mention}, это твой профиль для ознакомления с текущими данными:\n\n"
+            f"⚡ Энергий всего: {mining_user['energy']}/{mining_user['max_energy']}\n"
+            f"⛏️ Твоя кирка: {pickaxe_data['name']} | {mining_user['pickaxe_durability']}/{mining_user['max_durability']}\n"
+            f"🚥 Всего руд: {total_ores}\n"
+            f"💰 Текущий баланс: {format_number(user_data['balance'])}$"
+        )
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"mine_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка профиля: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== КОПАНИЕ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["копать", "копать шахту"])
+def mine_ore(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    # Проверяем, может ли пользователь копать
+    can_mine_result, message_text = can_mine(user_id)
+    
+    if not can_mine_result:
+        bot.reply_to(message, message_text, parse_mode="HTML")
+        return
+    
+    mining_user = get_mining_user(user_id)
+    
+    # Проверяем наличие кирки
+    if mining_user["pickaxe_id"] == 1 and PICKAXES[1]["name"] == "⛏️ Деревянная кирка":
+        # У всех есть деревянная кирка по умолчанию
+        pass
+    
+    # Получаем случайную руду
+    ore_found = get_random_ore(mining_user["pickaxe_id"])
+    ore_price = ORES[ore_found]["price"]
+    
+    # Обновляем данные пользователя
+    mining_user["energy"] -= 1
+    mining_user["pickaxe_durability"] -= 2
+    mining_user["total_ores_mined"] += 1
+    mining_user["last_mining_time"] = datetime.now().isoformat()
+    
+    # Проверяем, не сломалась ли кирка
+    if mining_user["pickaxe_durability"] <= 0:
+        mining_user["pickaxe_durability"] = 0
+    
+    update_mining_user(user_id, mining_user)
+    
+    # Добавляем руду в инвентарь
+    add_ore_to_user(user_id, ore_found)
+    
+    # Формируем ответ
+    text = (
+        f"⛏️ Копая шахту ты нашёл {ore_found} ({ore_price}$), потратив 1 энергию и две силы своей кирки\n"
+        f"⚡ Осталось энергии: {mining_user['energy']}/50\n"
+        f"⛏️ Осталось силы кирки: {mining_user['pickaxe_durability']}/{mining_user['max_durability']}"
+    )
+    
+    # Проверяем, не сломалась ли кирка
+    if mining_user["pickaxe_durability"] <= 0:
+        text += "\n\n⚠️ <b>Твоя кирка сломалась! Купи новую в магазине.</b>"
+    
+    bot.reply_to(message, text, parse_mode="HTML")
+
+# ================== ВОЗВРАТ В ШАХТУ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_back_"))
+def mine_back(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        if not check_button_owner(call, user_id):
+            return
+        
+        # Создаем фейковое сообщение
+        class FakeMessage:
+            def __init__(self, chat_id, from_user):
+                self.chat = type('Chat', (), {'id': chat_id})()
+                self.from_user = from_user
+        
+        fake_msg = FakeMessage(call.message.chat.id, call.from_user)
+        my_mine(fake_msg)
+        
+        # Удаляем старое сообщение
+        try:
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+        except:
+            pass
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка возврата в шахту: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== АДМИН КОМАНДА: +РЕКЛАМА ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "+реклама")
+def add_advertisement(message):
+    user_id = message.from_user.id
+    
+    if user_id not in ADMIN_IDS:
+        bot.reply_to(message, "❌ Эта команда только для администраторов!")
+        return
+    
+    bot.reply_to(message, "📢 Отправьте текст рекламы:")
+    bot.register_next_step_handler(message, process_ad_text)
+
+def process_ad_text(message):
+    user_id = message.from_user.id
+    
+    if user_id not in ADMIN_IDS:
+        return
+    
+    ad_text = message.text
+    
+    bot.reply_to(message, "🔗 Теперь отправьте ссылку для рекламы (Telegram чат/канал):")
+    bot.register_next_step_handler(message, process_ad_link, ad_text)
+
+def process_ad_link(message, ad_text):
+    user_id = message.from_user.id
+    
+    if user_id not in ADMIN_IDS:
+        return
+    
+    ad_link = message.text
+    
+    # Сохраняем рекламу в базу
+    conn = sqlite3.connect(MINING_DB)
+    c = conn.cursor()
+    
+    # Деактивируем старую рекламу
+    c.execute("UPDATE mining_ads SET active = 0 WHERE active = 1")
+    
+    # Добавляем новую рекламу
+    c.execute("INSERT INTO mining_ads (text, link, active, created_at) VALUES (?, ?, 1, ?)",
+              (ad_text, ad_link, datetime.now().isoformat()))
+    
+    conn.commit()
+    conn.close()
+    
+    bot.reply_to(message, "✅ Реклама занесена в профиль шахты всем участникам бота")
+
+print("✅ Система шахты загружена и готова к работе! ⛏️")
 
 PREFIX_DB = "prefixes.db"
 
@@ -8590,9 +9377,10 @@ COMMANDS_PAGES = [
         "title": "📋 <b>КОМАНДЫ - СТРАНИЦА 1/3</b>\n━━━━━━━━━━━━━━━━━",
         "content": """<b>ОСНОВНЫЕ КОМАНДЫ:</b>
 
-<code>/start</code> — главное меню
+<code>моя шахта</code> — главная меню твоей шахты
+<code>копать</code> — копать руду в шахте, альтернативная команда: копать шахту
 <code>/help</code> — помощь
-<code>баланс / б</code> — баланс
+<code>баланс</code> — баланс
 <code>топ</code> — топ игроков
 <code>бонус</code> — ежедневный бонус
 <code>ферма</code> — фарм валюты
