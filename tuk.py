@@ -1286,56 +1286,140 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# ID подарков
+# ID подарков (Telegram Premium Gifts)
 ALLOWED_GIFTS = [
-    "5170145012310081615",
-    "5170250947678437525",
-    "5170564780938756245",
-    "5170521118301225164"
+    "5170145012310081615",  # 🎁 Gift 1
+    "5170250947678437525",  # 🎁 Gift 2
+    "5170564780938756245",  # 🎁 Gift 3
+    "5170521118301225164"   # 🎁 Gift 4
 ]
 
 @bot.message_handler(commands=['wp'])
 def send_custom_gift(message: Message):
+    """
+    Отправляет подарок указанному пользователю.
+    Форматы использования:
+    1. /wp - отправить подарок себе
+    2. /wp @username - отправить подарок пользователю по username
+    3. /wp 123456789 - отправить подарок пользователю по ID
+    4. Ответить на сообщение с командой /wp - отправить подарок тому, кому ответили
+    """
     try:
+        # Разбираем команду
+        args = message.text.split()
+        target_user_id = message.from_user.id
+        target_name = "тебе"
+        
+        # Определяем цель отправки
+        if message.reply_to_message:
+            # Если ответ на сообщение - отправляем тому, кому ответили
+            target_user_id = message.reply_to_message.from_user.id
+            target_name = f"пользователю {message.reply_to_message.from_user.first_name}"
+        elif len(args) > 1:
+            arg = args[1]
+            
+            if arg.startswith('@'):
+                # Поиск по username
+                try:
+                    user = bot.get_chat(arg)
+                    target_user_id = user.id
+                    target_name = f"пользователю @{arg[1:]}"
+                except:
+                    bot.reply_to(message, "❌ Пользователь не найден!")
+                    return
+            else:
+                # По ID
+                try:
+                    target_user_id = int(arg)
+                    # Получаем информацию о пользователе
+                    try:
+                        target_user = bot.get_chat(target_user_id)
+                        target_name = f"пользователю {target_user.first_name}"
+                    except:
+                        target_name = f"пользователю с ID {target_user_id}"
+                except ValueError:
+                    bot.reply_to(message, "❌ Неверный формат! Используйте ID или @username")
+                    return
+        
+        # Проверяем, не пытаются ли отправить подарок боту
+        try:
+            target_user = bot.get_chat(target_user_id)
+            if target_user.is_bot:
+                bot.reply_to(message, "❌ Нельзя отправить подарок боту!")
+                return
+        except:
+            pass
+        
         # Выбираем первый доступный подарок из списка
         gift_id = ALLOWED_GIFTS[0]
         
         params = {
             "chat_id": message.chat.id,
-            "user_id": message.from_user.id,
+            "user_id": target_user_id,
             "gift_id": gift_id,
-            "text": "🎁 Подарок от Meow Game"
+            "text": "🎁 Подарок от Meow Game | by Parviz"
         }
         
-        # Отправляем запрос
+        # Отправляем запрос к Telegram API
         response = requests.post(
             f"https://api.telegram.org/bot{bot.token}/sendGift",
-            json=params
+            json=params,
+            timeout=10
         )
         
         # Проверяем ответ
-        if response.status_code == 200 and response.json().get('ok'):
-            bot.reply_to(message, "🎉 Подарок успешно отправлен!")
-            logging.info(f"Успешная отправка подарка {gift_id} пользователю {message.from_user.id}")
+        response_data = response.json()
+        
+        if response.status_code == 200 and response_data.get('ok'):
+            if target_user_id == message.from_user.id:
+                reply_text = "🎉 Подарок успешно отправлен тебе!"
+            else:
+                reply_text = f"🎉 Подарок успешно отправлен {target_name}!"
+            
+            bot.reply_to(message, reply_text)
+            logging.info(f"Успешная отправка подарка {gift_id} пользователю {target_user_id}")
             return
         
-        # Если что-то пошло не так
-        error_data = response.json()
-        error_message = error_data.get('description', 'Неизвестная ошибка')
-        bot.reply_to(message, f"❌ Ошибка при отправке подарка: {error_message}")
-        logging.error(f"Ошибка отправки подарка {gift_id}: {error_data}")
+        # Обработка ошибок от Telegram API
+        error_code = response_data.get('error_code')
+        error_message = response_data.get('description', 'Неизвестная ошибка')
+        
+        # Кастомные сообщения для разных ошибок
+        if error_code == 400:
+            if "gift not available" in error_message.lower():
+                bot.reply_to(message, "❌ Этот подарок недоступен в данном регионе")
+            elif "user not found" in error_message.lower():
+                bot.reply_to(message, "❌ Пользователь не найден")
+            else:
+                bot.reply_to(message, f"❌ Ошибка запроса: {error_message}")
+        
+        elif error_code == 403:
+            bot.reply_to(message, "❌ У бота недостаточно прав для отправки подарков")
+        
+        elif error_code == 429:
+            bot.reply_to(message, "⏳ Слишком много запросов. Попробуйте позже")
+        
+        else:
+            bot.reply_to(message, f"❌ Ошибка при отправке подарка: {error_message}")
+        
+        logging.error(f"Ошибка отправки подарка {gift_id}: {response_data}")
+        
+    except requests.exceptions.Timeout:
+        logging.error(f"Таймаут при отправке подарка")
+        bot.reply_to(message, "⏳ Время ожидания истекло. Попробуйте позже.")
         
     except requests.exceptions.RequestException as req_err:
         logging.error(f"Сетевая ошибка: {req_err}")
-        bot.reply_to(message, "❌ Произошла сетевая ошибка. Попробуйте позже.")
+        bot.reply_to(message, "❌ Произошла сетевая ошибка. Проверьте подключение к интернету.")
         
     except Exception as e:
-        logging.exception(f"Критическая ошибка: {str(e)}")
-        bot.reply_to(message, "❌ Произошла внутренняя ошибка.")
+        logging.exception(f"Критическая ошибка в send_custom_gift: {str(e)}")
+        bot.reply_to(message, "❌ Произошла внутренняя ошибка бота.")
 
 def handle_exception(bot, error):
+    """Глобальный обработчик исключений бота"""
     logging.critical(f"Критическая ошибка в боте: {str(error)}")
-    bot.stop_polling()
+    # Можно добавить уведомление администраторам о критической ошибке
 
 # Подключаем обработчик ошибок
 bot.error_handler = handle_exception
