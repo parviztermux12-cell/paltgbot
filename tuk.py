@@ -2480,8 +2480,8 @@ def buy_autotrash(call):
         
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("✅ Купить за 240.000$", callback_data=f"confirm_autotrash_{user_id}"),
-            InlineKeyboardButton("❌ Отмена", callback_data=f"cancel_autotrash_{user_id}")
+            InlineKeyboardButton("✅", callback_data=f"confirm_autotrash_{user_id}"),
+            InlineKeyboardButton("❌", callback_data=f"cancel_autotrash_{user_id}")
         )
         
         bot.edit_message_text(
@@ -3091,10 +3091,10 @@ def my_mine(message):
     
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
-        InlineKeyboardButton("⛏️ Магазин кирок", callback_data=f"mine_pickaxe_shop_{user_id}"),
-        InlineKeyboardButton("🎒 Инвентарь", callback_data=f"mine_inventory_{user_id}")
+        InlineKeyboardButton("⛏️", callback_data=f"mine_pickaxe_shop_{user_id}"),
+        InlineKeyboardButton("🎒", callback_data=f"mine_inventory_{user_id}")
     )
-    kb.add(InlineKeyboardButton("👤 Мой профиль", callback_data=f"mine_profile_{user_id}"))
+    kb.add(InlineKeyboardButton("👤", callback_data=f"mine_profile_{user_id}"))
     
     bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
 
@@ -3164,8 +3164,8 @@ def buy_pickaxe(call):
         
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("✅ Да", callback_data=f"mine_confirm_buy_{user_id}_{pickaxe_id}"),
-            InlineKeyboardButton("❌ Нет", callback_data=f"mine_pickaxe_shop_{user_id}")
+            InlineKeyboardButton("✅", callback_data=f"mine_confirm_buy_{user_id}_{pickaxe_id}"),
+            InlineKeyboardButton("❌", callback_data=f"mine_pickaxe_shop_{user_id}")
         )
         
         bot.edit_message_text(
@@ -3234,7 +3234,6 @@ def confirm_buy_pickaxe(call):
     except Exception as e:
         logger.error(f"Ошибка подтверждения покупки: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
 # ================== ИНВЕНТАРЬ ШАХТЫ ==================
 @bot.callback_query_handler(func=lambda c: c.data.startswith("mine_inventory_"))
 def mine_inventory(call):
@@ -3299,11 +3298,18 @@ def my_ores(call):
             
             text += f"\n💰 Общая стоимость: {format_number(total_value)}$"
         
-        kb = InlineKeyboardMarkup(row_width=2)
-        
+        kb = InlineKeyboardMarkup(row_width=1)
+
         if ores:
-            kb.add(InlineKeyboardButton("💰 Продать все руды", callback_data=f"mine_sell_all_{user_id}"))
-        
+            kb.add(InlineKeyboardButton(" Продать все", callback_data=f"mine_sell_all_{user_id}"))
+            for ore_name, quantity in ores.items():
+                kb.add(
+                    InlineKeyboardButton(
+                        f"Продать {ore_name} ×{quantity}",
+                        callback_data=f"mine_sell_ore_{user_id}_{ore_name}"
+                    )
+                )
+
         kb.add(
             InlineKeyboardButton("⬅️ Назад", callback_data=f"mine_inventory_{user_id}"),
             InlineKeyboardButton("⛏️ В шахту", callback_data=f"mine_back_{user_id}")
@@ -3327,25 +3333,33 @@ def my_ores(call):
 def sell_all_ores(call):
     try:
         user_id = int(call.data.split("_")[3])
+        
         if not check_button_owner(call, user_id):
             return
-        
-        total_value = calculate_ores_value(user_id)
-        
-        if total_value == 0:
-            bot.answer_callback_query(call.id, "❌ Нет руд для продажи!", show_alert=True)
+
+        ores = get_user_ores(user_id)
+        if not ores:
+            bot.answer_callback_query(call.id, "❌ У тебя нет руд для продажи!", show_alert=True)
             return
-        
+
+        # Считаем общую стоимость
+        total_value = 0
+        for ore_name, quantity in ores.items():
+            if ore_name in ORES:
+                total_value += ORES[ore_name]["price"] * quantity
+
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        text = f"{mention}, вы точно хотите продать все руды за <code>{format_number(total_value)}$</code>?"
-        
+        text = (
+            f"{mention}, ты точно хочешь продать ВСЕ руды?\n\n"
+            f"💰 Общая стоимость: <code>{format_number(total_value)}$</code>"
+        )
+
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("✅ Да", callback_data=f"mine_confirm_sell_{user_id}"),
-            InlineKeyboardButton("❌ Нет", callback_data=f"mine_my_ores_{user_id}")
+            InlineKeyboardButton("✅", callback_data=f"mine_confirm_sell_all_{user_id}"),
+            InlineKeyboardButton("❌", callback_data=f"mine_my_ores_{user_id}")
         )
-        
+
         bot.edit_message_text(
             text,
             call.message.chat.id,
@@ -3354,39 +3368,60 @@ def sell_all_ores(call):
             reply_markup=kb
         )
         bot.answer_callback_query(call.id)
-        
-    except Exception as e:
-        logger.error(f"Ошибка продажи руд: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_confirm_sell_"))
-def confirm_sell_all(call):
+    except Exception as e:
+        logger.error(f"Ошибка продажи всех руд: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
+
+# ================== ПОДТВЕРЖДЕНИЕ ПРОДАЖИ ВСЕХ РУД ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_confirm_sell_all_"))
+def confirm_sell_all_ores(call):
     try:
-        user_id = int(call.data.split("_")[3])
+        user_id = int(call.data.split("_")[4])
+        
         if not check_button_owner(call, user_id):
             return
-        
-        total_value = calculate_ores_value(user_id)
-        
-        if total_value == 0:
-            bot.answer_callback_query(call.id, "❌ Нет руд для продажи!", show_alert=True)
+
+        ores = get_user_ores(user_id)
+        if not ores:
+            bot.answer_callback_query(call.id, "❌ У тебя нет руд для продажи!", show_alert=True)
             return
-        
+
+        # Считаем общую стоимость
+        total_value = 0
+        sold_items = []
+        for ore_name, quantity in ores.items():
+            if ore_name in ORES:
+                ore_value = ORES[ore_name]["price"] * quantity
+                total_value += ore_value
+                sold_items.append(f"{ore_name} ×{quantity}")
+
         # Начисляем деньги
         user_data = get_user_data(user_id)
         user_data["balance"] += total_value
-        save_casino_data()
         
-        # Очищаем руды
+        # Очищаем инвентарь
         clear_user_ores(user_id)
         
+        save_casino_data()
+
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
         
-        text = f"✅ {mention}, все руды проданы за <code>{format_number(total_value)}$</code>!"
-        
+        # Формируем список проданных руд (первые 5, если много)
+        sold_list = "\n".join(sold_items[:5])
+        if len(sold_items) > 5:
+            sold_list += f"\n... и ещё {len(sold_items) - 5} видов руд"
+
+        text = (
+            f"✅ {mention}, ты продал ВСЕ руды!\n\n"
+            f"💰 Получено: <code>{format_number(total_value)}$</code>\n"
+            f"📦 Баланс: <code>{format_number(user_data['balance'])}$</code>\n\n"
+            f"📋 Проданные руды:\n{sold_list}"
+        )
+
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("⬅️ В инвентарь", callback_data=f"mine_inventory_{user_id}"))
-        
+        kb.add(InlineKeyboardButton("⬅️ К рудам", callback_data=f"mine_my_ores_{user_id}"))
+
         bot.edit_message_text(
             text,
             call.message.chat.id,
@@ -3394,10 +3429,104 @@ def confirm_sell_all(call):
             parse_mode="HTML",
             reply_markup=kb
         )
-        bot.answer_callback_query(call.id, f"✅ +{format_number(total_value)}$")
-        
+        bot.answer_callback_query(call.id, f"+{format_number(total_value)}$")
+
     except Exception as e:
-        logger.error(f"Ошибка подтверждения продажи: {e}")
+        logger.error(f"Ошибка подтверждения продажи всех руд: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
+
+# ================== ПРОДАЖА ОДНОГО ТИПА РУД ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_sell_ore_"))
+def sell_single_ore(call):
+    try:
+        parts = call.data.split("_")
+        user_id = int(parts[3])
+        ore_name = parts[4]
+        
+        if not check_button_owner(call, user_id):
+            return
+
+        ores = get_user_ores(user_id)
+        if ore_name not in ores:
+            bot.answer_callback_query(call.id, "❌ У тебя нет этой руды!", show_alert=True)
+            return
+
+        quantity = ores[ore_name]
+        price = ORES[ore_name]["price"]
+        total = price * quantity
+
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        text = (
+            f"{mention}, ты точно хочешь продать\n"
+            f"<b>{ore_name} ×{quantity}</b>\n"
+            f"за <code>{format_number(total)}$</code>?"
+        )
+
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("✅", callback_data=f"mine_confirm_sell_ore_{user_id}_{ore_name}"),
+            InlineKeyboardButton("❌", callback_data=f"mine_my_ores_{user_id}")
+        )
+
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+
+    except Exception as e:
+        logger.error(f"Ошибка продажи руды: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== ПОДТВЕРЖДЕНИЕ ПРОДАЖИ ОДНОГО ТИПА РУД ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mine_confirm_sell_ore_"))
+def confirm_sell_single_ore(call):
+    try:
+        parts = call.data.split("_")
+        user_id = int(parts[4])
+        ore_name = parts[5]
+        
+        if not check_button_owner(call, user_id):
+            return
+
+        ores = get_user_ores(user_id)
+        if ore_name not in ores:
+            bot.answer_callback_query(call.id, "❌ Руда не найдена!", show_alert=True)
+            return
+
+        quantity = ores[ore_name]
+        price = ORES[ore_name]["price"]
+        total = price * quantity
+
+        # Начисляем деньги
+        user_data = get_user_data(user_id)
+        user_data["balance"] += total
+        
+        # Удаляем руду из инвентаря
+        add_ore_to_user(user_id, ore_name, -quantity)
+        
+        save_casino_data()
+
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        text = f"✅ {mention}, ты продал <b>{ore_name} ×{quantity}</b> за <code>{format_number(total)}$</code>"
+
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К рудам", callback_data=f"mine_my_ores_{user_id}"))
+
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id, f"+{format_number(total)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка подтверждения продажи руды: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
         
         # ================== ПРОФИЛЬ ШАХТЫ ==================
