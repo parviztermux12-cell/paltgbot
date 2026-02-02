@@ -20,7 +20,7 @@
   "новенький": {
     "amount": 25000,
     "max_activations": 10000,
-    "current_activations": 19,
+    "current_activations": 21,
     "activated_by": [
       7526512670,
       8293448450,
@@ -40,7 +40,9 @@
       5317756229,
       8452337057,
       6794415080,
-      8340514324
+      8340514324,
+      7652793353,
+      8458064859
     ]
   },
   "I47Z29V4": {
@@ -438,6 +440,60 @@
       8168027201,
       8121785280,
       7696828602
+    ]
+  },
+  "sosite": {
+    "amount": 50000,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      7526512670,
+      777000,
+      7307656251,
+      7696828602,
+      6512241065
+    ]
+  },
+  "ещё_sosite": {
+    "amount": 50000,
+    "max_activations": 9,
+    "current_activations": 9,
+    "activated_by": [
+      7526512670,
+      777000,
+      7307656251,
+      8340514324,
+      7865817563,
+      1448932943,
+      5317756229,
+      6512241065,
+      5203713503
+    ]
+  },
+  "маладес": {
+    "amount": 80000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8340514324
+    ]
+  },
+  "76": {
+    "amount": 20000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8121785280
+    ]
+  },
+  "3MQP9IYG": {
+    "amount": 4330,
+    "max_activations": 6,
+    "current_activations": 3,
+    "activated_by": [
+      7696828602,
+      6512241065,
+      1248832437
     ]
   }
 }
