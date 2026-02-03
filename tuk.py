@@ -15742,61 +15742,86 @@ def house_collect_callback(call):
     """Обработка сбора аренды"""
     try:
         user_id = int(call.data.split("_")[2])
-        
+
         # Проверяем владельца кнопки
         if not check_button_owner(call, user_id):
             return
-        
+
         user_data = get_user_data(user_id)
         user_mention = get_user_mention(call.from_user)
-        
+
         if not user_data.get("house"):
-            bot.answer_callback_query(call.id, "❌ У вас нет дома!", show_alert=True)
+            bot.answer_callback_query(call.id, "У вас нет дома!", show_alert=True)
             return
-        
+
         update_house_stats(user_data)
         house = user_data["house"]
-        accumulated = house["profit_accumulated"]
-        
+
+        accumulated = int(house["profit_accumulated"])
+        house["profit_accumulated"] = accumulated
+
         if accumulated <= 0:
-            bot.answer_callback_query(call.id, "💰 Нет накопленной аренды!", show_alert=True)
+            bot.answer_callback_query(call.id, "Нет накопленной аренды!", show_alert=True)
             return
-        
+
         # Начисляем аренду
-        user_data["balance"] += accumulated
+        user_data["balance"] = int(user_data["balance"] + accumulated)
         user_data["house"]["profit_accumulated"] = 0
         user_data["house"]["last_update"] = datetime.now().isoformat()
         save_casino_data()
-        
+
         # Обновляем сообщение
         house_info = HOUSE_DATA[house["name"]]
-        new_text = (f"🏠 <b>Ваш дом</b> | {user_mention}\n\n"
-                   f"🏡 <b>«{house['name'].capitalize()}»</b>\n\n"
-                   f"✅ <b>Аренда собрана!</b>\n"
-                   f"💰 Получено: {format_number(accumulated)}$\n"
-                   f"💳 Баланс: {format_number(user_data['balance'])}$\n\n"
-                   f"📈 Прибыль/час: {format_number(house_info['profit_per_hour'])}$")
-        
+        new_text = (
+            f"<b>Ваш дом</b> | {user_mention}\n\n"
+            f"<b>«{house['name'].capitalize()}»</b>\n\n"
+            f"<b>Аренда собрана!</b>\n"
+            f"Получено: {format_number(accumulated)}$\n"
+            f"Баланс: {format_number(user_data['balance'])}$\n\n"
+            f"Прибыль/час: {format_number(house_info['profit_per_hour'])}$"
+        )
+
         markup = InlineKeyboardMarkup()
         markup.row(
-            InlineKeyboardButton("💰 Собрать аренду", callback_data=f"house_collect_{user_id}"),
-            InlineKeyboardButton("🏠 Оплатить содержание", callback_data=f"house_upkeep_{user_id}")
+            InlineKeyboardButton("Собрать аренду", callback_data=f"house_collect_{user_id}"),
+            InlineKeyboardButton("Оплатить содержание", callback_data=f"house_upkeep_{user_id}")
         )
-        markup.row(InlineKeyboardButton("🏪 В магазин", callback_data=f"house_shop_{user_id}"))
-        
+        markup.row(
+            InlineKeyboardButton("В магазин", callback_data=f"house_shop_{user_id}")
+        )
+
         try:
-            bot.edit_message_text(new_text, call.message.chat.id, 
-                                 call.message.message_id, parse_mode="HTML", reply_markup=markup)
+            bot.edit_message_text(
+                new_text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=markup
+            )
         except:
-            bot.edit_message_caption(new_text, call.message.chat.id,
-                                   call.message.message_id, parse_mode="HTML", reply_markup=markup)
-        
-        bot.answer_callback_query(call.id, f"✅ Получено {format_number(accumulated)}$")
-        logger.info(f"Пользователь {call.from_user.username} собрал аренду: {accumulated}$")
-        
+            bot.edit_message_caption(
+                new_text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=markup
+            )
+
+        bot.answer_callback_query(
+            call.id,
+            f"Получено {format_number(accumulated)}$"
+        )
+        logger.info(
+            f"Пользователь {call.from_user.username} собрал аренду: {accumulated}$"
+        )
+
     except Exception as e:
         logger.error(f"Ошибка сбора аренды: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при сборе аренды!", show_alert=True)
+        bot.answer_callback_query(
+            call.id,
+            "Ошибка при сборе аренды!",
+            show_alert=True
+        )
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("house_upkeep_"))
 def house_upkeep_callback(call):
