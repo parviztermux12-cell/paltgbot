@@ -10965,7 +10965,7 @@ print("✅ Игры: футбол, баскетбол, тир и кубик за
 # ================== MINES 5x5 ==================
 config = {
     "mines_count": 5,
-    "mines_multiplier_increment": 0.1
+    "mines_multiplier_increment": 0.2
 }
 
 def start_mines(user_id, bet):
@@ -11024,35 +11024,43 @@ def mines_keyboard(user_id, reveal_all=False, hide_buttons=False):
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("мины "))
 def mines_command(message):
     user_id = message.from_user.id
-    parts = message.text.split()
-    
+    parts = message.text.split(maxsplit=1)
+
     if len(parts) < 2:
         return
-    
+
     try:
         bet = int(parts[1])
+
         if bet < 50:
             bot.reply_to(message, "❌ Мин. ставка: 50$")
             return
-            
-        u = get_user_data(user_id)
-        
-        if bet > u["balance"]:
+
+        user = get_user_data(user_id)
+
+        if bet > user["balance"]:
             bot.reply_to(message, "❌ Недостаточно средств!")
             return
-        
-        if start_mines(user_id, bet):
-            mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-            bot.send_message(
-                message.chat.id,
-                f"{mention}, ты начал игру в мины.\n"
-                f"💹 Коэффициент: 1.0",
-                parse_mode="HTML",
-                reply_markup=mines_keyboard(user_id)
-            )
-        else:
+
+        # 🔥 ВСЕГДА сбрасываем старую игру
+        stop_mines(user_id)  # если нет — просто удали эту строку
+
+        started = start_mines(user_id, bet)
+
+        if not started:
             bot.reply_to(message, "❌ Ошибка начала игры!")
-            
+            return
+
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+
+        bot.send_message(
+            message.chat.id,
+            f"{mention}, ты начал игру в мины.\n"
+            f"💹 Коэффициент: 1.0",
+            parse_mode="HTML",
+            reply_markup=mines_keyboard(user_id)
+        )
+
     except ValueError:
         bot.reply_to(message, "❌ Ставка должна быть числом!")
 

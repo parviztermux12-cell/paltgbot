@@ -1,6 +1,6 @@
 {
   "7526512670": {
-    "balance": 1337906.0,
+    "balance": 653853.0,
     "last_bonus": "2026-02-02",
     "stage": "finished",
     "game": "mines",
@@ -40,16 +40,16 @@
       "expires": null
     },
     "_user_id": 7526512670,
-    "mines_bet": 123,
+    "mines_bet": 279000000,
     "mines_positions": [
+      9,
       10,
-      17,
-      8,
-      12,
-      14
+      24,
+      5,
+      3
     ],
     "mines_revealed": [],
-    "mines_multiplier": 1.2000000000000002,
+    "mines_multiplier": 1.15,
     "last_farm": "2026-02-02T18:41:30.028343",
     "mines_message_id": 9046,
     "mines_chat_id": -1003058891966,
@@ -278,8 +278,8 @@
     "last_transfer_date": "2025-12-17",
     "first_move": true,
     "mines_open": [
-      20,
-      4
+      0,
+      24
     ],
     "mines_started": true
   },
@@ -312,7 +312,7 @@
     "_first_name": "𝙈𝙚𝙤𝙬 𝙂𝙖𝙢𝙚"
   },
   "1375612102": {
-    "balance": 49825390.0,
+    "balance": 52603404.0,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -357,17 +357,17 @@
     "_user_id": 1375612102,
     "mines_bet": 100000,
     "mines_positions": [
-      10,
-      8,
-      1,
-      19,
-      22
+      18,
+      23,
+      3,
+      22,
+      14
     ],
     "mines_revealed": [
       25,
       26
     ],
-    "mines_multiplier": 1.2000000000000002,
+    "mines_multiplier": 1.15,
     "last_farm": "2026-02-03T11:16:07.135429",
     "bet": 1000,
     "choice": "red",
@@ -590,13 +590,13 @@
     "_first_name": "...WΞIRLD...",
     "mines_owner": 1375612102,
     "mines_open": [
-      16,
-      11
+      7,
+      18
     ],
     "mines_started": true
   },
   "5694141752": {
-    "balance": 549780,
+    "balance": 331345,
     "last_bonus": "2026-02-01",
     "stage": "finished",
     "game": "mines",
@@ -629,18 +629,18 @@
       "last_income": "2025-12-24T08:44:28.318472"
     },
     "_user_id": 5694141752,
-    "mines_bet": 100000,
+    "mines_bet": 30000,
     "mines_positions": [
-      13,
-      11,
       21,
-      19,
-      5
+      0,
+      14,
+      12,
+      18
     ],
     "mines_revealed": [
       0
     ],
-    "mines_multiplier": 1.2000000000000002,
+    "mines_multiplier": 1.15,
     "last_farm": "2026-02-03T07:49:19.550823",
     "deck": [
       [
@@ -863,14 +863,13 @@
     "mines_msg_id": 464516,
     "mines_owner": 5694141752,
     "mines_open": [
-      4,
-      15,
-      19
+      9,
+      0
     ],
     "mines_started": true
   },
   "5203713503": {
-    "balance": 161469,
+    "balance": 321989,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -15804,7 +15803,7 @@
     "_user_id": 5491753170
   },
   "5646570650": {
-    "balance": 5000000,
+    "balance": 4670000,
     "last_bonus": "2026-02-01",
     "stage": "finished",
     "game": "mines",
@@ -21782,7 +21781,7 @@
     "_user_id": 8438421753
   },
   "7696828602": {
-    "balance": 8067250,
+    "balance": 20121518,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -21790,8 +21789,8 @@
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
-      "materials": 83,
-      "last_update": "2026-02-03T11:37:57.990979",
+      "materials": 76,
+      "last_update": "2026-02-03T19:20:34.369939",
       "profit_accumulated": 0
     },
     "house": null,
@@ -21813,18 +21812,18 @@
       "expires": null
     },
     "_user_id": 7696828602,
-    "mines_bet": 73000,
+    "mines_bet": 30000,
     "mines_positions": [
-      0,
-      2,
-      17,
-      24,
-      1
+      15,
+      21,
+      23,
+      1,
+      3
     ],
     "mines_revealed": [
       19
     ],
-    "mines_multiplier": 1.4,
+    "mines_multiplier": 1.0,
     "mines_msg_id": 32976,
     "mines_chat_id": -1003058891966,
     "_first_name": "•Викса",
@@ -21838,7 +21837,7 @@
     "transferred_today": 50000,
     "last_transfer_date": "2025-12-18",
     "mines_open": [
-      10
+      15
     ],
     "mines_started": true
   },
@@ -21924,8 +21923,8 @@
     "_user_id": 7786515660
   },
   "7985584520": {
-    "balance": 5077,
-    "last_bonus": "2026-01-11",
+    "balance": 7501,
+    "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -21935,11 +21934,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-11",
+      "date": "2026-02-03",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-11",
+      "date": "2026-02-03",
       "amount": 0
     },
     "bank_balance": 0,
@@ -21964,7 +21963,7 @@
     "mines_multiplier": 1.3000000000000003,
     "mines_msg_id": 32454,
     "mines_chat_id": -1003058891966,
-    "last_farm": "2026-01-11T09:12:35.561723",
+    "last_farm": "2026-02-03T18:21:43.079409",
     "mines_owner": 7985584520,
     "bet": 4000,
     "choice": "red",
@@ -22279,7 +22278,7 @@
     "last_farm": "2025-11-25T17:22:30.851499"
   },
   "8568012798": {
-    "balance": 48655,
+    "balance": 3109904,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -23437,7 +23436,7 @@
     "_user_id": 5095607272
   },
   "6689877443": {
-    "balance": 407575,
+    "balance": 4037262,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -23445,8 +23444,8 @@
     "business": {
       "name": "отель",
       "profit_per_hour": 10000,
-      "materials": 100,
-      "last_update": "2026-02-03T16:33:57.937900",
+      "materials": 98,
+      "last_update": "2026-02-03T19:22:10.141815",
       "profit_accumulated": 0
     },
     "house": null,
@@ -23487,7 +23486,7 @@
     "mines_msg_id": 23987,
     "mines_chat_id": -1003058891966,
     "_first_name": "ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ👨‍🦽ㅤㅤㅤ🚓🚑🚓🚓",
-    "last_farm": "2026-02-03T10:58:36.731406",
+    "last_farm": "2026-02-03T19:22:15.034199",
     "transferred_today": 10000,
     "last_transfer_date": "2025-12-17",
     "mines_owner": 6689877443,
@@ -32399,7 +32398,7 @@
     "_user_id": 6009149979
   },
   "1448932943": {
-    "balance": 47114,
+    "balance": 186704,
     "last_bonus": "2026-02-01",
     "stage": "finished",
     "game": "mines",
@@ -32408,8 +32407,8 @@
       "name": "автосалон",
       "profit_per_hour": 5000,
       "materials": 100,
-      "last_update": "2026-02-03T06:25:09.181697",
-      "profit_accumulated": 81415
+      "last_update": "2026-02-03T18:56:57.701582",
+      "profit_accumulated": 144065
     },
     "house": null,
     "car": null,
@@ -32433,18 +32432,18 @@
     "last_farm": "2026-02-01T22:49:12.283936",
     "_first_name": "Даврон",
     "mines_owner": 1448932943,
-    "mines_bet": 50000,
+    "mines_bet": 120000,
     "mines_positions": [
-      16,
-      9,
-      0,
+      10,
+      6,
+      3,
       18,
-      22
+      7
     ],
     "mines_open": [
-      0
+      20
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.15,
     "mines_started": true
   },
   "7625671037": {
@@ -34232,7 +34231,7 @@
     "_user_id": 6834778445
   },
   "5815880196": {
-    "balance": 0,
+    "balance": 900000,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -34257,7 +34256,7 @@
       "expires": null
     },
     "_user_id": 5815880196,
-    "last_farm": "2026-02-03T15:05:01.007785",
+    "last_farm": "2026-02-03T17:10:42.873745",
     "mines_owner": 5815880196,
     "mines_bet": 1000,
     "mines_positions": [
@@ -35210,7 +35209,7 @@
     "_user_id": 8335308191
   },
   "8168027201": {
-    "balance": 0,
+    "balance": 1500000,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -35235,21 +35234,20 @@
       "expires": null
     },
     "_user_id": 8168027201,
-    "last_farm": "2026-02-03T15:58:31.974571",
+    "last_farm": "2026-02-03T18:23:16.798332",
     "mines_owner": 8168027201,
-    "mines_bet": 250,
+    "mines_bet": 6605,
     "mines_positions": [
-      13,
+      19,
+      4,
       6,
-      10,
-      9,
-      4
+      11,
+      2
     ],
     "mines_open": [
-      23,
-      1
+      23
     ],
-    "mines_multiplier": 1.2000000000000002,
+    "mines_multiplier": 1.15,
     "mines_started": true,
     "_first_name": "Злой Columbus"
   },
@@ -36050,7 +36048,7 @@
     "_user_id": 5134314017
   },
   "6492371047": {
-    "balance": 3175,
+    "balance": 1753060,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -39046,7 +39044,7 @@
     "_user_id": 5080698146
   },
   "8328320271": {
-    "balance": 652,
+    "balance": 577,
     "last_bonus": "2026-01-31",
     "stage": "finished",
     "game": "mines",
@@ -39057,11 +39055,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-01-31",
+      "date": "2026-02-03",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-01-31",
+      "date": "2026-02-03",
       "amount": 0
     },
     "bank_balance": 0,
@@ -39625,7 +39623,7 @@
     "last_farm": "2026-02-01T13:21:39.155528"
   },
   "8323498717": {
-    "balance": 0,
+    "balance": 960,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -39664,7 +39662,8 @@
     ],
     "mines_multiplier": 1.0,
     "mines_started": true,
-    "last_farm": "2026-02-03T08:53:14.436653"
+    "last_farm": "2026-02-03T18:39:34.042441",
+    "_first_name": "swedow # razaчаrowan"
   },
   "8480318977": {
     "balance": 3538,
@@ -43957,8 +43956,8 @@
     "_user_id": 7967003543
   },
   "7307656251": {
-    "balance": 2222,
-    "last_bonus": "2026-02-02",
+    "balance": 75901327,
+    "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -43984,19 +43983,20 @@
     "_user_id": 7307656251,
     "last_farm": "2026-02-02T17:17:11.470458",
     "mines_owner": 7307656251,
-    "mines_bet": 13000,
+    "mines_bet": 100,
     "mines_positions": [
-      14,
-      6,
-      2,
-      0,
-      3
+      15,
+      3,
+      16,
+      20,
+      14
     ],
     "mines_open": [
-      6
+      23
     ],
-    "mines_multiplier": 1.0,
-    "mines_started": true
+    "mines_multiplier": 1.15,
+    "mines_started": true,
+    "_first_name": "Say me"
   },
   "7006061964": {
     "balance": 5000,
@@ -45901,7 +45901,7 @@
     "_user_id": 8034274149
   },
   "7865817563": {
-    "balance": 160995,
+    "balance": 317620,
     "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
@@ -45941,7 +45941,7 @@
     ],
     "mines_multiplier": 1.35,
     "mines_started": true,
-    "last_farm": "2026-02-03T10:07:06.816492"
+    "last_farm": "2026-02-03T18:23:04.859795"
   },
   "6416061633": {
     "balance": 9211,
@@ -47026,24 +47026,12 @@
     "_first_name": "Tamaev orig"
   },
   "6512241065": {
-    "balance": 106956245,
-    "last_bonus": "2026-02-02",
+    "balance": 11455,
+    "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
-    "tyanka": {
-      "name": "соня",
-      "satiety": 100,
-      "mood": 100,
-      "last_update": "2026-02-03T15:23:47.192755",
-      "profit_accumulated": 0
-    },
-    "business": {
-      "name": "отель",
-      "profit_per_hour": 10000,
-      "materials": 100,
-      "last_update": "2026-02-03T15:23:40.287974",
-      "profit_accumulated": 0
-    },
+    "tyanka": null,
+    "business": null,
     "house": null,
     "car": null,
     "pet": null,
@@ -47063,19 +47051,21 @@
       "expires": null
     },
     "_user_id": 6512241065,
-    "last_farm": "2026-02-02T16:04:14.459018",
+    "last_farm": "2026-02-03T19:22:19.793440",
     "mines_owner": 6512241065,
-    "mines_bet": 106950000,
+    "mines_bet": 100000,
     "mines_positions": [
-      24,
-      5,
-      2,
-      0,
+      22,
+      17,
+      15,
+      11,
+      13
+    ],
+    "mines_open": [
       12
     ],
-    "mines_open": [],
-    "mines_multiplier": 1.0,
-    "mines_started": false,
+    "mines_multiplier": 1.15,
+    "mines_started": true,
     "_first_name": "𝙰𝚁𝙱𝚄𝚉𝙸𝙺"
   },
   "8201500496": {
@@ -48182,24 +48172,12 @@
     "_user_id": 2034187373
   },
   "1248832437": {
-    "balance": 53138552,
-    "last_bonus": "2026-02-02",
+    "balance": 1034999,
+    "last_bonus": "2026-02-03",
     "stage": "finished",
     "game": "mines",
-    "tyanka": {
-      "name": "соня",
-      "satiety": 94,
-      "mood": 92,
-      "last_update": "2026-02-03T13:47:41.608321",
-      "profit_accumulated": 2184
-    },
-    "business": {
-      "name": "отель",
-      "profit_per_hour": 10000,
-      "materials": 98,
-      "last_update": "2026-02-03T13:46:50.675796",
-      "profit_accumulated": 0
-    },
+    "tyanka": null,
+    "business": null,
     "house": null,
     "car": null,
     "pet": null,
@@ -48220,18 +48198,20 @@
     },
     "_user_id": 1248832437,
     "mines_owner": 1248832437,
-    "mines_bet": 50000000,
+    "mines_bet": 900000,
     "mines_positions": [
-      17,
-      14,
-      13,
-      23,
-      24
+      6,
+      5,
+      22,
+      2,
+      11
     ],
-    "mines_open": [],
-    "mines_multiplier": 1.0,
-    "mines_started": false,
-    "last_farm": "2026-02-02T21:28:35.703878",
+    "mines_open": [
+      12
+    ],
+    "mines_multiplier": 1.15,
+    "mines_started": true,
+    "last_farm": "2026-02-03T19:09:48.312546",
     "_first_name": "Принц"
   },
   "5787460521": {
@@ -49210,9 +49190,9 @@
     "last_farm": "2026-01-29T11:53:53.582718"
   },
   "5317756229": {
-    "balance": 107423,
-    "last_bonus": "2026-02-02",
-    "stage": "finished",
+    "balance": 560822,
+    "last_bonus": "2026-02-03",
+    "stage": "mines",
     "game": "mines",
     "tyanka": null,
     "business": null,
@@ -49236,20 +49216,20 @@
     },
     "_user_id": 5317756229,
     "mines_owner": 5317756229,
-    "mines_bet": 317000,
+    "mines_bet": 400000,
     "mines_positions": [
-      13,
-      3,
-      2,
       9,
-      20
+      18,
+      4,
+      24,
+      16
     ],
     "mines_open": [
-      24
+      20
     ],
-    "mines_multiplier": 1.1,
+    "mines_multiplier": 1.15,
     "mines_started": true,
-    "last_farm": "2026-02-02T11:03:55.689924",
+    "last_farm": "2026-02-03T19:10:07.363491",
     "_first_name": "ディック"
   },
   "8340514324": {
