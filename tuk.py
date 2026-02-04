@@ -10158,7 +10158,7 @@ def slot_game(message):
         save_casino_data()
         
         # Генерируем слоты с учетом вероятности проигрыша 45%
-        if random.random() < 0.45:  # 45% шанс проигрыша
+        if random.random() < 0.35:  # 45% шанс проигрыша
             # Генерируем гарантированный проигрыш (нет выигрышных комбинаций)
             while True:
                 slots = [random.choice(SLOT_SYMBOLS) for _ in range(3)]
@@ -11042,8 +11042,6 @@ def mines_command(message):
             bot.reply_to(message, "❌ Недостаточно средств!")
             return
 
-        # 🔥 ВСЕГДА сбрасываем старую игру
-        stop_mines(user_id)  # если нет — просто удали эту строку
 
         started = start_mines(user_id, bet)
 
@@ -15693,57 +15691,86 @@ def my_house(message):
         user_id = message.from_user.id
         user_data = get_user_data(user_id)
         user_mention = get_user_mention(message.from_user)
-        
+
         if not user_data.get("house"):
-            bot.send_message(message.chat.id,
-                           f"🏠 {user_mention}, у вас нет дома!\n\n"
-                           f"🛒 <b>Магазин домов:</b> <code>магазин домов</code>\n"
-                           f"💸 <b>Купить дом:</b> <code>купить дом [название]</code>",
-                           parse_mode="HTML")
+            bot.send_message(
+                message.chat.id,
+                f"{user_mention}, у вас нет дома!\n\n"
+                f"<b>Магазин домов:</b> <code>магазин домов</code>\n"
+                f"<b>Купить дом:</b> <code>купить дом [название]</code>",
+                parse_mode="HTML"
+            )
             return
-            
+
         update_house_stats(user_data)
         house = user_data["house"]
         house_info = HOUSE_DATA[house["name"]]
-        
+
         # Рассчитываем время с последнего обновления
         last_update = datetime.fromisoformat(house["last_update"])
         hours_passed = (datetime.now() - last_update).total_seconds() / 3600
-        accumulated = house["profit_accumulated"]
-        
-        house_text = (f"🏠 <b>Ваш дом</b> | {user_mention}\n\n"
-                     f"🏡 <b>«{house['name'].capitalize()}»</b>\n\n"
-                     f"📊 <b>Финансы:</b>\n"
-                     f"├ 📈 Прибыль/час: {format_number(house_info['profit_per_hour'])}$\n"
-                     f"├ 💰 Накоплено: {format_number(accumulated)}$\n"
-                     f"├ ⏱ Прошло часов: {hours_passed:.1f}\n"
-                     f"└ 🏠 Содержание: {format_number(house_info['upkeep_cost'])}$/день\n\n"
-                     f"⏰ <i>Доход накапливается автоматически</i>")
-        
-        # Создаем клавиатуру с кнопками
+
+        # Деньги всегда целые
+        accumulated = int(house["profit_accumulated"])
+        house["profit_accumulated"] = accumulated
+
+        house_text = (
+            f"<b>Ваш дом</b> | {user_mention}\n\n"
+            f"<b>«{house['name'].capitalize()}»</b>\n\n"
+            f"<b>Финансы:</b>\n"
+            f"Прибыль/час: {format_number(house_info['profit_per_hour'])}$\n"
+            f"Накоплено: {format_number(accumulated)}$\n"
+            f"Прошло часов: {hours_passed:.1f}\n"
+            f"Содержание: {format_number(house_info['upkeep_cost'])}$/день\n\n"
+            f"<i>Доход накапливается автоматически</i>"
+        )
+
+        # Клавиатура
         markup = InlineKeyboardMarkup()
         markup.row(
             InlineKeyboardButton("Собрать аренду", callback_data=f"house_collect_{user_id}"),
             InlineKeyboardButton("Оплатить", callback_data=f"house_upkeep_{user_id}")
         )
-        markup.row(InlineKeyboardButton("В магазин", callback_data=f"house_shop_{user_id}"))
-        
-        # Отправляем фото дома и текст в подписи
+        markup.row(
+            InlineKeyboardButton("В магазин", callback_data=f"house_shop_{user_id}")
+        )
+
+        # Отправляем сообщение
         try:
-            if house_info.get('image'):
-                bot.send_photo(message.chat.id, house_info['image'], 
-                              caption=house_text, reply_markup=markup, parse_mode="HTML")
+            if house_info.get("image"):
+                bot.send_photo(
+                    message.chat.id,
+                    house_info["image"],
+                    caption=house_text,
+                    reply_markup=markup,
+                    parse_mode="HTML"
+                )
             else:
-                bot.send_message(message.chat.id, house_text, reply_markup=markup, parse_mode="HTML")
+                bot.send_message(
+                    message.chat.id,
+                    house_text,
+                    reply_markup=markup,
+                    parse_mode="HTML"
+                )
         except Exception as e:
-            logger.error(f"Не удалось отправить фото дома: {e}")
-            bot.send_message(message.chat.id, house_text, reply_markup=markup, parse_mode="HTML")
-        
-        logger.info(f"Пользователь {message.from_user.username} запросил информацию о доме")
-        
+            logger.error(f"Не удалось отправить дом: {e}")
+            bot.send_message(
+                message.chat.id,
+                house_text,
+                reply_markup=markup,
+                parse_mode="HTML"
+            )
+
+        logger.info(
+            f"Пользователь {message.from_user.username} запросил информацию о доме"
+        )
+
     except Exception as e:
         logger.error(f"Ошибка отображения дома: {e}")
-        bot.send_message(message.chat.id, "❌ Произошла ошибка при загрузке информации о доме!")
+        bot.send_message(
+            message.chat.id,
+            "Произошла ошибка при загрузке информации о доме!"
+        )
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("house_collect_"))
 def house_collect_callback(call):
