@@ -2912,7 +2912,7 @@ def generate_account_number():
             return account_number
 
 def get_bank_account(user_id):
-    """Получает информацию о банковском счете пользователя"""
+    """Получает информацию о банковском счете пользователя (с округлением)"""
     conn = sqlite3.connect(BANK_DB)
     c = conn.cursor()
     
@@ -2927,14 +2927,27 @@ def get_bank_account(user_id):
     conn.close()
     
     if result:
+        # Округляем все денежные значения до целых чисел
+        balance = result[1]
+        if isinstance(balance, float):
+            balance = int(round(balance))
+        
+        deposit_amount = result[2]
+        if isinstance(deposit_amount, float):
+            deposit_amount = int(round(deposit_amount))
+        
+        interest_earned = result[6]
+        if isinstance(interest_earned, float):
+            interest_earned = int(round(interest_earned))
+        
         return {
             "account_number": result[0],
-            "balance": result[1],
-            "deposit_amount": result[2],
+            "balance": balance,
+            "deposit_amount": deposit_amount,
             "interest_rate": result[3],
             "created_at": result[4],
             "last_interest": result[5],
-            "interest_earned": result[6],
+            "interest_earned": interest_earned,
             "username": result[7],
             "last_deposit": result[8]
         }
@@ -2968,24 +2981,50 @@ def create_bank_account(user_id, username):
 
 def deposit_to_account(user_id, amount):
     """Пополняет банковский счет"""
-    account = get_bank_account(user_id)
+    account = get_bank_account(user_id)  # Используем исправленную функцию с округлением
     if not account:
         return False, "У тебя нет банковского счета!"
+    
+    # Проверяем, что amount - целое число
+    try:
+        amount = int(amount)
+    except (ValueError, TypeError):
+        return False, "❌ Сумма должна быть целым числом!"
+    
+    if amount <= 0:
+        return False, "❌ Сумма должна быть больше 0!"
     
     # Проверяем баланс пользователя
     user_data = get_user_data(user_id)
     if user_data["balance"] < amount:
         return False, "🔴 На твоём счёту нет столько средств"
     
-    # Списываем с баланса и добавляем на счет
+    # Списываем с баланса и добавляем на счет (целые числа)
     user_data["balance"] -= amount
     save_casino_data()
     
     conn = sqlite3.connect(BANK_DB)
     c = conn.cursor()
     
-    new_balance = account["balance"] + amount
-    new_deposit = account["deposit_amount"] + amount
+    # Получаем текущие значения из БД (не из кэшированного account)
+    c.execute("SELECT balance, deposit_amount FROM bank_accounts WHERE user_id = ?", (user_id,))
+    db_result = c.fetchone()
+    
+    if db_result:
+        current_balance = db_result[0]
+        if isinstance(current_balance, float):
+            current_balance = int(round(current_balance))
+        
+        current_deposit = db_result[1]
+        if isinstance(current_deposit, float):
+            current_deposit = int(round(current_deposit))
+    else:
+        current_balance = 0
+        current_deposit = 0
+    
+    # Рассчитываем новые значения (целые числа)
+    new_balance = current_balance + amount
+    new_deposit = current_deposit + amount
     now = datetime.now().isoformat()
     
     c.execute("""
@@ -3022,13 +3061,15 @@ def calculate_daily_interest():
         daily_rate = interest_rate / 365 / 100
         interest = balance * daily_rate
         
-        # Округляем до 2 знаков
-        interest = round(interest, 2)
+        # ИЗМЕНЕНО: Округляем до ЦЕЛОГО числа (без копеек)
+        interest = int(round(interest))
         
         if interest > 0:
             # Начисляем проценты
             new_balance = balance + interest
-            new_interest_earned = balance * (interest_rate / 100) * (1/365)  # Проценты за день
+            
+            # ИЗМЕНЕНО: Проценты за день тоже округляем
+            new_interest_earned = int(round(balance * (interest_rate / 100) * (1/365)))
             
             c.execute("""
                 UPDATE bank_accounts 
@@ -3055,9 +3096,12 @@ def withdraw_from_account(user_id):
     if account["balance"] <= 0:
         return False, "На счету нет средств для снятия!"
     
+    # ИЗМЕНЕНО: Округляем баланс перед снятием
+    amount_to_withdraw = int(round(account["balance"]))
+    
     # Добавляем средства на баланс пользователя
     user_data = get_user_data(user_id)
-    user_data["balance"] += account["balance"]
+    user_data["balance"] += amount_to_withdraw
     save_casino_data()
     
     # Обнуляем счет (но не удаляем)
@@ -3073,7 +3117,7 @@ def withdraw_from_account(user_id):
     conn.commit()
     conn.close()
     
-    return True, account["balance"]
+    return True, amount_to_withdraw
 
 def delete_bank_account(user_id):
     """Удаляет банковский счет"""
@@ -3082,7 +3126,12 @@ def delete_bank_account(user_id):
         return False, "🚥 У тебя нету счёта чтобы удалить."
     
     # Проверяем, есть ли деньги на счету
-    if account["balance"] > 0:
+    # ИЗМЕНЕНО: Проверяем округленное значение
+    account_balance = account.get("balance", 0)
+    if isinstance(account_balance, float):
+        account_balance = int(round(account_balance))
+    
+    if account_balance > 0:
         return False, "pending_confirmation"
     
     # Удаляем счет
@@ -3094,7 +3143,7 @@ def delete_bank_account(user_id):
     conn.close()
     
     return True, "✅ Счёт успешно удалён."
-
+    
 def calculate_time_info(created_at, last_deposit, last_interest):
     """Рассчитывает информацию о времени"""
     from datetime import datetime, timedelta
@@ -6229,8 +6278,8 @@ def marriage_proposal(message):
             
             kb = InlineKeyboardMarkup()
             kb.add(
-                InlineKeyboardButton("💍 Согласиться", callback_data=f"marriage_accept_{user_id}_{target_user_id}"),
-                InlineKeyboardButton("❌ Отказать", callback_data=f"marriage_reject_{user_id}_{target_user_id}")
+                InlineKeyboardButton(" Согласиться", callback_data=f"marriage_accept_{user_id}_{target_user_id}"),
+                InlineKeyboardButton(" Отказать", callback_data=f"marriage_reject_{user_id}_{target_user_id}")
             )
             
             msg = bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
@@ -6280,7 +6329,7 @@ def accept_marriage_callback(call):
                 
                 text = (
                     f"💞 {to_mention}, ты принял(а) предложение о вступлении в брак с {from_mention}\n\n"
-                    f"💍 С ребёнком не тяните 👉👈"
+                    f"💍 С ребёнком не тяните "
                 )
                 
             except Exception as e:
@@ -6354,7 +6403,7 @@ def reject_marriage_callback(call):
         logger.error(f"Ошибка отклонения брака: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка при отклонении брака!", show_alert=True)
 
-# ================== КОМАНДА "МОЙ БРАК" ==================
+# ================== КОМАНДА "МОЙ БРАК" (УЛУЧШЕННЫЙ ДИЗАЙН) ==================
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мой брак", "брак", "статистика брака"])
 def my_marriage(message):
@@ -6368,11 +6417,14 @@ def my_marriage(message):
         
         if not marriage:
             text = (
-                f"💔 {mention}, ты не состоишь в браке 😔\n\n"
-                f"📊 <b>Статистика браков:</b>\n"
-                f"• Всего браков: {stats['total_marriages']}\n"
+                f"<b>💍 Информация о браке</b>\n\n"
+                f"Пользователь: {mention}\n"
+                f"Статус: Не состоите в браке\n\n"
+                f"<b>📈 Статистика:</b>\n"
+                f"• Общее количество браков: {stats['total_marriages']}\n"
                 f"• Всего дней в браке: {stats['total_days_married']}\n"
-                f"• Самый долгий брак: {stats['longest_marriage_days']} дней"
+                f"• Самый продолжительный брак: {stats['longest_marriage_days']} дней\n\n"
+                f"Для создания брака используйте команду /брак [ответ на сообщение]"
             )
             bot.send_message(message.chat.id, text, parse_mode="HTML")
             return
@@ -6386,91 +6438,86 @@ def my_marriage(message):
         marriage_rank = get_marriage_rank(days_married)
         
         text = (
-            f"💞 {mention}, ты состоишь в браке с {partner_mention}\n\n"
-            f"💍 <b>Информация о браке:</b>\n"
-            f"• Вместе уже: <b>{days_married}</b> дней\n"
-            f"• Ранг: {marriage_rank}\n"
-            f"• Дата брака: {datetime.fromisoformat(marriage['married_at']).strftime('%d.%m.%Y')}\n\n"
-            f"📊 <b>Общая статистика:</b>\n"
+            f"<b>💍 Информация о браке</b>\n\n"
+            f"Пользователь: {mention}\n"
+            f"Супруг(а): {partner_mention}\n"
+            f"Статус: Состоите в браке\n\n"
+            f"<b>📊 Детали брака:</b>\n"
+            f"• Продолжительность: {days_married} дней\n"
+            f"• Уровень отношений: {marriage_rank}\n"
+            f"• Дата заключения: {datetime.fromisoformat(marriage['married_at']).strftime('%d.%m.%Y')}\n"
+            f"• Количество разводов: {marriage['divorce_count']}\n\n"
+            f"<b>📈 Общая статистика:</b>\n"
             f"• Всего браков: {stats['total_marriages']}\n"
-            f"• Всего дней в браке: {stats['total_days_married']}\n"
-            f"• Рекорд: {stats['longest_marriage_days']} дней"
+            f"• Суммарное время в браке: {stats['total_days_married']} дней\n"
+            f"• Рекордная продолжительность: {stats['longest_marriage_days']} дней"
         )
         
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("💔 Развестись", callback_data=f"marriage_divorce_{user_id}"))
-        kb.add(InlineKeyboardButton("📊 Общая статистика", callback_data=f"marriage_stats_{user_id}"))
+        kb.add(InlineKeyboardButton("💔 Расторгнуть брак", callback_data=f"marriage_divorce_{user_id}"))
+        kb.add(InlineKeyboardButton("📈 Подробная статистика", callback_data=f"marriage_stats_{user_id}"))
         
         bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
         
     except Exception as e:
         logger.error(f"Ошибка показа брака: {e}")
-        bot.send_message(message.chat.id, "❌ Ошибка при получении информации о браке!")
+        bot.send_message(message.chat.id, "Произошла ошибка при получении информации о браке.")
 
 # ================== ОБРАБОТЧИК КНОПКИ РАЗВОДА ==================
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("marriage_divorce_"))
 def divorce_marriage_callback(call):
     try:
-        # Разбираем callback data
         parts = call.data.split("_")
         if len(parts) != 3:
-            bot.answer_callback_query(call.id, "❌ Ошибка в данных!", show_alert=True)
+            bot.answer_callback_query(call.id, "Ошибка обработки запроса.", show_alert=True)
             return
             
         user_id = int(parts[2])
         
-        # Проверяем, что нажимает именно участник брака
         if call.from_user.id != user_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            bot.answer_callback_query(call.id, "Эта функция доступна только участнику брака.", show_alert=True)
             return
         
-        # Расторгаем брак
         success, result_msg = divorce_marriage(user_id)
         
         if success:
-            # Получаем информацию о пользователе
             try:
                 user = bot.get_chat(user_id)
                 mention = f'<a href="tg://user?id={user_id}">{user.first_name}</a>'
-                
-                text = f"💔 {mention}, {result_msg}"
-                
-            except Exception as e:
-                text = f"💔 {result_msg}"
+                text = f"Брак успешно расторгнут. {result_msg}"
+            except:
+                text = result_msg
             
-            # Редактируем сообщение
             bot.edit_message_text(
-                text,
+                f"<b>💔 Расторжение брака</b>\n\n{text}",
                 call.message.chat.id,
                 call.message.message_id,
                 parse_mode="HTML"
             )
             
-            bot.answer_callback_query(call.id, "💔 Брак расторгнут!")
+            bot.answer_callback_query(call.id, "Брак расторгнут")
         else:
-            bot.answer_callback_query(call.id, f"❌ {result_msg}", show_alert=True)
+            bot.answer_callback_query(call.id, result_msg, show_alert=True)
             
     except Exception as e:
         logger.error(f"Ошибка развода: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при разводе!", show_alert=True)
+        bot.answer_callback_query(call.id, "Произошла ошибка при обработке запроса.", show_alert=True)
 
 # ================== ОБРАБОТЧИК СТАТИСТИКИ ==================
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("marriage_stats_"))
 def show_marriage_stats_callback(call):
-    """Показывает подробную статистику браков"""
     try:
-        # Разбираем callback data
         parts = call.data.split("_")
         if len(parts) != 3:
-            bot.answer_callback_query(call.id, "❌ Ошибка в данных!", show_alert=True)
+            bot.answer_callback_query(call.id, "Ошибка обработки запроса.", show_alert=True)
             return
             
         user_id = int(parts[2])
         
         if call.from_user.id != user_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя статистика!", show_alert=True)
+            bot.answer_callback_query(call.id, "Доступ к статистике ограничен.", show_alert=True)
             return
         
         stats = get_marriage_stats(user_id)
@@ -6478,28 +6525,27 @@ def show_marriage_stats_callback(call):
         mention = f'<a href="tg://user?id={user_id}">{user.first_name}</a>'
         
         text = (
-            f"📊 <b>СТАТИСТИКА БРАКОВ</b>\n\n"
-            f"👤 {mention}\n\n"
-            f"💍 <b>Общая статистика:</b>\n"
-            f"• Всего браков: {stats['total_marriages']}\n"
-            f"• Всего дней в браке: {stats['total_days_married']}\n"
+            f"<b>📊 Статистика браков</b>\n\n"
+            f"Пользователь: {mention}\n\n"
+            f"<b>Общие показатели:</b>\n"
+            f"• Количество браков: {stats['total_marriages']}\n"
+            f"• Общее время в браке: {stats['total_days_married']} дней\n"
             f"• Самый долгий брак: {stats['longest_marriage_days']} дней\n\n"
         )
         
-        # Добавляем достижения
         achievements = []
         if stats['total_marriages'] >= 10:
-            achievements.append("🏆 Серийный брачующийся")
+            achievements.append("• Серийный брачующийся")
         if stats['longest_marriage_days'] >= 365:
-            achievements.append("💎 Год вместе")
+            achievements.append("• Годовой юбилей")
         if stats['longest_marriage_days'] >= 365 * 5:
-            achievements.append("👑 Ветеран брака")
+            achievements.append("• Ветеран семейной жизни")
         
         if achievements:
-            text += "🎖️ <b>Достижения:</b>\n" + "\n".join(f"• {ach}" for ach in achievements)
+            text += "<b>🏆 Достижения:</b>\n" + "\n".join(achievements)
         
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("⬅️ Назад к браку", callback_data=f"back_to_marriage_{user_id}"))
+        kb.add(InlineKeyboardButton("← Назад к браку", callback_data=f"back_to_marriage_{user_id}"))
         
         bot.edit_message_text(
             text,
@@ -6513,38 +6559,32 @@ def show_marriage_stats_callback(call):
         
     except Exception as e:
         logger.error(f"Ошибка показа статистики: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при показе статистики!", show_alert=True)
+        bot.answer_callback_query(call.id, "Произошла ошибка при загрузке статистики.", show_alert=True)
 
 # ================== ОБРАБОТЧИК НАЗАД К БРАКУ ==================
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("back_to_marriage_"))
 def back_to_marriage_callback(call):
-    """Возвращает к информации о браке"""
     try:
-        # Разбираем callback data
         parts = call.data.split("_")
         if len(parts) != 4:
-            bot.answer_callback_query(call.id, "❌ Ошибка в данных!", show_alert=True)
+            bot.answer_callback_query(call.id, "Ошибка обработки запроса.", show_alert=True)
             return
             
         user_id = int(parts[3])
         
         if call.from_user.id != user_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            bot.answer_callback_query(call.id, "Доступ ограничен.", show_alert=True)
             return
         
-        # Создаем фейковое сообщение для вызова функции
         class FakeMsg:
             def __init__(self, chat_id, from_user):
                 self.chat = type('Chat', (), {'id': chat_id})()
                 self.from_user = from_user
         
         fake_msg = FakeMsg(call.message.chat.id, call.from_user)
-        
-        # Вызываем функцию показа брака
         my_marriage(fake_msg)
         
-        # Удаляем старое сообщение
         try:
             bot.delete_message(call.message.chat.id, call.message.message_id)
         except:
@@ -6554,77 +6594,62 @@ def back_to_marriage_callback(call):
         
     except Exception as e:
         logger.error(f"Ошибка возврата к браку: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+        bot.answer_callback_query(call.id, "Произошла ошибка.", show_alert=True)
 
-# ================== КОМАНДА "БРАКИ" ==================
+# ================== КОМАНДА "БРАКИ" (УЛУЧШЕННЫЙ ВАРИАНТ) ==================
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["браки", "список браков", "топ браков"])
 def marriages_list(message):
     try:
+        # Получаем список всех активных браков
         marriages = get_all_marriages(40)
         
         if not marriages:
-            bot.send_message(message.chat.id, "💔 Пока никто не состоит в браке...")
+            bot.send_message(
+                message.chat.id, 
+                "<b>Информация о браках</b>\n\nВ настоящее время нет активных браков среди пользователей."
+            )
             return
         
-        text = "💞 <b>СПИСОК АКТИВНЫХ БРАКОВ</b>\n\n"
+        text = "<b>📋 Список активных браков</b>\n\n"
         
+        # Формируем список браков с индексацией
         for i, (user1_id, user2_id, user1_name, user2_name, married_at) in enumerate(marriages, 1):
+            # Рассчитываем продолжительность брака
             days_married = get_marriage_days(married_at)
             marriage_rank = get_marriage_rank(days_married)
             
+            # Форматируем строку с информацией о паре
             text += (
-                f"💍 <b>{i}.</b> "
-                f"<a href='tg://user?id={user1_id}'>{user1_name}</a> ❤️ "
+                f"<b>{i}.</b> "
+                f"<a href='tg://user?id={user1_id}'>{user1_name}</a> и "
                 f"<a href='tg://user?id={user2_id}'>{user2_name}</a>\n"
-                f"   └─ {marriage_rank} (<b>{days_married}</b> дней)\n\n"
+                f"   Продолжительность: {days_married} дней ({marriage_rank})\n\n"
             )
         
-        # Добавляем общую статистику
+        # Получаем общую статистику
         conn = sqlite3.connect(MARRIAGE_DB)
         c = conn.cursor()
         c.execute("SELECT COUNT(*) FROM marriages")
         total_marriages = c.fetchone()[0]
         conn.close()
         
-        text += f"📊 Всего активных браков: <b>{total_marriages}</b>"
+        # Добавляем статистику в конец
+        text += f"<b>📊 Общая статистика:</b>\n• Активных браков: {total_marriages}\n• Отображено: {len(marriages)}"
         
-        kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("🔄 Обновить", callback_data="marriages_refresh"))
-        
-        bot.send_message(message.chat.id, text, parse_mode="HTML", 
-                        disable_web_page_preview=True, reply_markup=kb)
-        
-    except Exception as e:
-        logger.error(f"Ошибка показа списка браков: {e}")
-        bot.send_message(message.chat.id, "❌ Ошибка при получении списка браков!")
-
-# ================== ОБНОВЛЕНИЕ СПИСКА БРАКОВ ==================
-
-@bot.callback_query_handler(func=lambda c: c.data == "marriages_refresh")
-def refresh_marriages_callback(call):
-    """Обновляет список браков"""
-    try:
-        # Создаем фейковое сообщение
-        class FakeMsg:
-            def __init__(self, chat_id, from_user):
-                self.chat = type('Chat', (), {'id': chat_id})()
-                self.from_user = from_user
-        
-        fake_msg = FakeMsg(call.message.chat.id, call.from_user)
-        marriages_list(fake_msg)
-        
-        # Удаляем старое сообщение
-        try:
-            bot.delete_message(call.message.chat.id, call.message.message_id)
-        except:
-            pass
-            
-        bot.answer_callback_query(call.id, "🔄 Список обновлен!")
+        bot.send_message(
+            message.chat.id, 
+            text, 
+            parse_mode="HTML", 
+            disable_web_page_preview=True
+        )
         
     except Exception as e:
-        logger.error(f"Ошибка обновления списка браков: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка обновления!", show_alert=True)
+        logger.error(f"Ошибка при формировании списка браков: {e}")
+        bot.send_message(
+            message.chat.id, 
+            "Произошла ошибка при загрузке списка браков. Пожалуйста, попробуйте позже."
+        )
 
 # ================== НОВОГОДНЯЯ ИГРА СО СНЕЖКАМИ (ПОЛНАЯ ВЕРСИЯ) ==================
 SNOWBALLS_DB = "snowballs.db"
@@ -6914,7 +6939,7 @@ def snowball_profile(message):
         )
 
         text = (
-            "🎄 <b>ТВОЙ СНЕЖНЫЙ ПРОФИЛЬ</b> 🎄\n\n"
+            "🎄 <b>ТВОЙ ПРОФИЛЬ</b> 🎄\n\n"
             f"👤 Ник: {mention}\n"
             f"🎖️ Звание: {rank}\n"
             f"🎯 Уровень: {data['level']}\n"
@@ -6928,12 +6953,12 @@ def snowball_profile(message):
 
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("🏆 ТОП игроков", callback_data=f"snow_top_{user_id}_1"),
-            InlineKeyboardButton("💎 Обменять", callback_data=f"snow_exchange_{user_id}")
+            InlineKeyboardButton("ТОП", callback_data=f"snow_top_{user_id}_1"),
+            InlineKeyboardButton("Обменять", callback_data=f"snow_exchange_{user_id}")
         )
         kb.add(
-            InlineKeyboardButton("🎁 Ежедневный", callback_data=f"snow_daily_{user_id}"),
-            InlineKeyboardButton("📊 Статистика", callback_data=f"snow_stats_{user_id}")
+            InlineKeyboardButton(" Ежедневный приз", callback_data=f"snow_daily_{user_id}"),
+            InlineKeyboardButton(" Статистика", callback_data=f"snow_stats_{user_id}")
         )
 
         bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
@@ -6981,7 +7006,7 @@ def show_stats(call):
             text += f"🏆 Место в топе: #{pos}"
 
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("🔙 Назад", callback_data=f"snow_profile_{user_id}"))
+        kb.add(InlineKeyboardButton(" Назад", callback_data=f"snow_profile_{user_id}"))
 
         bot.edit_message_text(
             text, call.message.chat.id, call.message.message_id,
@@ -7022,13 +7047,13 @@ def show_snowball_top_page(chat_id, message_id, viewer_id, page=1):
 
         row = []
         if page > 1:
-            row.append(InlineKeyboardButton("⬅️", callback_data=f"snow_top_{viewer_id}_{page-1}"))
+            row.append(InlineKeyboardButton("<", callback_data=f"snow_top_{viewer_id}_{page-1}"))
         row.append(InlineKeyboardButton(f"{page}/{pages}", callback_data="nope"))
         if page < pages:
-            row.append(InlineKeyboardButton("➡️", callback_data=f"snow_top_{viewer_id}_{page+1}"))
+            row.append(InlineKeyboardButton(">", callback_data=f"snow_top_{viewer_id}_{page+1}"))
 
         kb.row(*row)
-        kb.add(InlineKeyboardButton("🔙 Назад", callback_data=f"snow_profile_{viewer_id}"))
+        kb.add(InlineKeyboardButton(" Назад", callback_data=f"snow_profile_{viewer_id}"))
 
         bot.edit_message_text(
             text, chat_id, message_id,
@@ -7073,15 +7098,15 @@ def exchange_menu(call):
         kb = InlineKeyboardMarkup(row_width=2)
         
         if data["snowballs_count"] > 0:
-            kb.add(InlineKeyboardButton(f"❄️ Обычные", callback_data=f"snow_exchange_normal_{user_id}"))
+            kb.add(InlineKeyboardButton(f" Обычные", callback_data=f"snow_exchange_normal_{user_id}"))
         
         if data["golden_snowballs"] > 0:
-            kb.add(InlineKeyboardButton(f"🌟 Золотые", callback_data=f"snow_exchange_golden_{user_id}"))
+            kb.add(InlineKeyboardButton(f" Золотые", callback_data=f"snow_exchange_golden_{user_id}"))
         
         if data["snowballs_count"] > 0 or data["golden_snowballs"] > 0:
-            kb.add(InlineKeyboardButton("💎 Все", callback_data=f"snow_exchange_all_{user_id}"))
+            kb.add(InlineKeyboardButton("Все", callback_data=f"snow_exchange_all_{user_id}"))
 
-        kb.add(InlineKeyboardButton("🔙 Назад", callback_data=f"snow_profile_{user_id}"))
+        kb.add(InlineKeyboardButton(" Назад", callback_data=f"snow_profile_{user_id}"))
 
         bot.edit_message_text(
             text, call.message.chat.id, call.message.message_id,
@@ -7130,8 +7155,8 @@ def handle_exchange_type(call):
 
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
-            InlineKeyboardButton("✅ Да", callback_data=callback),
-            InlineKeyboardButton("❌ Нет", callback_data=f"snow_exchange_{user_id}")
+            InlineKeyboardButton("✅ ", callback_data=callback),
+            InlineKeyboardButton("❌ ", callback_data=f"snow_exchange_{user_id}")
         )
 
         name = call.from_user.first_name
@@ -7219,7 +7244,7 @@ def execute_exchange(call):
             )
 
             kb = InlineKeyboardMarkup()
-            kb.add(InlineKeyboardButton("🔙 В профиль", callback_data=f"snow_profile_{user_id}"))
+            kb.add(InlineKeyboardButton("В профиль", callback_data=f"snow_profile_{user_id}"))
 
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode="HTML", reply_markup=kb)
             bot.answer_callback_query(call.id, f"✅ +{money_earned}$")
@@ -7283,7 +7308,7 @@ def daily_callback(call):
             message_text += f"\n\n🎉 <b>ПОЗДРАВЛЯЮ! Ты достиг {new_level} уровня!</b> 🎉"
 
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("🔙 В профиль", callback_data=f"snow_profile_{user_id}"))
+        kb.add(InlineKeyboardButton("В профиль", callback_data=f"snow_profile_{user_id}"))
 
         bot.edit_message_text(message_text, call.message.chat.id, call.message.message_id, parse_mode="HTML", reply_markup=kb)
         bot.answer_callback_query(call.id)
@@ -7324,7 +7349,7 @@ def handle_snow_callbacks(call):
             rank = "Новичок" if data["level"] < 3 else "Снежный боец" if data["level"] < 6 else "Мастер снежков" if data["level"] < 9 else "Снежный король"
 
             text = (
-                "🎄 <b>ТВОЙ СНЕЖНЫЙ ПРОФИЛЬ</b> 🎄\n\n"
+                "🎄 <b>ТВОЙ ПРОФИЛЬ</b> 🎄\n\n"
                 f"👤 <b>Ник:</b> {mention}\n"
                 f"🎖️ <b>Звание:</b> {rank}\n"
                 f"🎯 <b>Уровень:</b> {data['level']}\n"
@@ -7336,12 +7361,12 @@ def handle_snow_callbacks(call):
 
             kb = InlineKeyboardMarkup(row_width=2)
             kb.add(
-                InlineKeyboardButton("🏆 ТОП игроков", callback_data=f"snow_top_{user_id}_1"),
-                InlineKeyboardButton("💎 Обменять", callback_data=f"snow_exchange_{user_id}")
+                InlineKeyboardButton("ТОП", callback_data=f"snow_top_{user_id}_1"),
+                InlineKeyboardButton(" Обменять", callback_data=f"snow_exchange_{user_id}")
             )
             kb.add(
-                InlineKeyboardButton("🎁 Ежедневный", callback_data=f"snow_daily_{user_id}"),
-                InlineKeyboardButton("📊 Статистика", callback_data=f"snow_stats_{user_id}")
+                InlineKeyboardButton(" Ежедневный приз", callback_data=f"snow_daily_{user_id}"),
+                InlineKeyboardButton(" Статистика", callback_data=f"snow_stats_{user_id}")
             )
 
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode="HTML", reply_markup=kb)
@@ -8247,31 +8272,31 @@ HOUSE_DATA = {
     "Хижина": {
         "price": 2000000,  # 2 млн
         "profit_per_hour": 500,  # 500$/час
-        "upkeep_cost": 10000,  # 10к/день
+        "upkeep_cost": 2000,  # 10к/день
         "image": "https://png.pngtree.com/background/20230516/original/pngtree-ancient-thatched-huts-in-a-forest-picture-image_2611775.jpg"
     },
     "Коттедж": {
         "price": 5000000,  # 5 млн
         "profit_per_hour": 1200,  # 1.2к/час
-        "upkeep_cost": 25000,  # 25к/день
+        "upkeep_cost": 5000,  # 25к/день
         "image": "https://pic.rutubelist.ru/video/2024-12-12/fb/9e/fb9e3caca7807585073e47c12be4c0c6.jpg"
     },
     "Вилла": {
         "price": 10000000,  # 10 млн
         "profit_per_hour": 2500,  # 2.5к/час
-        "upkeep_cost": 50000,  # 50к/день
+        "upkeep_cost": 10000,  # 50к/день
         "image": "https://img.freepik.com/premium-photo/contemporary-villa-with-pool-garden-sleek-design_1270611-8380.jpg?semt=ais_hybrid"
     },
     "Особняк": {
         "price": 25000000,  # 25 млн
         "profit_per_hour": 6000,  # 6к/час
-        "upkeep_cost": 120000,  # 120к/день
+        "upkeep_cost": 20000,  # 120к/день
         "image": "https://i.pinimg.com/736x/46/f9/a4/46f9a4c8705a5763d59912e2d82b337c.jpg"
     },
     "Дворец": {
         "price": 50000000,  # 50 млн
         "profit_per_hour": 12000,  # 12к/час
-        "upkeep_cost": 250000,  # 250к/день
+        "upkeep_cost": 30000,  # 250к/день
         "image": "https://img.goodfon.com/wallpaper/nbig/b/c1/enchanted-castle-ancient-gloomy-fairytale-zamok-skazochnyi-2.webp"
     }
 }

@@ -1,4 +1,4 @@
 {
   "mines_count": 5,
-  "mines_multiplier_increment": 0.15
+  "mines_multiplier_increment": 0.4
 }
