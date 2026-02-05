@@ -10988,12 +10988,12 @@ print("✅ Игры: футбол, баскетбол, тир и кубик за
 MINE_CONFIGS = {
     3: {
         "name": "Лёгкий",
-        "multiplier_increment": 0.05,
+        "multiplier_increment": 0.02,
         "base_multiplier": 1.0
     },
     5: {
         "name": "Средний",
-        "multiplier_increment": 0.10,
+        "multiplier_increment": 0.12,
         "base_multiplier": 1.0
     },
     10: {
