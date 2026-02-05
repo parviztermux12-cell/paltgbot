@@ -6424,7 +6424,7 @@ def my_marriage(message):
                 f"• Общее количество браков: {stats['total_marriages']}\n"
                 f"• Всего дней в браке: {stats['total_days_married']}\n"
                 f"• Самый продолжительный брак: {stats['longest_marriage_days']} дней\n\n"
-                f"Для создания брака используйте команду /брак [ответ на сообщение]"
+                f"Для создания брака используйте команду +брак [ответ на сообщение]"
             )
             bot.send_message(message.chat.id, text, parse_mode="HTML")
             return
@@ -6939,7 +6939,7 @@ def snowball_profile(message):
         )
 
         text = (
-            "🎄 <b>ТВОЙ ПРОФИЛЬ</b> 🎄\n\n"
+            "🎄 <b>ТВОЙ ПРОФИЛЬ (ОЗНАКОМ.)</b> 🎄\n\n"
             f"👤 Ник: {mention}\n"
             f"🎖️ Звание: {rank}\n"
             f"🎯 Уровень: {data['level']}\n"
@@ -7349,7 +7349,7 @@ def handle_snow_callbacks(call):
             rank = "Новичок" if data["level"] < 3 else "Снежный боец" if data["level"] < 6 else "Мастер снежков" if data["level"] < 9 else "Снежный король"
 
             text = (
-                "🎄 <b>ТВОЙ ПРОФИЛЬ</b> 🎄\n\n"
+                "🎄 <b>ТВОЙ ПРОФИЛЬ (ОЗНАКОМ.)</b> 🎄\n\n"
                 f"👤 <b>Ник:</b> {mention}\n"
                 f"🎖️ <b>Звание:</b> {rank}\n"
                 f"🎯 <b>Уровень:</b> {data['level']}\n"
@@ -8025,10 +8025,10 @@ def top_cmd(message):
     users.sort(key=lambda x: x[1], reverse=True)
     
     # Берем топ 100
-    top_users = users[:25]
+    top_users = users[:50]
 
-    # Формируем текст одним блоком
-    text = "🏆 <b>Топ 25 игроков:</b>\n\n<blockquote>"
+    # Формируем текст одним блоком (без тегов <blockquote>)
+    text = "🏆 <b>Топ 50 игроков:</b>\n\n"
     
     for i, (uid, bal) in enumerate(top_users, 1):
         try:
@@ -8058,15 +8058,12 @@ def top_cmd(message):
             text += f"{i}. User {uid} — {format_number(bal)}$\n"
             continue
 
-    text += "</blockquote>"
-    
     # Если топ пустой
     if not top_users:
-        text = "🏆 <b>Топ игроков:</b>\n\n<blockquote>📊 Пока нет данных для топа</blockquote>"
+        text = "🏆 <b>Топ игроков:</b>\n\n📊 Пока нет данных для топа"
 
     # Быстрая отправка
     bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
-
 
 
 
@@ -10988,70 +10985,117 @@ def get_user_name(user_id):
 
 print("✅ Игры: футбол, баскетбол, тир и кубик загружены и готовы к работе! ⚽🏀🎯🎲")
 # ================== MINES 5x5 ==================
-config = {
-    "mines_count": 5,
-    "mines_multiplier_increment": 0.2
+MINE_CONFIGS = {
+    3: {
+        "name": "Лёгкий",
+        "multiplier_increment": 0.05,
+        "base_multiplier": 1.0
+    },
+    5: {
+        "name": "Средний",
+        "multiplier_increment": 0.10,
+        "base_multiplier": 1.0
+    },
+    10: {
+        "name": "Сложный",
+        "multiplier_increment": 0.20,
+        "base_multiplier": 1.0
+    },
+    15: {
+        "name": "Экстрим",
+        "multiplier_increment": 0.45,
+        "base_multiplier": 1.0
+    },
+    20: {
+        "name": "Хардкор",
+        "multiplier_increment": 1.25,
+        "base_multiplier": 1.0
+    }
 }
 
-def start_mines(user_id, bet):
+def start_mines_with_mines_count(user_id, bet, mines_count):
+    """Начинает игру с указанным количеством мин"""
     u = get_user_data(user_id)
     if u["balance"] < bet:
         return False
 
+    if mines_count not in MINE_CONFIGS:
+        return False
+
+    config = MINE_CONFIGS[mines_count]
+    
     u["balance"] -= bet  
     u.update({  
         "game": "mines",  
         "stage": "mines",  
         "mines_owner": user_id,  
         "mines_bet": bet,  
-        "mines_positions": random.sample(range(25), config["mines_count"]),  
+        "mines_count": mines_count,
+        "mines_positions": random.sample(range(25), mines_count),  
         "mines_open": [],  
-        "mines_multiplier": 1.0,  
-        "mines_started": False  
+        "mines_multiplier": config["base_multiplier"],  
+        "mines_started": False,
+        "mines_config": config
     })  
     save_casino_data()  
     return True
 
 def mines_keyboard(user_id, reveal_all=False, hide_buttons=False):
+    """Создает клавиатуру для игры в мины"""
     u = get_user_data(user_id)
     kb = InlineKeyboardMarkup()
 
     btns = []  
     for i in range(25):  
         if reveal_all:  
-            text = " 💣 " if i in u["mines_positions"] else " "  
+            # Показываем мины 💣 или безопасные клетки 💎
+            if i in u["mines_positions"]:  
+                text = "  💣  "
+            else:
+                text = "  💎  "
         else:  
-            text = "       " if i in u["mines_open"] else " ❓ "  
+            # Показываем открытые клетки или неизвестные
+            if i in u["mines_open"]:  
+                text = "  💎  "  # Безопасная клетка
+            else:  
+                text = "  ❓  "  # Неоткрытая клетка
 
+        # Создаем кнопку с callback_data для владельца игры
         btns.append(  
             InlineKeyboardButton(  
-                f" {text} ",  
-                callback_data=f"mines_{i}_{user_id}"  
+                text,  
+                callback_data=f"mines_{i}_{user_id}" if not hide_buttons else "no_action"
             )  
         )  
 
+    # Собираем сетку 5x5
     for i in range(0, 25, 5):  
         kb.row(*btns[i:i + 5])  
 
-    # ЕСЛИ hide_buttons=True - НЕ ДОБАВЛЯЕМ КНОПКИ ДЕЙСТВИЙ
+    # Кнопки действий (только если не скрыты)
     if not hide_buttons:
         if not u["mines_started"]:  
+            # Кнопка отмены в начале игры
             kb.row(  
-                InlineKeyboardButton(" ❌ ", callback_data=f"mines_cancel_{user_id}")  
+                InlineKeyboardButton(" Отменить игру", callback_data=f"mines_cancel_{user_id}")  
             )  
         else:  
+            # Кнопка забрать выигрыш во время игры
+            current_win = int(u["mines_bet"] * u["mines_multiplier"])
             kb.row(  
-                InlineKeyboardButton(" 💸 Забрать выигрыш", callback_data=f"mines_cash_{user_id}")  
+                InlineKeyboardButton(f"💸 Забрать выигрыш", callback_data=f"mines_cash_{user_id}")  
             )  
 
     return kb
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("мины "))
 def mines_command(message):
+    """Обработчик команды мины"""
     user_id = message.from_user.id
     parts = message.text.split(maxsplit=1)
 
     if len(parts) < 2:
+        bot.reply_to(message, "❌ Использование: мины [ставка]\nПример: мины 1000")
         return
 
     try:
@@ -11067,116 +11111,273 @@ def mines_command(message):
             bot.reply_to(message, "❌ Недостаточно средств!")
             return
 
-
-        started = start_mines(user_id, bet)
-
-        if not started:
-            bot.reply_to(message, "❌ Ошибка начала игры!")
-            return
+        # Сохраняем базовую информацию об игре
+        user["mines_pending_bet"] = bet
+        save_casino_data()
 
         mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
 
+        # Показываем выбор количества мин
+        text = (
+            f"{mention}, ставка: <b>{format_number(bet)}$</b>\n"
+            f"🎯 Выберите количество мин:"
+        )
+
+        kb = InlineKeyboardMarkup(row_width=3)
+        
+        # Кнопки выбора количества мин
+        buttons = []
+        for mines_count in [3, 5, 10, 15, 20]:
+            config = MINE_CONFIGS[mines_count]
+            buttons.append(
+                InlineKeyboardButton(
+                    f"{config['name']} ({mines_count})", 
+                    callback_data=f"mines_select_{user_id}_{mines_count}"
+                )
+            )
+        
+        # Добавляем кнопки в 2 ряда
+        kb.row(buttons[0], buttons[1])
+        kb.row(buttons[2], buttons[3])
+        kb.row(buttons[4])
+        kb.row(InlineKeyboardButton("❌ Отменить", callback_data=f"mines_pending_cancel_{user_id}"))
+
         bot.send_message(
             message.chat.id,
-            f"{mention}, ты начал игру в мины.\n"
-            f"💹 Коэффициент: 1.0",
+            text,
             parse_mode="HTML",
-            reply_markup=mines_keyboard(user_id)
+            reply_markup=kb
         )
 
     except ValueError:
         bot.reply_to(message, "❌ Ставка должна быть числом!")
 
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mines_select_"))
+def mines_select_handler(call):
+    """Обработчик выбора количества мин"""
+    try:
+        parts = call.data.split("_")
+        user_id = int(parts[2])
+        mines_count = int(parts[3])
+        
+        # Проверяем, что нажимает владелец
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+        
+        user_data = get_user_data(user_id)
+        bet = user_data.get("mines_pending_bet", 0)
+        
+        if bet == 0:
+            bot.answer_callback_query(call.id, "❌ Ошибка: ставка не найдена", show_alert=True)
+            return
+        
+        if mines_count not in MINE_CONFIGS:
+            bot.answer_callback_query(call.id, "❌ Неверное количество мин", show_alert=True)
+            return
+        
+        config = MINE_CONFIGS[mines_count]
+        
+        # Начинаем игру с выбранным количеством мин
+        success = start_mines_with_mines_count(user_id, bet, mines_count)
+        
+        if not success:
+            bot.answer_callback_query(call.id, "❌ Ошибка начала игры", show_alert=True)
+            return
+        
+        # Убираем временную ставку
+        if "mines_pending_bet" in user_data:
+            del user_data["mines_pending_bet"]
+            save_casino_data()
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = (
+            f"{mention}, игра началась!\n"
+            f"💣 Мин: <b>{mines_count}</b>\n"
+            f"📈 Множитель: <b>x{config['base_multiplier']}</b>"
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=mines_keyboard(user_id)
+        )
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка выбора мин: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("mines_pending_cancel_"))
+def mines_pending_cancel_handler(call):
+    """Отмена ожидающей игры"""
+    try:
+        user_id = int(call.data.split("_")[3])
+        
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+        
+        user_data = get_user_data(user_id)
+        
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        bot.edit_message_text(
+            f"{mention}, выбор отменён.",
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML"
+        )
+        
+        bot.answer_callback_query(call.id, "✅ Отменено")
+        
+    except Exception as e:
+        logger.error(f"Ошибка отмены ожидающей игры: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
 @bot.callback_query_handler(func=lambda c: c.data.startswith("mines_"))
 def mines_handler(call):
-    parts = call.data.split("_")
-    action = parts[1]
-    owner_id = int(parts[2])
-    user_id = call.from_user.id
+    """Основной обработчик игры в мины"""
+    try:
+        parts = call.data.split("_")
+        action = parts[1]
+        owner_id = int(parts[2])
+        user_id = call.from_user.id
 
-    if user_id != owner_id:  
-        bot.answer_callback_query(call.id, "НЕ ТВОЯ ИГРА", show_alert=True)  
-        return  
+        # ЗАЩИТА: проверяем, что нажимает владелец игры
+        if user_id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
 
-    u = get_user_data(user_id)  
-    if u.get("stage") != "mines":  
-        bot.answer_callback_query(call.id, "ИГРА ЗАКОНЧЕНА")  
-        return  
-
-    # ❌ ОТМЕНА  
-    if action == "cancel" and not u["mines_started"]:  
-        u["balance"] += u["mines_bet"]  
-        u["stage"] = "finished"  
-        save_casino_data()  
-
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, игра отменена.",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
-
-    # 💸 ЗАБРАТЬ ВЫИГРЫШ  
-    if action == "cash" and u["mines_started"]:  
-        win = int(u["mines_bet"] * u["mines_multiplier"])  
+        u = get_user_data(user_id)
         
-        user_game_data = get_user_data(user_id)
-        user_game_data["balance"] += win
-        save_casino_data()
-        
-        u["stage"] = "finished"  
-        save_casino_data()  
+        # Проверяем, что игра активна
+        if u.get("stage") != "mines":
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
+            return
 
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, ты забрал выигрыш <b>{format_number(win)}$</b>\n"
-            f"💰 Новый баланс: <b>{format_number(user_game_data['balance'])}$</b>",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
+        # ❌ ОТМЕНА ИГРЫ (в начале)
+        if action == "cancel" and not u["mines_started"]:
+            u["balance"] += u["mines_bet"]
+            u["stage"] = "finished"
+            save_casino_data()
 
-    # 🧩 КЛЕТКА  
-    cell = int(action)  
-    if cell in u["mines_open"]:  
-        bot.answer_callback_query(call.id)  
-        return  
+            mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+            bot.edit_message_text(
+                f"{mention}, игра отменена.",
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
+            )
+            bot.answer_callback_query(call.id, "✅ Отменено")
+            return
 
-    u["mines_open"].append(cell)  
-    u["mines_started"] = True  
+        # 💸 ЗАБРАТЬ ВЫИГРЫШ
+        if action == "cash" and u["mines_started"]:
+            win = int(u["mines_bet"] * u["mines_multiplier"])
+            
+            user_game_data = get_user_data(user_id)
+            user_game_data["balance"] += win
+            user_game_data["stage"] = "finished"
+            save_casino_data()
 
-    # 💥 МИНА  
-    if cell in u["mines_positions"]:  
-        u["stage"] = "finished"  
-        save_casino_data()  
+            mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+            
+            # Показываем все мины
+            text = (
+                f"🎉 {mention}\n"
+                f"💰 Выигрыш: <b>{format_number(win)}$</b>\n"
+                f"📈 Множитель: <b>x{u['mines_multiplier']:.2f}</b>"
+            )
+            
+            bot.edit_message_text(
+                text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
+            )
+            bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+            return
 
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'  
-        bot.edit_message_text(  
-            f"{mention}, ты подорвался на мине 💥\n"
-            f"❌ Ставка {format_number(u['mines_bet'])}$ потеряна!",  
-            call.message.chat.id,  
-            call.message.message_id,  
-            parse_mode="HTML",  
-            reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
-        )  
-        return  
+        # 🧩 ОТКРЫТИЕ КЛЕТКИ (число)
+        try:
+            cell = int(action)
+            
+            # Проверяем валидность клетки
+            if cell < 0 or cell > 24:
+                bot.answer_callback_query(call.id, "❌ Неверная клетка!")
+                return
+            
+            # Проверяем, не открыта ли уже клетка
+            if cell in u["mines_open"]:
+                bot.answer_callback_query(call.id)
+                return
+            
+            # Открываем клетку
+            u["mines_open"].append(cell)
+            u["mines_started"] = True
 
-    # ✅ БЕЗОПАСНО  
-    u["mines_multiplier"] += config["mines_multiplier_increment"]  
-    save_casino_data()  
+            # 💥 ПОДРЫВ НА МИНЕ
+            if cell in u["mines_positions"]:
+                u["stage"] = "finished"
+                save_casino_data()
 
-    bot.edit_message_reply_markup(  
-        call.message.chat.id,  
-        call.message.message_id,  
-        reply_markup=mines_keyboard(user_id)  
-    )  
+                mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+                
+                text = (
+                    f"💥 {mention}\n"
+                    f"❌ Проигрыш: <b>{format_number(u['mines_bet'])}$</b>\n"
+                    f"📈 Множитель: <b>x{u['mines_multiplier']:.2f}</b>"
+                )
+                
+                bot.edit_message_text(
+                    text,
+                    call.message.chat.id,
+                    call.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=mines_keyboard(user_id, reveal_all=True, hide_buttons=True)
+                )
+                bot.answer_callback_query(call.id, "💥 Мина!")
+                return
 
-    bot.answer_callback_query(call.id)
+            # ✅ БЕЗОПАСНАЯ КЛЕТКА
+            # Увеличиваем множитель
+            u["mines_multiplier"] += u.get("mines_config", MINE_CONFIGS.get(u.get("mines_count", 5), MINE_CONFIGS[5]))["multiplier_increment"]
+            save_casino_data()
+
+            # Обновляем клавиатуру
+            current_win = int(u["mines_bet"] * u["mines_multiplier"])
+            
+            text = (
+                f"💎 Безопасно!\n"
+                f"💰 Выигрыш: <b>{format_number(current_win)}$</b>\n"
+                f"📈 Множитель: <b>x{u['mines_multiplier']:.2f}</b>"
+            )
+            
+            bot.edit_message_text(
+                text,
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=mines_keyboard(user_id)
+            )
+            
+            bot.answer_callback_query(call.id, f"✅ x{u['mines_multiplier']:.2f}")
+            
+        except ValueError:
+            # Если action не число, это не клетка
+            bot.answer_callback_query(call.id)
+            
+    except Exception as e:
+        logger.error(f"Ошибка в обработчике мин: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)            
     
 # ================== КОМАНДЫ "ПОМОЩЬ" И "/help" ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["помощь", "/help@meow_gamechat_bot", "/help"])
