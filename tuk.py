@@ -12998,6 +12998,14 @@ def clear_messages(message):
 
 # ================== КОМАНДЫ АДМИНИСТРИРОВАНИЯ ==================
 
+def is_admin(user_id):
+    """Проверка на администратора"""
+    return user_id in ADMIN_IDS
+
+def log_moderation(action, admin_id, target_id, details=""):
+    """Логирование действий модерации"""
+    logger.info(f"🛡 Модерация: {action} | Админ: {admin_id} | Цель: {target_id} | {details}")
+
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("меню юзера"))
 def user_menu_command(message):
     if not is_admin(message.from_user.id):
@@ -13041,72 +13049,142 @@ def show_user_admin_menu(chat_id, target_user):
     """Показывает меню администрирования пользователя"""
     mention = f'<a href="tg://user?id={target_user.id}">{target_user.first_name}</a>'
     
-    text = f"<b>{mention} - Это меню пользователя, выберите действия которые хотите сделать с ним.</b>"
+    text = f"<b>👤 АДМИН ПАНЕЛЬ: {mention}</b>\n\nВыберите действие:"
     
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
-        InlineKeyboardButton("📊 Информация", callback_data=f"admin_user_info_{target_user.id}"),
-        InlineKeyboardButton("🛡 Выдать модератора", callback_data=f"admin_give_mod_{target_user.id}")
+        InlineKeyboardButton("📊 Полная информация", callback_data=f"admin_full_info_{target_user.id}"),
+        InlineKeyboardButton("💰 Баланс", callback_data=f"admin_balance_info_{target_user.id}")
     )
     kb.add(
-        InlineKeyboardButton("🚫 Убрать модератора", callback_data=f"admin_remove_mod_{target_user.id}"),
-        InlineKeyboardButton("💥 Обнулить данные", callback_data=f"admin_reset_data_{target_user.id}")
+        InlineKeyboardButton("🎮 Игровые системы", callback_data=f"admin_games_info_{target_user.id}"),
+        InlineKeyboardButton("🏦 Банк/Шахта/Мусор", callback_data=f"admin_other_info_{target_user.id}")
+    )
+    kb.add(
+        InlineKeyboardButton("🛡 Выдать/Убрать модератора", callback_data=f"admin_mod_menu_{target_user.id}"),
+        InlineKeyboardButton("💥 Селективный сброс", callback_data=f"admin_selective_reset_{target_user.id}")
     )
     
     bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=kb)
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_user_info_"))
-def admin_user_info(call):
+# ================== ПОЛНАЯ ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ ==================
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_full_info_"))
+def admin_full_info(call):
     try:
         target_user_id = int(call.data.split("_")[3])
         target_user = bot.get_chat(target_user_id)
         
+        # Получаем все данные
         user_data = get_user_data(target_user_id)
         
-        # Информация о VIP
-        vip = user_data["vip"]
-        vip_text = "Нет" if vip["level"] == 0 else f"{VIP_LEVELS[vip['level']]['prefix']} {VIP_LEVELS[vip['level']]['name']}"
+        # ===== ОСНОВНАЯ ИНФОРМАЦИЯ =====
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
         
-        # Информация о тянке
+        # Админ статус
+        admin_status = "✅ Да" if target_user_id in ADMIN_IDS else "❌ Нет"
+        
+        # Префикс
+        prefix_data = get_user_prefix(target_user_id)
+        prefix_text = prefix_data["name"] if prefix_data else "Нет"
+        
+        # VIP
+        vip = user_data.get("vip", {})
+        vip_text = "Нет"
+        if vip.get("level", 0) > 0:
+            vip_info = VIP_LEVELS.get(vip["level"], {})
+            vip_text = f"{vip_info.get('prefix', '⭐')} {vip_info.get('name', 'VIP')}"
+        
+        # ===== БАЛАНС И ФИНАНСЫ =====
+        balance_text = f"{format_number(user_data.get('balance', 0))}$"
+        
+        # Банковский счет
+        bank_account = get_bank_account(target_user_id)
+        bank_text = "Нет"
+        if bank_account:
+            bank_text = f"{format_number(bank_account.get('balance', 0))}$ (счет: {bank_account.get('account_number', 'N/A')})"
+        
+        # ===== ИГРОВЫЕ СИСТЕМЫ =====
+        # Тянка
         tyanka_text = "Нет"
         if user_data.get("tyanka"):
-            tyanka_name = user_data["tyanka"].get("name", "Нет")
-            tyanka_mood = user_data["tyanka"].get("mood", 0)
-            tyanka_text = f"{tyanka_name} ({tyanka_mood}%)"
+            tyanka = user_data["tyanka"]
+            tyanka_text = f"{tyanka.get('name', 'Неизвестно')} ({tyanka.get('mood', 0)}%)"
         
-        # Информация о питомце
+        # Питомец
         pet_text = "Нет"
         pet_data = get_pet(target_user_id)
         if pet_data:
             pet_id, name, price, satiety, level, xp, last_update = pet_data
-            pet_info = PETS_DATA.get(pet_id, {})
-            pet_text = f"{name} (ур. {level})"
+            pet_text = f"{name} (ур. {level}, сытость: {satiety}%)"
         
-        # Информация о машине
+        # Машина
         car_text = "Нет"
         if user_data.get("car"):
-            car_name = user_data["car"].get("name", "Нет")
-            car_text = car_name
+            car = user_data["car"]
+            car_text = f"{car.get('name', 'Неизвестно')}"
         
-        # Информация о бизнесе
+        # Бизнес
         business_text = "Нет"
         if user_data.get("business"):
-            business_name = user_data["business"].get("name", "Нет")
-            business_text = business_name
+            business = user_data["business"]
+            business_text = f"{business.get('name', 'Неизвестно')}"
         
-        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        # Дом
+        house_text = "Нет"
+        if user_data.get("house"):
+            house = user_data["house"]
+            house_text = f"{house.get('name', 'Неизвестно')}"
         
+        # ===== ДОПОЛНИТЕЛЬНЫЕ СИСТЕМЫ =====
+        # Шахта
+        mining_user = get_mining_user(target_user_id)
+        mining_text = "Нет данных"
+        if mining_user:
+            pickaxe = PICKAXES.get(mining_user.get("pickaxe_id", 1), {})
+            mining_text = f"Кирка: {pickaxe.get('name', 'Нет')}, Энергия: {mining_user.get('energy', 0)}"
+        
+        # Мусор
+        trash_inventory = get_user_trash_inventory(target_user_id)
+        trash_text = f"Предметов: {len(trash_inventory.get('items', {}))}"
+        
+        # Новогодний календарь
+        new_year_data = get_user_new_year_data(target_user_id)
+        new_year_text = f"Подарков: {new_year_data.get('total_claimed', 0)}"
+        
+        # Рефералы
+        ref_data = get_user_referral_data(target_user_id)
+        ref_text = f"Рефералов: {len(ref_data.get('referrals', []))}"
+        
+        # ===== ФОРМИРОВАНИЕ ТЕКСТА =====
         text = (
-            f"<b>📊 ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ</b>\n\n"
-            f"👤 <b>Имя:</b> {mention}\n"
-            f"🆔 <b>ID:</b> <code>{target_user_id}</code>\n"
-            f"💰 <b>Баланс:</b> {format_number(user_data['balance'])}$\n"
-            f"⭐ <b>VIP:</b> {vip_text}\n"
-            f"💞 <b>Тянка:</b> {tyanka_text}\n"
-            f"🐾 <b>Питомец:</b> {pet_text}\n"
-            f"🚗 <b>Машина:</b> {car_text}\n"
-            f"🏢 <b>Бизнес:</b> {business_text}\n"
-            f"🛡 <b>Админ:</b> {'✅ Да' if target_user_id in ADMIN_IDS else '❌ Нет'}"
+            f"<b>📊 ПОЛНАЯ ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ</b>\n\n"
+            
+            f"<b>👤 ОСНОВНОЕ:</b>\n"
+            f"• Имя: {mention}\n"
+            f"• ID: <code>{target_user_id}</code>\n"
+            f"• Админ: {admin_status}\n"
+            f"• Префикс: {prefix_text}\n"
+            f"• VIP: {vip_text}\n\n"
+            
+            f"<b>💰 ФИНАНСЫ:</b>\n"
+            f"• Баланс: {balance_text}\n"
+            f"• Банковский счет: {bank_text}\n\n"
+            
+            f"<b>🎮 ИГРОВЫЕ СИСТЕМЫ:</b>\n"
+            f"• Тянка: {tyanka_text}\n"
+            f"• Питомец: {pet_text}\n"
+            f"• Машина: {car_text}\n"
+            f"• Бизнес: {business_text}\n"
+            f"• Дом: {house_text}\n\n"
+            
+            f"<b>⚙️ ДОПОЛНИТЕЛЬНЫЕ СИСТЕМЫ:</b>\n"
+            f"• Шахта: {mining_text}\n"
+            f"• Мусор: {trash_text}\n"
+            f"• Новогодний календарь: {new_year_text}\n"
+            f"• Рефералы: {ref_text}\n\n"
+            
+            f"<i>Данные актуальны на {datetime.now().strftime('%d.%m.%Y %H:%M')}</i>"
         )
         
         kb = InlineKeyboardMarkup()
@@ -13122,7 +13200,274 @@ def admin_user_info(call):
         
     except Exception as e:
         bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
-        logger.error(f"Ошибка admin_user_info: {e}")
+        logger.error(f"Ошибка admin_full_info: {e}")
+        
+        # ================== ИНФОРМАЦИЯ О БАЛАНСЕ ==================
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_balance_info_"))
+def admin_balance_info(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        # Банковский счет
+        bank_account = get_bank_account(target_user_id)
+        
+        text = (
+            f"<b>💰 ФИНАНСОВАЯ ИНФОРМАЦИЯ: {mention}</b>\n\n"
+            
+            f"<b>Основной баланс:</b>\n"
+            f"• Текущий баланс: <code>{format_number(user_data.get('balance', 0))}$</code>\n\n"
+            
+            f"<b>Банковский счет:</b>\n"
+        )
+        
+        if bank_account:
+            text += (
+                f"• Номер счета: <code>{bank_account.get('account_number', 'N/A')}</code>\n"
+                f"• Баланс на счету: <code>{format_number(bank_account.get('balance', 0))}$</code>\n"
+                f"• Начисленные проценты: <code>{format_number(bank_account.get('interest_earned', 0))}$</code>\n"
+                f"• Ставка: {bank_account.get('interest_rate', 0)}% годовых\n"
+                f"• Создан: {bank_account.get('created_at', 'N/A')}\n\n"
+            )
+        else:
+            text += "• Счет не открыт\n\n"
+            
+        text += f"<i>ID пользователя: <code>{target_user_id}</code></i>"
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(
+            InlineKeyboardButton("💸 Изменить баланс", callback_data=f"admin_edit_balance_{target_user_id}"),
+            InlineKeyboardButton("🏦 Управление банком", callback_data=f"admin_bank_manage_{target_user_id}")
+        )
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# ================== ИНФОРМАЦИЯ О ИГРОВЫХ СИСТЕМАХ ==================
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_games_info_"))
+def admin_games_info(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        # Тянка
+        tyanka_text = "Нет"
+        if user_data.get("tyanka"):
+            tyanka = user_data["tyanka"]
+            tyanka_text = f"{tyanka.get('name', 'Неизвестно')}\n" \
+                         f"• Настроение: {tyanka.get('mood', 0)}%\n" \
+                         f"• Последняя кормежка: {tyanka.get('last_fed', 'N/A')}\n"
+        
+        # Питомец
+        pet_text = "Нет"
+        pet_data = get_pet(target_user_id)
+        if pet_data:
+            pet_id, name, price, satiety, level, xp, last_update = pet_data
+            pet_info = PETS_DATA.get(pet_id, {})
+            pet_text = f"{name}\n" \
+                      f"• Уровень: {level}\n" \
+                      f"• Сытость: {satiety}%\n" \
+                      f"• Опыт: {xp}\n" \
+                      f"• Редкость: {PET_RARITY.get(pet_info.get('rarity', 1), {}).get('emoji', '❓')}"
+        
+        # Машина
+        car_text = "Нет"
+        if user_data.get("car"):
+            car = user_data["car"]
+            car_text = f"{car.get('name', 'Неизвестно')}\n" \
+                      f"• Цена: {format_number(car.get('price', 0))}$\n" \
+                      f"• Доход в час: {format_number(car.get('profit_per_hour', 0))}$"
+        
+        # Бизнес
+        business_text = "Нет"
+        if user_data.get("business"):
+            business = user_data["business"]
+            business_text = f"{business.get('name', 'Неизвестно')}\n" \
+                          f"• Уровень: {business.get('level', 1)}\n" \
+                          f"• Доход: {format_number(business.get('profit', 0))}$"
+        
+        # Дом
+        house_text = "Нет"
+        if user_data.get("house"):
+            house = user_data["house"]
+            house_text = f"{house.get('name', 'Неизвестно')}\n" \
+                        f"• Уровень комфорта: {house.get('comfort', 1)}\n" \
+                        f"• Вместимость: {house.get('capacity', 1)}"
+        
+        text = (
+            f"<b>🎮 ИГРОВЫЕ СИСТЕМЫ: {mention}</b>\n\n"
+            
+            f"<b>💞 ТЯНКА:</b>\n{tyanka_text}\n"
+            
+            f"<b>🐾 ПИТОМЕЦ:</b>\n{pet_text}\n"
+            
+            f"<b>🚗 МАШИНА:</b>\n{car_text}\n"
+            
+            f"<b>🏢 БИЗНЕС:</b>\n{business_text}\n"
+            
+            f"<b>🏠 ДОМ:</b>\n{house_text}\n\n"
+            
+            f"<i>Для управления выберите опцию ниже</i>"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("🗑 Удалить тянку", callback_data=f"admin_delete_tyanka_{target_user_id}"),
+            InlineKeyboardButton("🗑 Удалить питомца", callback_data=f"admin_delete_pet_{target_user_id}")
+        )
+        kb.add(
+            InlineKeyboardButton("🗑 Удалить машину", callback_data=f"admin_delete_car_{target_user_id}"),
+            InlineKeyboardButton("🗑 Удалить бизнес", callback_data=f"admin_delete_business_{target_user_id}")
+        )
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+        
+        # ================== ИНФОРМАЦИЯ О ДОПОЛНИТЕЛЬНЫХ СИСТЕМАХ ==================
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_other_info_"))
+def admin_other_info(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        target_user = bot.get_chat(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        # Шахта
+        mining_user = get_mining_user(target_user_id)
+        mining_text = "Данные не найдены"
+        if mining_user:
+            pickaxe = PICKAXES.get(mining_user.get("pickaxe_id", 1), {})
+            mining_text = (
+                f"Кирка: {pickaxe.get('name', 'Неизвестно')}\n"
+                f"• Энергия: {mining_user.get('energy', 0)}/{mining_user.get('max_energy', 50)}\n"
+                f"• Прочность: {mining_user.get('pickaxe_durability', 0)}/{mining_user.get('max_durability', 100)}\n"
+                f"• Добыто руд: {mining_user.get('total_ores_mined', 0)}\n"
+            )
+        
+        # Инвентарь руд
+        ores = get_user_ores(target_user_id)
+        ores_text = "Руд нет"
+        if ores:
+            total_value = calculate_total_value(ores)
+            ores_text = f"Всего видов: {len(ores)}\nОбщая стоимость: {format_number(total_value)}$"
+        
+        # Мусор
+        trash_inventory = get_user_trash_inventory(target_user_id)
+        trash_items = trash_inventory.get("items", {})
+        trash_text = "Мусора нет"
+        if trash_items:
+            trash_value = calculate_total_value(trash_items)
+            trash_text = f"Предметов: {sum(trash_items.values())}\nВидов: {len(trash_items)}\nСтоимость: {format_number(trash_value)}$"
+        
+        # Новогодний календарь
+        new_year_data = get_user_new_year_data(target_user_id)
+        new_year_text = f"Получено подарков: {new_year_data.get('total_claimed', 0)}\nПоследний: {new_year_data.get('last_claimed_date', 'Никогда')}"
+        
+        # Рефералы
+        ref_data = get_user_referral_data(target_user_id)
+        ref_text = f"Всего рефералов: {len(ref_data.get('referrals', []))}\nПригласил: {ref_data.get('referrer', 'Никто')}"
+        
+        text = (
+            f"<b>⚙️ ДОПОЛНИТЕЛЬНЫЕ СИСТЕМЫ: {mention}</b>\n\n"
+            
+            f"<b>⛏️ ШАХТА:</b>\n{mining_text}\n"
+            
+            f"<b>🪨 ИНВЕНТАРЬ РУД:</b>\n{ores_text}\n\n"
+            
+            f"<b>🗑️ СБОРКА МУСОРА:</b>\n{trash_text}\n\n"
+            
+            f"<b>🎄 НОВОГОДНИЙ КАЛЕНДАРЬ:</b>\n{new_year_text}\n\n"
+            
+            f"<b>👥 РЕФЕРАЛЬНАЯ СИСТЕМА:</b>\n{ref_text}\n\n"
+            
+            f"<i>Для управления выберите опцию ниже</i>"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("⛏️ Сбросить шахту", callback_data=f"admin_reset_mine_{target_user_id}"),
+            InlineKeyboardButton("🗑 Очистить мусор", callback_data=f"admin_clear_trash_{target_user_id}")
+        )
+        kb.add(
+            InlineKeyboardButton("🪨 Продать все руды", callback_data=f"admin_sell_all_ores_{target_user_id}"),
+            InlineKeyboardButton("🎄 Сбросить календарь", callback_data=f"admin_reset_newyear_{target_user_id}")
+        )
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# ================== УПРАВЛЕНИЕ МОДЕРАТОРОМ ==================
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_mod_menu_"))
+def admin_mod_menu(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        target_user = bot.get_chat(target_user_id)
+        
+        is_mod = target_user_id in ADMIN_IDS
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        text = (
+            f"<b>🛡 УПРАВЛЕНИЕ МОДЕРАТОРОМ: {mention}</b>\n\n"
+            f"Текущий статус: {'<b>✅ МОДЕРАТОР</b>' if is_mod else '<b>❌ НЕ МОДЕРАТОР</b>'}\n\n"
+            f"Выберите действие:"
+        )
+        
+        kb = InlineKeyboardMarkup()
+        if is_mod:
+            kb.add(InlineKeyboardButton("🚫 Снять с модератора", callback_data=f"admin_remove_mod_{target_user_id}"))
+        else:
+            kb.add(InlineKeyboardButton("✅ Назначить модератором", callback_data=f"admin_give_mod_{target_user_id}"))
+        
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("admin_give_mod_"))
 def admin_give_mod(call):
@@ -13138,10 +13483,22 @@ def admin_give_mod(call):
         ADMIN_IDS.append(target_user_id)
         
         mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
-        text = f"<b>Ты успешно выдал {mention} права модератора в боте</b>"
+        text = f"<b>✅ ПРАВА МОДЕРАТОРА ВЫДАНЫ: {mention}</b>\n\nПользователь получил полные права администратора в боте."
+        
+        # Отправляем уведомление пользователю
+        try:
+            bot.send_message(
+                target_user_id,
+                f"🎉 <b>Поздравляем!</b>\n\n"
+                f"Вам были выданы права модератора в боте!\n"
+                f"Теперь у вас есть доступ к административным командам.",
+                parse_mode="HTML"
+            )
+        except:
+            pass
         
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_mod_menu_{target_user_id}"))
         
         bot.edit_message_text(
             text,
@@ -13172,10 +13529,21 @@ def admin_remove_mod(call):
         ADMIN_IDS.remove(target_user_id)
         
         mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
-        text = f"<b>Права модератора успешно убраны у {mention}</b>"
+        text = f"<b>🚫 ПРАВА МОДЕРАТОРА СНЯТЫ: {mention}</b>\n\nПользователь больше не имеет прав администратора в боте."
+        
+        # Отправляем уведомление пользователю
+        try:
+            bot.send_message(
+                target_user_id,
+                f"ℹ️ <b>Уведомление</b>\n\n"
+                f"Ваши права модератора в боте были отозваны.",
+                parse_mode="HTML"
+            )
+        except:
+            pass
         
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_mod_menu_{target_user_id}"))
         
         bot.edit_message_text(
             text,
@@ -13191,34 +13559,57 @@ def admin_remove_mod(call):
     except Exception as e:
         bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
         logger.error(f"Ошибка admin_remove_mod: {e}")
+        
+        # ================== СЕЛЕКТИВНЫЙ СБРОС ДАННЫХ ==================
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_data_"))
-def admin_reset_data(call):
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_selective_reset_"))
+def admin_selective_reset(call):
     try:
         target_user_id = int(call.data.split("_")[3])
         target_user = bot.get_chat(target_user_id)
         
-        user_data = get_user_data(target_user_id)
-        
-        # Обнуляем все данные пользователя
-        user_data["balance"] = START_BALANCE
-        user_data["tyanka"] = None
-        user_data["business"] = None
-        user_data["car"] = None
-        user_data["activated_promos"] = []
-        user_data["daily_income"] = {"date": date.today().isoformat(), "amount": 0}
-        user_data["daily_transfers"] = {"date": date.today().isoformat(), "amount": 0}
-        user_data["vip"] = {"level": 0, "expires": None}
-        
-        # Удаляем питомца из базы
-        delete_pet(target_user_id)
-        
-        save_casino_data()
-        
         mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
-        text = f"<b>✅ Все данные пользователя {mention} были обнулены!</b>\n\nБаланс сброшен до начального: {format_number(START_BALANCE)}$"
         
-        kb = InlineKeyboardMarkup()
+        text = (
+            f"<b>💥 СЕЛЕКТИВНЫЙ СБРОС ДАННЫХ: {mention}</b>\n\n"
+            f"Выберите какие данные вы хотите сбросить:\n\n"
+            f"⚠️ <i>Внимание: Это действие необратимо!</i>"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        
+        # Финансы
+        kb.add(
+            InlineKeyboardButton("💰 Баланс", callback_data=f"admin_reset_balance_{target_user_id}"),
+            InlineKeyboardButton("🏦 Банковский счет", callback_data=f"admin_reset_bank_{target_user_id}")
+        )
+        
+        # Игровые системы
+        kb.add(
+            InlineKeyboardButton("💞 Тянка", callback_data=f"admin_reset_tyanka_{target_user_id}"),
+            InlineKeyboardButton("🐾 Питомец", callback_data=f"admin_reset_pet_{target_user_id}")
+        )
+        kb.add(
+            InlineKeyboardButton("🚗 Машина", callback_data=f"admin_reset_car_{target_user_id}"),
+            InlineKeyboardButton("🏢 Бизнес", callback_data=f"admin_reset_business_{target_user_id}")
+        )
+        kb.add(
+            InlineKeyboardButton("🏠 Дом", callback_data=f"admin_reset_house_{target_user_id}"),
+            InlineKeyboardButton("⭐ VIP", callback_data=f"admin_reset_vip_{target_user_id}")
+        )
+        
+        # Дополнительные системы
+        kb.add(
+            InlineKeyboardButton("⛏️ Шахта", callback_data=f"admin_reset_mine_full_{target_user_id}"),
+            InlineKeyboardButton("🗑️ Мусор", callback_data=f"admin_reset_trash_full_{target_user_id}")
+        )
+        kb.add(
+            InlineKeyboardButton("🔰 Префикс", callback_data=f"admin_reset_prefix_{target_user_id}"),
+            InlineKeyboardButton("🎄 Календарь", callback_data=f"admin_reset_newyear_full_{target_user_id}")
+        )
+        
+        # Полный сброс
+        kb.add(InlineKeyboardButton("💀 ПОЛНЫЙ СБРОС ВСЕГО", callback_data=f"admin_reset_everything_{target_user_id}"))
         kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_back_{target_user_id}"))
         
         bot.edit_message_text(
@@ -13229,12 +13620,838 @@ def admin_reset_data(call):
             reply_markup=kb
         )
         
-        log_moderation("обнуление данных", call.from_user.id, target_user_id)
-        bot.answer_callback_query(call.id, "✅ Данные обнулены!")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# ================== ФУНКЦИИ СБРОСА ==================
+
+def confirm_reset(call, action, target_user_id, reset_function):
+    """Показывает подтверждение сброса"""
+    try:
+        target_user = bot.get_chat(target_user_id)
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        text = (
+            f"<b>⚠️ ПОДТВЕРЖДЕНИЕ СБРОСА</b>\n\n"
+            f"Вы уверены, что хотите {action} для {mention}?\n\n"
+            f"<i>Это действие нельзя отменить!</i>"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("✅ Да, сбросить", callback_data=reset_function),
+            InlineKeyboardButton("❌ Нет, отмена", callback_data=f"admin_selective_reset_{target_user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
         
     except Exception as e:
         bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
-        logger.error(f"Ошибка admin_reset_data: {e}")
+
+# Сброс баланса
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_balance_"))
+def admin_reset_balance_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "сбросить баланс до начального", target_user_id, f"admin_do_reset_balance_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_balance_"))
+def admin_do_reset_balance(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        old_balance = user_data["balance"]
+        user_data["balance"] = START_BALANCE
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ БАЛАНС СБРОШЕН: {mention}</b>\n\n"
+            f"• Старый баланс: {format_number(old_balance)}$\n"
+            f"• Новый баланс: {format_number(START_BALANCE)}$\n"
+            f"• Разница: {format_number(START_BALANCE - old_balance)}$"
+        )
+        
+        log_moderation("сброс баланса", call.from_user.id, target_user_id, f"Старый: {old_balance}, Новый: {START_BALANCE}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс банковского счета
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_bank_"))
+def admin_reset_bank_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить банковский счет", target_user_id, f"admin_do_reset_bank_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_bank_"))
+def admin_do_reset_bank(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        target_user = bot.get_chat(target_user_id)
+        
+        bank_account = get_bank_account(target_user_id)
+        old_balance = bank_account["balance"] if bank_account else 0
+        
+        # Удаляем счет
+        conn = sqlite3.connect(BANK_DB)
+        c = conn.cursor()
+        c.execute("DELETE FROM bank_accounts WHERE user_id = ?", (target_user_id,))
+        conn.commit()
+        conn.close()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ БАНКОВСКИЙ СЧЕТ УДАЛЕН: {mention}</b>\n\n"
+            f"• Было на счету: {format_number(old_balance)}$\n"
+            f"• Счет полностью удален\n\n"
+            f"<i>Деньги на счету не были переведены на баланс!</i>"
+        )
+        
+        log_moderation("удаление банковского счета", call.from_user.id, target_user_id, f"Баланс на счету: {old_balance}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс тянки
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_tyanka_"))
+def admin_reset_tyanka_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить тянку", target_user_id, f"admin_do_reset_tyanka_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_tyanka_"))
+def admin_do_reset_tyanka(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        had_tyanka = user_data.get("tyanka") is not None
+        tyanka_name = user_data.get("tyanka", {}).get("name", "Неизвестно") if had_tyanka else None
+        
+        user_data["tyanka"] = None
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ТЯНКА УДАЛЕНА: {mention}</b>\n\n"
+            f"• Была тянка: {'Да' if had_tyanka else 'Нет'}\n"
+            f"• Имя тянки: {tyanka_name if tyanka_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление тянки", call.from_user.id, target_user_id, f"Имя: {tyanka_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс питомца
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_pet_"))
+def admin_reset_pet_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить питомца", target_user_id, f"admin_do_reset_pet_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_pet_"))
+def admin_do_reset_pet(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        target_user = bot.get_chat(target_user_id)
+        
+        pet_data = get_pet(target_user_id)
+        had_pet = pet_data is not None
+        pet_name = pet_data[1] if had_pet else None
+        
+        delete_pet(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ПИТОМЕЦ УДАЛЕН: {mention}</b>\n\n"
+            f"• Был питомец: {'Да' if had_pet else 'Нет'}\n"
+            f"• Имя питомца: {pet_name if pet_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление питомца", call.from_user.id, target_user_id, f"Имя: {pet_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+        
+        # Сброс машины
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_car_"))
+def admin_reset_car_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить машину", target_user_id, f"admin_do_reset_car_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_car_"))
+def admin_do_reset_car(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        had_car = user_data.get("car") is not None
+        car_name = user_data.get("car", {}).get("name", "Неизвестно") if had_car else None
+        
+        user_data["car"] = None
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ МАШИНА УДАЛЕНА: {mention}</b>\n\n"
+            f"• Была машина: {'Да' if had_car else 'Нет'}\n"
+            f"• Модель: {car_name if car_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление машины", call.from_user.id, target_user_id, f"Модель: {car_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс бизнеса
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_business_"))
+def admin_reset_business_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить бизнес", target_user_id, f"admin_do_reset_business_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_business_"))
+def admin_do_reset_business(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        had_business = user_data.get("business") is not None
+        business_name = user_data.get("business", {}).get("name", "Неизвестно") if had_business else None
+        
+        user_data["business"] = None
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ БИЗНЕС УДАЛЕН: {mention}</b>\n\n"
+            f"• Был бизнес: {'Да' if had_business else 'Нет'}\n"
+            f"• Название: {business_name if business_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление бизнеса", call.from_user.id, target_user_id, f"Название: {business_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс дома
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_house_"))
+def admin_reset_house_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить дом", target_user_id, f"admin_do_reset_house_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_house_"))
+def admin_do_reset_house(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        had_house = user_data.get("house") is not None
+        house_name = user_data.get("house", {}).get("name", "Неизвестно") if had_house else None
+        
+        user_data["house"] = None
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ДОМ УДАЛЕН: {mention}</b>\n\n"
+            f"• Был дом: {'Да' if had_house else 'Нет'}\n"
+            f"• Название: {house_name if house_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление дома", call.from_user.id, target_user_id, f"Название: {house_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс VIP
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_vip_"))
+def admin_reset_vip_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить VIP статус", target_user_id, f"admin_do_reset_vip_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_vip_"))
+def admin_do_reset_vip(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        had_vip = user_data.get("vip", {}).get("level", 0) > 0
+        vip_level = user_data.get("vip", {}).get("level", 0)
+        
+        user_data["vip"] = {"level": 0, "expires": None}
+        
+        # Удаляем таймер дохода
+        vip_income_timers.pop(target_user_id, None)
+        
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ VIP СТАТУС УДАЛЕН: {mention}</b>\n\n"
+            f"• Был VIP: {'Да' if had_vip else 'Нет'}\n"
+            f"• Уровень VIP: {vip_level if had_vip else 'Нет'}"
+        )
+        
+        log_moderation("удаление VIP", call.from_user.id, target_user_id, f"Уровень: {vip_level}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс шахты
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_mine_full_"))
+def admin_reset_mine_full_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        confirm_reset(call, "полностью сбросить шахту", target_user_id, f"admin_do_reset_mine_full_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_mine_full_"))
+def admin_do_reset_mine_full(call):
+    try:
+        target_user_id = int(call.data.split("_")[5])
+        target_user = bot.get_chat(target_user_id)
+        
+        # Сбрасываем данные шахты
+        conn = sqlite3.connect(MINING_DB)
+        c = conn.cursor()
+        
+        # Удаляем данные пользователя
+        c.execute("DELETE FROM mining_users WHERE user_id = ?", (target_user_id,))
+        # Удаляем руды
+        c.execute("DELETE FROM mining_ores WHERE user_id = ?", (target_user_id,))
+        
+        conn.commit()
+        conn.close()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ШАХТА ПОЛНОСТЬЮ СБРОШЕНА: {mention}</b>\n\n"
+            f"• Данные шахты удалены\n"
+            f"• Инвентарь руд очищен\n"
+            f"• Прогресс сброшен до начального"
+        )
+        
+        log_moderation("полный сброс шахты", call.from_user.id, target_user_id)
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+        
+        # Сброс мусора
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_trash_full_"))
+def admin_reset_trash_full_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        confirm_reset(call, "очистить инвентарь мусора", target_user_id, f"admin_do_reset_trash_full_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_trash_full_"))
+def admin_do_reset_trash_full(call):
+    try:
+        target_user_id = int(call.data.split("_")[5])
+        target_user = bot.get_chat(target_user_id)
+        
+        # Очищаем инвентарь мусора
+        update_user_trash_inventory(target_user_id, {}, 0, 0)
+        
+        # Останавливаем авто-сборку если активна
+        AUTO_TRASH_USERS.pop(target_user_id, None)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ИНВЕНТАРЬ МУСОРА ОЧИЩЕН: {mention}</b>\n\n"
+            f"• Все предметы удалены\n"
+            f"• Авто-сборка остановлена\n"
+            f"• Прогресс сброшен"
+        )
+        
+        log_moderation("очистка инвентаря мусора", call.from_user.id, target_user_id)
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс префикса
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_prefix_"))
+def admin_reset_prefix_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "удалить префикс", target_user_id, f"admin_do_reset_prefix_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_prefix_"))
+def admin_do_reset_prefix(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        target_user = bot.get_chat(target_user_id)
+        
+        prefix_data = get_user_prefix(target_user_id)
+        had_prefix = prefix_data is not None
+        prefix_name = prefix_data["name"] if had_prefix else None
+        
+        remove_user_prefix(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ ПРЕФИКС УДАЛЕН: {mention}</b>\n\n"
+            f"• Был префикс: {'Да' if had_prefix else 'Нет'}\n"
+            f"• Название префикса: {prefix_name if prefix_name else 'Нет'}"
+        )
+        
+        log_moderation("удаление префикса", call.from_user.id, target_user_id, f"Префикс: {prefix_name}")
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Сброс новогоднего календаря
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_newyear_full_"))
+def admin_reset_newyear_full_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        confirm_reset(call, "сбросить новогодний календарь", target_user_id, f"admin_do_reset_newyear_full_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_newyear_full_"))
+def admin_do_reset_newyear_full(call):
+    try:
+        target_user_id = int(call.data.split("_")[5])
+        target_user = bot.get_chat(target_user_id)
+        
+        # Очищаем данные новогоднего календаря
+        conn = sqlite3.connect(NEW_YEAR_DB)
+        c = conn.cursor()
+        c.execute("DELETE FROM new_year_calendar WHERE user_id = ?", (target_user_id,))
+        conn.commit()
+        conn.close()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ НОВОГОДНИЙ КАЛЕНДАРЬ СБРОШЕН: {mention}</b>\n\n"
+            f"• История подарков удалена\n"
+            f"• Прогресс сброшен\n"
+            f"• Можно получать подарки заново"
+        )
+        
+        log_moderation("сброс новогоднего календаря", call.from_user.id, target_user_id)
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К выбору сброса", callback_data=f"admin_selective_reset_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# Полный сброс всего
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_reset_everything_"))
+def admin_reset_everything_confirm(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        confirm_reset(call, "полностью сбросить ВСЕ данные", target_user_id, f"admin_do_reset_everything_{target_user_id}")
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_do_reset_everything_"))
+def admin_do_reset_everything(call):
+    try:
+        target_user_id = int(call.data.split("_")[4])
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        # Сохраняем старые значения для логов
+        old_balance = user_data["balance"]
+        had_tyanka = user_data.get("tyanka") is not None
+        had_car = user_data.get("car") is not None
+        had_business = user_data.get("business") is not None
+        had_house = user_data.get("house") is not None
+        vip_level = user_data.get("vip", {}).get("level", 0)
+        
+        # ===== СБРАСЫВАЕМ ОСНОВНЫЕ ДАННЫЕ =====
+        user_data["balance"] = START_BALANCE
+        user_data["tyanka"] = None
+        user_data["business"] = None
+        user_data["car"] = None
+        user_data["house"] = None
+        user_data["activated_promos"] = []
+        user_data["daily_income"] = {"date": date.today().isoformat(), "amount": 0}
+        user_data["daily_transfers"] = {"date": date.today().isoformat(), "amount": 0}
+        user_data["vip"] = {"level": 0, "expires": None}
+        
+        # Удаляем таймер дохода VIP
+        vip_income_timers.pop(target_user_id, None)
+        
+        save_casino_data()
+        
+        # ===== СБРАСЫВАЕМ ДОПОЛНИТЕЛЬНЫЕ СИСТЕМЫ =====
+        # Питомец
+        delete_pet(target_user_id)
+        
+        # Банковский счет
+        conn = sqlite3.connect(BANK_DB)
+        c = conn.cursor()
+        c.execute("DELETE FROM bank_accounts WHERE user_id = ?", (target_user_id,))
+        conn.commit()
+        conn.close()
+        
+        # Шахта
+        conn = sqlite3.connect(MINING_DB)
+        c = conn.cursor()
+        c.execute("DELETE FROM mining_users WHERE user_id = ?", (target_user_id,))
+        c.execute("DELETE FROM mining_ores WHERE user_id = ?", (target_user_id,))
+        conn.commit()
+        conn.close()
+        
+        # Мусор
+        update_user_trash_inventory(target_user_id, {}, 0, 0)
+        AUTO_TRASH_USERS.pop(target_user_id, None)
+        
+        # Новогодний календарь
+        conn = sqlite3.connect(NEW_YEAR_DB)
+        c = conn.cursor()
+        c.execute("DELETE FROM new_year_calendar WHERE user_id = ?", (target_user_id,))
+        conn.commit()
+        conn.close()
+        
+        # Префикс
+        remove_user_prefix(target_user_id)
+        
+        # Рефералы (только для этого пользователя)
+        # (не удаляем реферальные связи, чтобы не ломать систему)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>💀 ВСЕ ДАННЫЕ ПОЛНОСТЬЮ СБРОШЕНЫ: {mention}</b>\n\n"
+            
+            f"<b>Сброшены следующие системы:</b>\n"
+            f"• Баланс: {format_number(old_balance)}$ → {format_number(START_BALANCE)}$\n"
+            f"• Тянка: {'Удалена' if had_tyanka else 'Не было'}\n"
+            f"• Питомец: Удален\n"
+            f"• Машина: {'Удалена' if had_car else 'Не было'}\n"
+            f"• Бизнес: {'Удален' if had_business else 'Не было'}\n"
+            f"• Дом: {'Удален' if had_house else 'Не было'}\n"
+            f"• VIP: {'Удален' if vip_level > 0 else 'Не было'}\n"
+            f"• Банковский счет: Удален\n"
+            f"• Шахта: Полностью сброшена\n"
+            f"• Мусор: Инвентарь очищен\n"
+            f"• Новогодний календарь: Сброшен\n"
+            f"• Префикс: Удален\n\n"
+            
+            f"<i>⚠️ Пользователь полностью обнулен!</i>"
+        )
+        
+        # Формируем детали для логов
+        log_details = (
+            f"Баланс: {old_balance}→{START_BALANCE}, "
+            f"Тянка: {had_tyanka}, "
+            f"Машина: {had_car}, "
+            f"Бизнес: {had_business}, "
+            f"Дом: {had_house}, "
+            f"VIP: {vip_level}"
+        )
+        log_moderation("полный сброс всех данных", call.from_user.id, target_user_id, log_details)
+        
+        # Отправляем уведомление пользователю
+        try:
+            bot.send_message(
+                target_user_id,
+                f"⚠️ <b>ВАЖНОЕ УВЕДОМЛЕНИЕ</b>\n\n"
+                f"Все ваши данные в боте были сброшены администратором.\n"
+                f"Баланс: {format_number(START_BALANCE)}$\n\n"
+                f"Если это ошибка - свяжитесь с администрацией.",
+                parse_mode="HTML"
+            )
+        except:
+            pass
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("⬅️ К меню пользователя", callback_data=f"admin_back_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+        logger.error(f"Ошибка полного сброса данных: {e}")
+        
+        # ================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ УПРАВЛЕНИЯ ==================
+
+# Изменение баланса
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_edit_balance_"))
+def admin_edit_balance(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        target_user = bot.get_chat(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        user_data = get_user_data(target_user_id)
+        
+        text = (
+            f"<b>💰 ИЗМЕНЕНИЕ БАЛАНСА: {mention}</b>\n\n"
+            f"Текущий баланс: <code>{format_number(user_data['balance'])}$</code>\n\n"
+            f"Отправьте новую сумму баланса (число):"
+        )
+        
+        # Отправляем сообщение с запросом новой суммы
+        msg = bot.send_message(call.message.chat.id, text, parse_mode="HTML")
+        bot.register_next_step_handler(msg, process_new_balance, target_user_id, call.message.message_id)
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+def process_new_balance(message, target_user_id, original_msg_id):
+    if not is_admin(message.from_user.id):
+        return
+        
+    try:
+        # Пытаемся получить число
+        try:
+            new_balance = int(message.text.strip())
+            if new_balance < 0:
+                raise ValueError
+        except ValueError:
+            bot.send_message(message.chat.id, "❌ Неверный формат! Укажите положительное число.")
+            return
+            
+        user_data = get_user_data(target_user_id)
+        target_user = bot.get_chat(target_user_id)
+        
+        old_balance = user_data["balance"]
+        user_data["balance"] = new_balance
+        save_casino_data()
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        text = (
+            f"<b>✅ БАЛАНС ИЗМЕНЕН: {mention}</b>\n\n"
+            f"• Старый баланс: {format_number(old_balance)}$\n"
+            f"• Новый баланс: {format_number(new_balance)}$\n"
+            f"• Разница: {format_number(new_balance - old_balance)}$"
+        )
+        
+        log_moderation("изменение баланса", message.from_user.id, target_user_id, 
+                      f"Старый: {old_balance}, Новый: {new_balance}")
+        
+        bot.send_message(message.chat.id, text, parse_mode="HTML")
+        
+        # Удаляем сообщения
+        try:
+            bot.delete_message(message.chat.id, message.message_id)
+            bot.delete_message(message.chat.id, original_msg_id)
+        except:
+            pass
+            
+    except Exception as e:
+        bot.send_message(message.chat.id, f"❌ Ошибка: {e}")
+
+# Управление банком
+@bot.callback_query_handler(func=lambda c: c.data.startswith("admin_bank_manage_"))
+def admin_bank_manage(call):
+    try:
+        target_user_id = int(call.data.split("_")[3])
+        target_user = bot.get_chat(target_user_id)
+        bank_account = get_bank_account(target_user_id)
+        
+        mention = f'<a href="tg://user?id={target_user_id}">{target_user.first_name}</a>'
+        
+        if not bank_account:
+            text = f"<b>🏦 УПРАВЛЕНИЕ БАНКОМ: {mention}</b>\n\nУ пользователя нет банковского счета."
+        else:
+            text = (
+                f"<b>🏦 УПРАВЛЕНИЕ БАНКОМ: {mention}</b>\n\n"
+                f"Номер счета: <code>{bank_account.get('account_number', 'N/A')}</code>\n"
+                f"Баланс: <code>{format_number(bank_account.get('balance', 0))}$</code>\n"
+                f"Проценты начислено: <code>{format_number(bank_account.get('interest_earned', 0))}$</code>"
+            )
+        
+        kb = InlineKeyboardMarkup()
+        
+        if bank_account:
+            kb.add(InlineKeyboardButton("➕ Пополнить счет", callback_data=f"admin_bank_deposit_{target_user_id}"))
+            kb.add(InlineKeyboardButton("➖ Снять со счета", callback_data=f"admin_bank_withdraw_{target_user_id}"))
+            kb.add(InlineKeyboardButton("✏️ Изменить баланс", callback_data=f"admin_bank_set_{target_user_id}"))
+        
+        kb.add(InlineKeyboardButton("⬅️ Назад", callback_data=f"admin_balance_info_{target_user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, f"❌ Ошибка: {e}")
+
+# ================== ВОЗВРАТ К МЕНЮ ==================
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("admin_back_"))
 def admin_back(call):
