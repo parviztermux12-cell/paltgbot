@@ -10998,12 +10998,12 @@ MINE_CONFIGS = {
     },
     10: {
         "name": "Сложный",
-        "multiplier_increment": 1.30,
+        "multiplier_increment": 0.40,
         "base_multiplier": 1.0
     },
     15: {
         "name": "Экстрим",
-        "multiplier_increment": 2.90,
+        "multiplier_increment": 2.10,
         "base_multiplier": 1.0
     },
     20: {
