@@ -10993,22 +10993,22 @@ MINE_CONFIGS = {
     },
     5: {
         "name": "Средний",
-        "multiplier_increment": 0.12,
+        "multiplier_increment": 0.15,
         "base_multiplier": 1.0
     },
     10: {
         "name": "Сложный",
-        "multiplier_increment": 0.20,
+        "multiplier_increment": 1.30,
         "base_multiplier": 1.0
     },
     15: {
         "name": "Экстрим",
-        "multiplier_increment": 0.45,
+        "multiplier_increment": 2.90,
         "base_multiplier": 1.0
     },
     20: {
         "name": "Хардкор",
-        "multiplier_increment": 1.25,
+        "multiplier_increment": 5.50,
         "base_multiplier": 1.0
     }
 }
@@ -12093,7 +12093,7 @@ def show_donate_menu(message):
 
     bot.send_photo(message.chat.id, DONATE_IMAGE_URL, caption=text, parse_mode="HTML", reply_markup=kb)
 
-@bot.message_handler(commands=["донат"])
+@bot.message_handler(commands=["довжжвжвжвт"])
 def cmd_donate(message):
     show_donate_menu(message)
 
@@ -12150,7 +12150,7 @@ def donate_custom(message):
             return
 
         # Рассчитываем звёзды по курсу (1⭐ = 2000💸)
-        stars = max(1, amount // 2000)
+        stars = max(1, amount // 7000)
         user_id = message.from_user.id
         payment_id = create_star_payment(user_id, stars, amount)
 
