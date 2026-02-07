@@ -9982,6 +9982,7 @@ def show_roulette_logs(message):
 
 # Глобальный словарь для хранения активных игр
 active_doors_games = {}
+doors_lock = threading.Lock()  # Добавляем блокировку для потокобезопасности
 
 class DoorsGame:
     """Класс для игры в двери с бомбами"""
@@ -10120,51 +10121,75 @@ def open_door_callback(call):
         parts = call.data.split("_")
         user_id = int(parts[2])
         door_index = int(parts[3])
-
+        
         if call.from_user.id != user_id:
             bot.answer_callback_query(call.id, "🚪 Это не твоя игра!", show_alert=True)
             return
-
+        
+        # Безопасно получаем игру с блокировкой
+        game = None
         with doors_lock:
-            game = active_doors_games.get(user_id)
-
+            if user_id in active_doors_games:
+                game = active_doors_games[user_id]
+        
         if not game:
             bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
             return
-
+        
         if not game.is_active:
             bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
             return
-
+        
         result = game.open_door(door_index)
         if result is None:
             bot.answer_callback_query(call.id, "🚪 Эта дверь уже открыта!", show_alert=True)
             return
-
+        
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-
+        
         if result == "bomb":
+            # Игрок попал на бомбу
             text = (
                 f"💥 {mention} попал(а) на бомбу!\n\n"
                 f"💰 Проиграно: <code>{format_number(game.original_bet)}$</code>\n"
                 f"🎯 Открыто дверей: {len(game.opened_doors)}/6\n\n"
                 f"<i>Ставка не возвращается</i>"
             )
-
+            
+            # Удаляем игру из активных
             with doors_lock:
-                active_doors_games.pop(user_id, None)
-
+                if user_id in active_doors_games:
+                    active_doors_games.pop(user_id, None)
+            
+            # Создаем клавиатуру с результатами
             kb = InlineKeyboardMarkup()
-            kb.row(*[
-                InlineKeyboardButton("💣" if game.doors[i] == 0 else "+0.50💹", callback_data="door_disabled")
-                for i in range(3)
-            ])
-            kb.row(*[
-                InlineKeyboardButton("💣" if game.doors[i] == 0 else "+0.50💹", callback_data="door_disabled")
-                for i in range(3, 6)
-            ])
+            
+            # Первый ряд (двери 0-2)
+            buttons_row1 = []
+            for i in range(3):
+                if i in game.opened_doors:
+                    buttons_row1.append(InlineKeyboardButton(
+                        "💣" if game.doors[i] == 0 else "+0.50💹", 
+                        callback_data="door_disabled"
+                    ))
+                else:
+                    buttons_row1.append(InlineKeyboardButton("🚪", callback_data="door_disabled"))
+            
+            # Второй ряд (двери 3-5)
+            buttons_row2 = []
+            for i in range(3, 6):
+                if i in game.opened_doors:
+                    buttons_row2.append(InlineKeyboardButton(
+                        "💣" if game.doors[i] == 0 else "+0.50💹", 
+                        callback_data="door_disabled"
+                    ))
+                else:
+                    buttons_row2.append(InlineKeyboardButton("🚪", callback_data="door_disabled"))
+            
+            kb.row(*buttons_row1)
+            kb.row(*buttons_row2)
             kb.row(InlineKeyboardButton("🔄 Начать заново", callback_data=f"door_restart_{user_id}"))
-
+            
             bot.edit_message_text(
                 text,
                 call.message.chat.id,
@@ -10172,31 +10197,61 @@ def open_door_callback(call):
                 parse_mode="HTML",
                 reply_markup=kb
             )
-
             bot.answer_callback_query(call.id, "💥 Бомба!")
-
-        else:
+            
+        else:  # result == "multiplier"
             can_continue = game.can_continue()
             if not can_continue:
                 game.is_active = False
-
+                with doors_lock:
+                    if user_id in active_doors_games:
+                        active_doors_games.pop(user_id, None)
+            
             text = (
                 f"🚪 {mention} открыл(а) дверь!\n\n"
                 f"🎯 Множитель: <b>{game.multiplier}x</b>\n"
                 f"💵 Выигрыш: <code>{format_number(game.current_bet)}$</code>\n"
+                f"🚪 Осталось дверей: {game.get_remaining_doors()}\n\n"
             )
-
-            kb = InlineKeyboardMarkup()
-            for row in (range(0, 3), range(3, 6)):
-                kb.row(*[
-                    InlineKeyboardButton(
-                        "+0.50💹" if i in game.opened_doors else "🚪",
-                        callback_data="door_disabled" if i in game.opened_doors else f"door_open_{user_id}_{i}"
-                    )
-                    for i in row
-                ])
-            kb.row(InlineKeyboardButton("💸 Забрать выигрыш", callback_data=f"door_take_{user_id}"))
-
+            
+            # Создаем обновленную клавиатуру
+            kb = InlineKeyboardMarkup(row_width=3)
+            
+            # Первый ряд (двери 0-2)
+            buttons_row1 = []
+            for i in range(3):
+                if i in game.opened_doors:
+                    buttons_row1.append(InlineKeyboardButton(
+                        "+0.50💹", 
+                        callback_data="door_disabled"
+                    ))
+                elif not game.is_active:
+                    buttons_row1.append(InlineKeyboardButton("🚪", callback_data="door_disabled"))
+                else:
+                    buttons_row1.append(InlineKeyboardButton("🚪", callback_data=f"door_open_{user_id}_{i}"))
+            
+            # Второй ряд (двери 3-5)
+            buttons_row2 = []
+            for i in range(3, 6):
+                if i in game.opened_doors:
+                    buttons_row2.append(InlineKeyboardButton(
+                        "+0.50💹", 
+                        callback_data="door_disabled"
+                    ))
+                elif not game.is_active:
+                    buttons_row2.append(InlineKeyboardButton("🚪", callback_data="door_disabled"))
+                else:
+                    buttons_row2.append(InlineKeyboardButton("🚪", callback_data=f"door_open_{user_id}_{i}"))
+            
+            kb.row(*buttons_row1)
+            kb.row(*buttons_row2)
+            
+            if game.is_active:
+                kb.row(InlineKeyboardButton("💸 Забрать выигрыш", callback_data=f"door_take_{user_id}"))
+            else:
+                kb.row(InlineKeyboardButton("🎉 Забрать выигрыш", callback_data=f"door_take_{user_id}"))
+                text += f"<b>🎯 Игра завершена! Открыто 2 множителя.</b>"
+            
             bot.edit_message_text(
                 text,
                 call.message.chat.id,
@@ -10204,53 +10259,100 @@ def open_door_callback(call):
                 parse_mode="HTML",
                 reply_markup=kb
             )
-
-            bot.answer_callback_query(call.id, f"+0.50💹 {game.multiplier}x")
-
+            
+            bot.answer_callback_query(call.id, f"+0.50💹 Множитель: {game.multiplier}x")
+            
     except Exception as e:
         logger.error(f"Ошибка открытия двери: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
+        bot.answer_callback_query(call.id, "❌ Ошибка при открытии двери!", show_alert=True)
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("door_take_"))
 def take_win_callback(call):
     try:
         user_id = int(call.data.split("_")[2])
-
+        
         if call.from_user.id != user_id:
             bot.answer_callback_query(call.id, "💰 Это не твоя игра!", show_alert=True)
             return
-
+        
+        # Безопасно получаем и удаляем игру
+        game = None
         with doors_lock:
-            game = active_doors_games.pop(user_id, None)
-
+            if user_id in active_doors_games:
+                game = active_doors_games.pop(user_id, None)
+        
         if not game:
             bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
             return
-
+        
+        # Начисляем выигрыш
         user_data = get_user_data(user_id)
         user_data["balance"] += game.current_bet
         save_casino_data()
-
+        
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
         text = (
             f"🎉 {mention} забрал(а) выигрыш!\n\n"
-            f"💰 <code>{format_number(game.current_bet)}$</code>\n"
-            f"🎯 Множитель: <b>{game.multiplier}x</b>"
+            f"💰 Получено: <code>{format_number(game.current_bet)}$</code>\n"
+            f"🎯 Итоговый множитель: <b>{game.multiplier}x</b>\n"
+            f"💵 Текущий баланс: <code>{format_number(user_data['balance'])}$</code>"
         )
-
+        
         bot.edit_message_text(
             text,
             call.message.chat.id,
             call.message.message_id,
             parse_mode="HTML"
         )
-
-        bot.answer_callback_query(call.id, f"+{format_number(game.current_bet)}$")
-
+        
+        bot.answer_callback_query(call.id, f"✅ +{format_number(game.current_bet)}$")
+        
     except Exception as e:
         logger.error(f"Ошибка взятия выигрыша: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при получении выигрыша!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("door_restart_"))
+def restart_game_callback(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "🔄 Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Создаем фейковое сообщение для повторного запуска
+        class FakeMessage:
+            def __init__(self, chat_id, from_user):
+                self.chat = type('Chat', (), {'id': chat_id})()
+                self.from_user = from_user
+        
+        fake_msg = FakeMessage(call.message.chat.id, call.from_user)
+        
+        # Удаляем старое сообщение
+        try:
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+        except:
+            pass
+        
+        # Просим ввести новую ставку
+        bot.send_message(
+            call.message.chat.id,
+            f"🔄 <a href='tg://user?id={user_id}'>{call.from_user.first_name}</a>, введите новую ставку для игры:\n\nПример: <code>дверь 1000</code>",
+            parse_mode="HTML"
+        )
+        
+        bot.answer_callback_query(call.id, "🔄 Введите новую ставку")
+        
+    except Exception as e:
+        logger.error(f"Ошибка рестарта игры: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data == "door_disabled")
+def door_disabled_callback(call):
+    """Обработчик для отключенных кнопок"""
+    bot.answer_callback_query(call.id, "⛔ Эта кнопка недоступна!", show_alert=False)
+
+print("✅ Игра 'Двери' загружена и готова к работе! 🚪")
         
 # ================== ФУТБОЛ / БАСКЕТБОЛ / ТИР (50/50) БЕЗ АНИМАЦИИ ==================
 
