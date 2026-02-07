@@ -634,7 +634,7 @@
   "game": {
     "amount": 30000,
     "max_activations": 100000,
-    "current_activations": 13,
+    "current_activations": 16,
     "activated_by": [
       7526512670,
       8168027201,
@@ -648,7 +648,48 @@
       1248832437,
       8340514324,
       8452337057,
-      8084177547
+      8084177547,
+      7158187651,
+      8335186885,
+      777000
+    ]
+  },
+  "ponchik": {
+    "amount": 20000,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      777000,
+      1375612102,
+      5815880196,
+      7158187651,
+      7696828602
+    ]
+  },
+  "228": {
+    "amount": 15000,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      777000,
+      7457101105,
+      5815880196,
+      8335186885,
+      8232024665,
+      7696828602,
+      1375612102,
+      1448932943,
+      6492371047,
+      5203713503
+    ]
+  },
+  "XOQM78H9": {
+    "amount": 2602,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7526512670,
+      6512241065
     ]
   }
 }
