@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("LasVenturas By parviz")
 
 # ================== КОНСТАНТЫ И ОГРАНИЧЕНИЯ ==================
-TOKEN = "8293824305:AAHgjsDcya_IX4jR0y0IIPY4b9wDlbhWSAQ"
+TOKEN = "8086235115:AAGSGvs1Jum4mipvyZuoFKGh5ml_RvUUZbQ"
 WELCOME_IMAGE_URL = "https://i.supaimg.com/2939d8ad-5c5a-4bea-a182-6c3e8bbc833d.jpg"
 CASINO_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=c651fbed170eb7128e00ff84ca1c0bf543c74de2-10332115-images-thumbs&n=13"
 BLACKJACK_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=dc64180881834f3c5a302bda16d65de46956d887-5355514-images-thumbs&n=13&shower=-1&blur=-1"
@@ -11364,17 +11364,17 @@ print("✅ Игры: футбол, баскетбол, тир и кубик за
 MINE_CONFIGS = {
     3: {
         "name": "Лёгкий",
-        "multiplier_increment": 0.02,
+        "multiplier_increment": 1.50,
         "base_multiplier": 1.0
     },
     5: {
         "name": "Средний",
-        "multiplier_increment": 0.15,
+        "multiplier_increment": 1.50,
         "base_multiplier": 1.0
     },
     10: {
         "name": "Сложный",
-        "multiplier_increment": 0.40,
+        "multiplier_increment": 1.50,
         "base_multiplier": 1.0
     },
     15: {
