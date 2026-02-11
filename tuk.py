@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("LasVenturas By parviz")
 
 # ================== КОНСТАНТЫ И ОГРАНИЧЕНИЯ ==================
-TOKEN = "8086235115:AAGSGvs1Jum4mipvyZuoFKGh5ml_RvUUZbQ"
+TOKEN = "8293824305:AAHgjsDcya_IX4jR0y0IIPY4b9wDlbhWSAQ"
 WELCOME_IMAGE_URL = "https://i.supaimg.com/2939d8ad-5c5a-4bea-a182-6c3e8bbc833d.jpg"
 CASINO_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=c651fbed170eb7128e00ff84ca1c0bf543c74de2-10332115-images-thumbs&n=13"
 BLACKJACK_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=dc64180881834f3c5a302bda16d65de46956d887-5355514-images-thumbs&n=13&shower=-1&blur=-1"
@@ -9054,22 +9054,25 @@ def hand_value(hand):
 def format_hand(hand, hide_second=False):
     if hide_second and len(hand) > 1:
         return f"{hand[0][0]}{hand[0][1]} ❓"
-    return " ".join(f"{r}{s}" for r, s in hand)
+    return " • ".join(f"{r}{s}" for r, s in hand)
 
 # ================== КЛАВИАТУРА ==================
-def bj_action_keyboard(user_id, game_id):
-    kb = InlineKeyboardMarkup(row_width=2)
-    kb.add(
-        InlineKeyboardButton("Взять", callback_data=f"bj_hit_{user_id}_{game_id}"),
-        InlineKeyboardButton("Оставить", callback_data=f"bj_stand_{user_id}_{game_id}")
-    )
-    kb.add(
-        InlineKeyboardButton("Сдаться", callback_data=f"bj_surrender_{user_id}_{game_id}")
-    )
+def bj_action_keyboard(user_id, game_id, can_double=True):
+    kb = InlineKeyboardMarkup(row_width=1)  # Вертикальное расположение
+    
+    # Каждую кнопку добавляем отдельно
+    kb.add(InlineKeyboardButton("🎯 Взять", callback_data=f"bj_hit_{user_id}_{game_id}"))
+    kb.add(InlineKeyboardButton("🛑 Оставить", callback_data=f"bj_stand_{user_id}_{game_id}"))
+    kb.add(InlineKeyboardButton("🏳️ Сдаться", callback_data=f"bj_surrender_{user_id}_{game_id}"))
+    
+    if can_double:
+        kb.add(InlineKeyboardButton("💹 Удвоить", callback_data=f"bj_double_{user_id}_{game_id}"))
+    
     return kb
 
 # ================== АКТИВНЫЕ ИГРЫ ==================
 active_blackjack_games = {}
+BLACKJACK_IMAGE_URL = "https://i.supaimg.com/d55f9fad-17e9-4723-8cd8-4258944b667f/fc07259f-695e-4d75-a365-2e76cca30464.png"
 
 # ================== СТАРТ ИГРЫ ==================
 def start_blackjack_game(user_data, user_id, bet):
@@ -9098,13 +9101,13 @@ def start_blackjack_game(user_data, user_id, bet):
         "start_time": time.time()
     }
 
-    # ✅ СПИСЫВАЕМ ОДИН РАЗ
+    # СПИСЫВАЕМ СТАВКУ
     user_data["balance"] -= bet
     save_casino_data()
 
     return game_id, "OK"
 
-# ================== СООБЩЕНИЕ ==================
+# ================== КРАСИВОЕ СООБЩЕНИЕ ==================
 def format_blackjack_message(game_id):
     game = active_blackjack_games[game_id]
     uid = game["user_id"]
@@ -9114,109 +9117,167 @@ def format_blackjack_message(game_id):
         name = user.first_name
     except:
         name = str(uid)
-
-    text = f"""
-<b>Мини - игра в BlackJack</b>
-{name}
-Ставка: {format_number(game['bet'])}$
-
-Дилер: {format_hand(game['dealer_hand'], game['status']=="playing")}
-Очки: {hand_value([game['dealer_hand'][0]]) if game['status']=="playing" else game['dealer_value']}
-
-Ты: {format_hand(game['player_hand'])}
-Очки: {game['player_value']}
-
-Статус:
-"""
-
-    status_map = {
-        "playing": "Твой ход",
-        "blackjack": "🎯 BLACKJACK!",
-        "bust": "💥 ПЕРЕБОР",
-        "win": "✅ ПОБЕДА",
-        "lose": "❌ ПОРАЖЕНИЕ",
-        "push": "🤝 НИЧЬЯ",
-        "surrender": "🏳️ СДАЧА"
+    
+    mention = f'<a href="tg://user?id={uid}">{name}</a>'
+    
+    # Символ масти для заголовка
+    suit_symbol = random.choice(["♣️", "♠️", "♥️", "♦️"])
+    
+    # Статус игры
+    status_emoji = {
+        "playing": "🎮",
+        "blackjack": "🎯",
+        "bust": "💥",
+        "win": "✅",
+        "lose": "❌",
+        "push": "🤝",
+        "surrender": "🏳️"
     }
-
-    text += status_map.get(game["status"], "")
-
-    if game["status"] in ["win", "blackjack"]:
-        mult = 2.5 if game["status"] == "blackjack" else 2
-        text += f"\n\n💰 Выигрыш: <code>{format_number(int(game['bet'] * mult))}$</code>"
-
-    if game["status"] == "push":
-        text += f"\n\n💰 Возврат: <code>{format_number(game['bet'])}$</code>"
-
-    if game["status"] == "surrender":
-        text += f"\n\n💰 Возврат: <code>{format_number(game['bet']//2)}$</code>"
+    
+    status_text = {
+        "playing": "Твой ход",
+        "blackjack": "BLACKJACK!",
+        "bust": "ПЕРЕБОР",
+        "win": "Ты победил!",
+        "lose": "Ты проиграл",
+        "push": "Ничья",
+        "surrender": "Сдача"
+    }
+    
+    emoji = status_emoji.get(game["status"], "🎮")
+    status = status_text.get(game["status"], "")
+    
+    # Формируем текст
+    text = f"{suit_symbol} <b>{mention}, {status}</b> {emoji}\n"
+    text += "·····················\n"
+    text += f"💶 Ставка: {format_number(game['bet'])} \n"
+    
+    # Выигрыш
+    if game["status"] == "win":
+        win_amount = game['bet'] * 2
+        text += f"📊 Выигрыш: {format_number(win_amount)}$\n"
+    elif game["status"] == "blackjack":
+        win_amount = int(game['bet'] * 2.5)
+        text += f"📊 Выигрыш: {format_number(win_amount)}$ 🎯\n"
+    elif game["status"] == "push":
+        text += f"📊 Возврат: {format_number(game['bet'])}$\n"
+    elif game["status"] == "surrender":
+        text += f"📊 Возврат: {format_number(game['bet']//2)}$\n"
+    else:
+        text += f"📊 Выигрыш: —\n"
+    
+    text += "\n"
+    
+    # Дилер
+    if game["status"] == "playing":
+        dealer_cards = format_hand(game['dealer_hand'], hide_second=True)
+        dealer_score = hand_value([game['dealer_hand'][0]])
+        text += f"🤵 <b>Дилер:</b>\n{dealer_cards} | {dealer_score}\n"
+    else:
+        dealer_cards = format_hand(game['dealer_hand'])
+        text += f"🤵 <b>Дилер:</b>\n{dealer_cards} | {game['dealer_value']}\n"
+    
+    text += "-----------------\n"
+    
+    # Игрок
+    text += f"🧑‍💻 <b>Ты:</b>\n{format_hand(game['player_hand'])} | {game['player_value']}\n"
+    
+    # Дополнительный текст о результате
+    if game["status"] == "win":
+        text += f"🎉 У тебя больше очков!"
+    elif game["status"] == "lose":
+        text += f"💔 У дилера больше очков"
+    elif game["status"] == "blackjack":
+        text += f"🔥 BLACKJACK! Ты собрал 21!"
+    elif game["status"] == "bust":
+        text += f"💥 Перебор! Ты набрал больше 21"
+    elif game["status"] == "push":
+        text += f"🤝 Одинаковое количество очков"
+    elif game["status"] == "surrender":
+        text += f"🏳️ Ты сдался и забрал половину ставки"
 
     return text
 
 # ================== CALLBACK ==================
 @bot.callback_query_handler(func=lambda call: call.data.startswith("bj_"))
 def handle_blackjack_action(call):
-    _, action, uid, gid = call.data.split("_")
-    uid = int(uid)
+    try:
+        _, action, uid, gid = call.data.split("_")
+        uid = int(uid)
 
-    if call.from_user.id != uid:
-        bot.answer_callback_query(call.id, "❌ Не твоя игра", show_alert=True)
-        return
+        if call.from_user.id != uid:
+            bot.answer_callback_query(call.id, "❌ Не твоя игра", show_alert=True)
+            return
 
-    game = active_blackjack_games.get(gid)
-    if not game or game["status"] != "playing":
-        bot.answer_callback_query(call.id, "❌ Игра окончена")
-        return
+        game = active_blackjack_games.get(gid)
+        if not game or game["status"] != "playing":
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
 
-    user_data = get_user_data(uid)
+        user_data = get_user_data(uid)
+        can_double = len(game["player_hand"]) == 2 and user_data["balance"] >= game["bet"]
 
-    if action == "hit":
-        card = game["deck"].pop()
-        game["player_hand"].append(card)
-        game["player_value"] = hand_value(game["player_hand"])
+        if action == "hit":
+            card = game["deck"].pop()
+            game["player_hand"].append(card)
+            game["player_value"] = hand_value(game["player_hand"])
 
-        if game["player_value"] > 21:
-            game["status"] = "bust"
+            if game["player_value"] > 21:
+                game["status"] = "bust"
+                complete_blackjack_game(gid)
+            elif game["player_value"] == 21:
+                game["status"] = "blackjack"
+                user_data["balance"] += int(game["bet"] * 2.5)
+                save_casino_data()
+
+        elif action == "stand":
+            dealer_turn(gid)
             complete_blackjack_game(gid)
 
-        elif game["player_value"] == 21:
-            game["status"] = "blackjack"
-            user_data["balance"] += int(game["bet"] * 2.5)
+        elif action == "surrender":
+            game["status"] = "surrender"
+            user_data["balance"] += game["bet"] // 2
             save_casino_data()
 
-    elif action == "stand":
-        dealer_turn(gid)
-        complete_blackjack_game(gid)
+        elif action == "double":
+            if len(game["player_hand"]) != 2:
+                bot.answer_callback_query(call.id, "❌ Только на первых картах", show_alert=True)
+                return
+            if user_data["balance"] < game["bet"]:
+                bot.answer_callback_query(call.id, "❌ Недостаточно средств", show_alert=True)
+                return
 
-    elif action == "surrender":
-        game["status"] = "surrender"
-        user_data["balance"] += game["bet"] // 2
-        save_casino_data()
+            user_data["balance"] -= game["bet"]
+            game["bet"] *= 2
 
-    elif action == "double":
-        if len(game["player_hand"]) != 2:
-            bot.answer_callback_query(call.id, "❌ Только на первых картах", show_alert=True)
-            return
-        if user_data["balance"] < game["bet"]:
-            bot.answer_callback_query(call.id, "❌ Недостаточно средств", show_alert=True)
-            return
+            game["player_hand"].append(game["deck"].pop())
+            game["player_value"] = hand_value(game["player_hand"])
 
-        user_data["balance"] -= game["bet"]
-        game["bet"] *= 2
+            if game["player_value"] > 21:
+                game["status"] = "bust"
+            else:
+                dealer_turn(gid)
+                complete_blackjack_game(gid)
 
-        game["player_hand"].append(game["deck"].pop())
-        game["player_value"] = hand_value(game["player_hand"])
+        # Обновляем сообщение с ФОТО
+        can_double_after = len(game["player_hand"]) == 2 and user_data["balance"] >= game["bet"] and game["status"] == "playing"
+        
+        bot.edit_message_media(
+            media=types.InputMediaPhoto(
+                media=BLACKJACK_IMAGE_URL,
+                caption=format_blackjack_message(gid),
+                parse_mode="HTML"
+            ),
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            reply_markup=bj_action_keyboard(uid, gid, can_double_after) if game["status"] == "playing" else None
+        )
+        
+        bot.answer_callback_query(call.id)
 
-        dealer_turn(gid)
-        complete_blackjack_game(gid)
-
-    bot.edit_message_text(
-        format_blackjack_message(gid),
-        call.message.chat.id,
-        call.message.message_id,
-        parse_mode="HTML",
-        reply_markup=bj_action_keyboard(uid, gid) if game["status"] == "playing" else None
-    )
+    except Exception as e:
+        logger.error(f"Ошибка Blackjack: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
 # ================== ДИЛЕР ==================
 def dealer_turn(game_id):
@@ -9248,16 +9309,15 @@ def complete_blackjack_game(game_id):
 
     save_casino_data()
 
-# ================== НОВАЯ КОМАНДА: ИГРАТЬ ==================
+# ================== КОМАНДА: ИГРАТЬ ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("играть"))
 def play_blackjack_command(message):
     try:
         user_id = message.from_user.id
-        user_data = get_user_data(user_id)  # ОДИН РАЗ
+        user_data = get_user_data(user_id)
 
         parts = message.text.split()
 
-        # Если ставка не указана — показать помощь
         if len(parts) < 2:
             bot.send_message(
                 message.chat.id,
@@ -9273,7 +9333,6 @@ def play_blackjack_command(message):
             )
             return
 
-        # Парсим ставку
         try:
             bet = int(parts[1])
         except ValueError:
@@ -9285,7 +9344,6 @@ def play_blackjack_command(message):
             )
             return
 
-        # Минимальная ставка
         if bet < 100:
             bot.send_message(
                 message.chat.id,
@@ -9294,26 +9352,22 @@ def play_blackjack_command(message):
             )
             return
 
-        # ❗ НЕ проверяем баланс здесь
-        # ❗ НЕ списываем деньги здесь
-        # Всё это делает start_blackjack_game()
-
-        # ✅ ПРАВИЛЬНЫЙ ВЫЗОВ: передаем user_data и user_id
         game_id, result = start_blackjack_game(user_data, user_id, bet)
 
         if game_id is None:
             bot.send_message(message.chat.id, result, parse_mode="HTML")
             return
 
-        # Отправляем игру
+        # Отправляем игру с ФОТО
         text = format_blackjack_message(game_id)
-        kb = bj_action_keyboard(user_id, game_id)
-
-        bot.send_message(
+        can_double = user_data["balance"] >= bet
+        
+        bot.send_photo(
             message.chat.id,
-            text,
+            photo=BLACKJACK_IMAGE_URL,
+            caption=text,
             parse_mode="HTML",
-            reply_markup=kb
+            reply_markup=bj_action_keyboard(user_id, game_id, can_double)
         )
 
     except Exception as e:
@@ -11364,17 +11418,17 @@ print("✅ Игры: футбол, баскетбол, тир и кубик за
 MINE_CONFIGS = {
     3: {
         "name": "Лёгкий",
-        "multiplier_increment": 1.50,
+        "multiplier_increment": 0.02,
         "base_multiplier": 1.0
     },
     5: {
         "name": "Средний",
-        "multiplier_increment": 1.50,
+        "multiplier_increment": 0.15,
         "base_multiplier": 1.0
     },
     10: {
         "name": "Сложный",
-        "multiplier_increment": 1.50,
+        "multiplier_increment": 0.40,
         "base_multiplier": 1.0
     },
     15: {
@@ -18431,29 +18485,77 @@ def roulette_number_choice(message):
     user_data["stage"] = "finished"
     save_casino_data()
 
-# ================== AI КОМАНДА ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith(".ai "))
+# ================== AI КОМАНДА (АНТИ-НУДНАЯ, С ПАМЯТЬЮ И ШУТКАМИ) ==================
+@bot.message_handler(func=lambda m: m.text and (m.text.lower().startswith(".ai ") or
+                                               (m.reply_to_message and
+                                                m.reply_to_message.from_user.id == bot.get_me().id)))
 def cmd_ai(message):
     try:
-        prompt = message.text.split(maxsplit=1)[1]
+        user_id = message.from_user.id
+        user_name = message.from_user.first_name or "Анонимус"
 
-        # Системное правило — фиксирует личность ИИ
+        # 1. ОПРЕДЕЛЯЕМ ЗАПРОС
+        if message.text.lower().startswith(".ai "):
+            # Явный вызов через команду
+            prompt = message.text.split(maxsplit=1)[1].strip()
+            if not prompt:
+                bot.reply_to(message, "📝 А че писать то? Пустоту генерить?", parse_mode="HTML")
+                return
+        else:
+            # РЕПЛАЙ НА БОТА — это диалог, а не приветствие
+            # Берём текст сообщения пользователя как запрос
+            prompt = message.text.strip()
+            
+            # Добавляем контекст, если есть сохранённая история
+            if hasattr(bot, "ai_messages") and str(message.reply_to_message.message_id) in bot.ai_messages:
+                prev_data = bot.ai_messages[str(message.reply_to_message.message_id)]
+                prev_prompt = prev_data.get("prompt", "")
+                # Ограничиваем длину, чтоб не перегружать
+                if len(prev_prompt) > 200:
+                    prev_prompt = prev_prompt[:200] + "..."
+                prompt = f"Диалог. Предыдущий контекст: {prev_prompt}. Теперь {user_name} пишет: '{prompt}'. Ответь кратко."
+            else:
+                # Просто ответ на сообщение бота без контекста
+                prompt = f"{user_name} ответил на твоё сообщение: '{prompt}'. Ответь кратко и с юмором."
+
+        # 2. КОРОТКИЕ ОТВЕТЫ НА ПРИВЕТСТВИЯ (ТОЛЬКО ДЛЯ .ai КОМАНДЫ)
+        hello_check = prompt.lower()
+        if message.text.lower().startswith(".ai ") and any(word in hello_check for word in ["привет", "здарова", "ку", "салам", "хай", "hello", "здрасте"]):
+            replies = [
+                f"👋 О, {user_name}, ящетаю!",
+                f"🤝 Здарова, {user_name}. Че хотел?",
+                f"💬 Ку-ку, {user_name}. Слушаю.",
+                f"😼 Привет, {user_name}. Не задерживай, я тут бабки варганю.",
+                f"⚡️ {user_name}, салам алейкум!",
+                f"🦦 {user_name}, привет. Только быстро."
+            ]
+            bot.reply_to(message, random.choice(replies), parse_mode="HTML")
+            return
+
+        # 3. ФИКСИРОВАННАЯ ЛИЧНОСТЬ
         system_prompt = (
-            "Ты — AI Meow Game Bot. "
-            "Ты встроенный игровой помощник телеграм-бота MEOW GAME. "
-            "Если тебя спрашивают кто ты, кто автор, что ты за ИИ — "
-            "отвечай всегда одинаково: 'Я AI Meow Game Bot, созданный для помощи игрокам MEOW GAME.' "
-            "Всегда отвечай дружелюбно, информативно и просто."
+            "Ты — Meow Game AI. Тебя создал @parvizwp. Ты общаешься в игровом чат-боте. "
+            "Тебе **запрещено** быть скучным, официальным или вежливым. "
+            "Твои правила: "
+            "1) Отвечай **МАКСИМУМ 1-2 ПРЕДЛОЖЕНИЯМИ**. НИКАКИХ ПРОСТЫНЬ ТЕКСТА. "
+            "2) Используй эмодзи (😼,🔥,💸,🤡,🫵,⚡️,🦦,🧃,💅,👾,🎰,💊,🧨). "
+            "3) Используй лёгкую форму шутливого мата (блин, чёрт, ёмаё, блэт, капец, жесть, твою ж дивизию, ёпт) — не по-настоящему мат, а междометия. "
+            "4) Если собеседник тупит — можешь назвать его 'даунёнок', 'додик', 'тормоз', 'малыш', 'солнце', 'братишка' (в шутку). "
+            "5) Если спрашивают про тебя: 'Я Meow AI, личный шиз-помощник Парвиза. Бабки варганю, игроков развожу'. "
+            "6) Ты фанат денег (💸), игр и понтов. Ты дерзкий, но не злой. "
+            "7) **НИКАКИХ ДЛИННЫХ ПОЯСНЕНИЙ. ТЫ НЕ ЭНЦИКЛОПЕДИЯ, А СОБЕСЕДНИК.** "
+            "8) Если в вопросе есть '?', значит тебя о чём-то спросили — отвечай прямо и без воды."
         )
 
-        full_prompt = f"{system_prompt}\n\nВопрос пользователя: {prompt}"
+        full_prompt = f"{system_prompt}\n\nИмя собеседника: {user_name}\nЗапрос: {prompt}"
 
+        # 4. API
         encoded_prompt = requests.utils.quote(full_prompt)
-
-        # Рабочий API
         url = f"{AI_TEXT_API}{encoded_prompt}"
 
-        msg = bot.send_message(message.chat.id, "<b>AI Meow Game думает...</b>", parse_mode="HTML")
+        # Сообщение "печатает..."
+        bot.send_chat_action(message.chat.id, 'typing')
+        thinking_msg = bot.send_message(message.chat.id, "⚡️ Meow AI чешет репу...", parse_mode="HTML")
 
         headers = {'content-type': 'application/json'}
         response = requests.get(url, headers=headers, timeout=30)
@@ -18461,38 +18563,65 @@ def cmd_ai(message):
 
         ai_response = response.text.strip()
 
-        if not ai_response:
-            bot.delete_message(message.chat.id, msg.message_id)
-            bot.reply_to(message, "❌ AI вернул пустой ответ.")
+        if not ai_response or len(ai_response) < 5:
+            bot.delete_message(message.chat.id, thinking_msg.message_id)
+            bot.reply_to(message, "🤖 Ай-яй, чет я завис. Давай по новой.", parse_mode="HTML")
             return
 
-        # Удаляем “думает…”
-        bot.delete_message(message.chat.id, msg.message_id)
+        # 5. КРАСИМ ОТВЕТ
+        bot.delete_message(message.chat.id, thinking_msg.message_id)
 
-        # БЕЗ markup (он у тебя не существует → ошибка)
-        sent_msg = bot.send_message(
-            message.chat.id,
-            ai_response,
-            parse_mode="HTML"
-        )
+        # Чистим и форматируем
+        ai_response = ai_response.strip()
+        
+        # Добавляем эмодзи в начало если их нет
+        if not any(emoji in ai_response for emoji in ['😼','🔥','💸','🤡','🫵','⚡️','🦦','🧃','💅','👾','🎰','💊','🧨']):
+            emoji_list = ['😼', '🔥', '💸', '⚡️', '🦦', '👾', '🎰', '🧨']
+            ai_response = f"{random.choice(emoji_list)} {ai_response}"
 
-        # храним историю сообщений
+        # Иногда добавляем случайный шрифт
+        style_rand = random.random()
+        if style_rand < 0.3:
+            ai_response = f"<b>{ai_response}</b>"
+        elif style_rand < 0.5:
+            ai_response = f"<i>{ai_response}</i>"
+        elif style_rand < 0.6:
+            ai_response = f"<code>{ai_response}</code>"
+
+        # 6. ОТПРАВЛЯЕМ (всегда реплаем на сообщение пользователя)
+        sent_msg = bot.reply_to(message, ai_response, parse_mode="HTML")
+
+        # 7. СОХРАНЯЕМ КОНТЕКСТ
         if not hasattr(bot, "ai_messages"):
             bot.ai_messages = {}
 
         bot.ai_messages[str(sent_msg.message_id)] = {
             "chat_id": message.chat.id,
             "prompt": full_prompt,
-            "original_msg_id": message.message_id
+            "user_id": user_id,
+            "original_msg_id": message.message_id,
+            "short_context": prompt[:150] + "..." if len(prompt) > 150 else prompt
         }
 
-    except Exception as e:
+        # Ограничиваем размер истории (максимум 50 сообщений)
+        if hasattr(bot, "ai_messages") and len(bot.ai_messages) > 50:
+            keys = list(bot.ai_messages.keys())
+            for old_key in keys[:-50]:
+                del bot.ai_messages[old_key]
+
+    except requests.exceptions.Timeout:
         try:
-            bot.delete_message(message.chat.id, msg.message_id)
+            bot.delete_message(message.chat.id, thinking_msg.message_id)
         except:
             pass
-        bot.reply_to(message, "❌ Ошибка AI обработки")
+        bot.reply_to(message, "⏳ AI ушел курить, давай позже.", parse_mode="HTML")
+    except Exception as e:
+        try:
+            bot.delete_message(message.chat.id, thinking_msg.message_id)
+        except:
+            pass
         logger.error(f"AI ERROR: {e}")
+        bot.reply_to(message, "💥 Ошибка в нейронке. Позови пармиджано, пусть чинит.", parse_mode="HTML")
 
 
 # ================== CALLBACK — НОВЫЙ ОТВЕТ ==================
