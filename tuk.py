@@ -11809,9 +11809,38 @@ def mines_handler(call):
         logger.error(f"Ошибка в обработчике мин: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)            
     
-# ================== КОМАНДЫ "ПОМОЩЬ" И "/help" ==================
+# ================== ПОЛНОСТЬЮ ПЕРЕРАБОТАННАЯ КОМАНДА "ПОМОЩЬ" / "/help" ==================
+# 2 СТРАНИЦЫ ПО 4 РАЗДЕЛА, ЗАЩИТА ОТ ЧУЖИХ КНОПОК
+# ВО ВСЕХ РАЗДЕЛАХ ОПИСАНИЯ КОМАНД, КРОМЕ ИГР - ТАМ ТОЛЬКО КОМАНДЫ
+
+# ---------- НАСТРОЙКА СТРАНИЦ ПОМОЩИ ----------
+HELP_PAGES = {
+    1: [  # Страница 1: 4 раздела
+        ("Команды", "help_cmds"),
+        ("Игры", "help_games"),
+        ("VIP", "help_vip"),
+        ("Тянки", "help_tyanki")
+    ],
+    2: [  # Страница 2: 4 раздела
+        ("Питомцы", "help_pets"),
+        ("Система брака", "help_marriage"),
+        ("Ивенты", "help_events"),
+        ("Донат", "help_donate")
+    ]
+}
+
+# ---------- ФУНКЦИЯ ПРОВЕРКИ ВЛАДЕЛЬЦА КНОПКИ ----------
+def check_help_owner(call, user_id):
+    """Проверяет, что кнопку нажимает её владелец"""
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+        return False
+    return True
+
+# ---------- КОМАНДА /help И ПОМОЩЬ ----------
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["помощь", "/help@meow_gamechat_bot", "/help"])
-def cmd_pomosh(message):
+def cmd_help(message):
+    user_id = message.from_user.id
     user = message.from_user
     mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
 
@@ -11822,13 +11851,13 @@ def cmd_pomosh(message):
         "Выберите раздел:"
     )
 
-    # Страница 1: первые 3 кнопки
+    # Страница 1: 4 раздела + кнопка Вперёд
     kb = InlineKeyboardMarkup(row_width=1)
-    kb.add(InlineKeyboardButton("Команды", callback_data="help_page_1"))
-    kb.add(InlineKeyboardButton("Игры", callback_data="help_games"))
-    kb.add(InlineKeyboardButton("VIP", callback_data="help_vip"))
-    # Только вперед
-    kb.add(InlineKeyboardButton(" > ", callback_data="help_next_page_2"))
+    
+    for btn_text, callback in HELP_PAGES[1]:
+        kb.add(InlineKeyboardButton(btn_text, callback_data=f"{callback}_{user_id}"))
+    
+    kb.add(InlineKeyboardButton("Вперёд", callback_data=f"help_next_{user_id}"))
 
     bot.send_message(
         message.chat.id,
@@ -11837,394 +11866,31 @@ def cmd_pomosh(message):
         parse_mode="HTML"
     )
 
-
-# ================== ПАГИНАЦИЯ КНОПОК ПОМОЩИ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("help_next_page_") or c.data.startswith("help_prev_page_"))
-def callback_help_pagination(call):
+# ---------- ОБРАБОТЧИК КНОПКИ ВПЕРЁД (СТРАНИЦА 2) ----------
+@bot.callback_query_handler(func=lambda c: c.data.startswith("help_next_"))
+def help_next_page(call):
     try:
-        if call.data.startswith("help_next_page_"):
-            page_num = int(call.data.split("_")[3])
-            show_help_page(call, page_num)
-        elif call.data.startswith("help_prev_page_"):
-            page_num = int(call.data.split("_")[3])
-            show_help_page(call, page_num)
-            
-        bot.answer_callback_query(call.id)
+        user_id = int(call.data.split("_")[2])
         
-    except Exception as e:
-        logger.error(f"Ошибка в пагинации помощи: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!")
-
-
-def show_help_page(call, page_num):
-    """Показывает конкретную страницу с кнопками помощи"""
-    user = call.from_user
-    mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
-    
-    text = (
-        "📖 <b>ПАНЕЛЬ ПОМОЩИ</b>\n"
-        f"👤 <b>Пользователь:</b> {mention}\n"
-        f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
-        "Выберите раздел:"
-    )
-    
-    kb = InlineKeyboardMarkup(row_width=1)
-    
-    if page_num == 1:
-        # Страница 1: первые 3 кнопки
-        kb.add(InlineKeyboardButton("Команды", callback_data="help_page_1"))
-        kb.add(InlineKeyboardButton("Игры", callback_data="help_games"))
-        kb.add(InlineKeyboardButton("VIP", callback_data="help_vip"))
-        # Только вперед
-        kb.add(InlineKeyboardButton(" > ", callback_data="help_next_page_2"))
-        
-    elif page_num == 2:
-        # Страница 2: следующие 3 кнопки
-        kb.add(InlineKeyboardButton("Тянки", callback_data="help_tyanki"))
-        kb.add(InlineKeyboardButton("Питомцы", callback_data="help_pets"))
-        kb.add(InlineKeyboardButton("Брак", callback_data="help_marriage"))
-        # Назад и вперед
-        kb.row(
-            InlineKeyboardButton(" < ", callback_data="help_prev_page_1"),
-            InlineKeyboardButton(" > ", callback_data="help_next_page_3")
-        )
-        
-    elif page_num == 3:
-        # Страница 3: следующие 3 кнопки
-        kb.add(InlineKeyboardButton("Ивенты", callback_data="help_snow"))
-        kb.add(InlineKeyboardButton("Донат", callback_data="help_donate"))
-        kb.add(InlineKeyboardButton("Поддержка", callback_data="help_support"))
-        # Назад и вперед
-        kb.row(
-            InlineKeyboardButton(" < ", callback_data="help_prev_page_2"),
-            InlineKeyboardButton(" > ", callback_data="help_next_page_4")
-        )
-        
-    elif page_num == 4:
-        # Страница 4: последние кнопки
-        kb.add(InlineKeyboardButton("Канал", url="https://t.me/meow_newsbot"))
-        # Только назад
-        kb.add(InlineKeyboardButton(" < ", callback_data="help_prev_page_3"))
-    
-    bot.edit_message_text(
-        text,
-        call.message.chat.id,
-        call.message.message_id,
-        reply_markup=kb,
-        parse_mode="HTML"
-    )
-
-
-# ================== ПАГИНАЦИЯ КОМАНД ==================
-COMMANDS_PAGES = [
-    {
-        "title": "📋 <b>КОМАНДЫ - СТРАНИЦА 1/3</b>\n━━━━━━━━━━━━━━━━━",
-        "content": """<b>ОСНОВНЫЕ КОМАНДЫ:</b>
-
-<code>моя шахта</code> — главная меню твоей шахты
-<code>копать</code> — копать руду в шахте, альтернативная команда: копать шахту
-<code>/help</code> — помощь
-<code>баланс</code> — баланс
-<code>топ</code> — топ игроков
-<code>бонус</code> — ежедневный бонус
-<code>ферма</code> — фарм валюты
-<code>бот</code> — позвать бота
-
-<b>БАНКОВСКАЯ СИСТЕМА MEOW BANK:</b>
-<code>открыть счёт</code> — создать банковский счет
-<code>мой счёт</code> — показать информацию о счете
-<code>пополнить счёт [сумма]</code> — пополнить счет (например: пополнить счёт 10000)
-<code>удалить счёт</code> — удалить банковский счет
-• Процентная ставка: 1.2% годовых
-• Начисления: ежедневно в 03:00 по МСК
-• Минимальный депозит: 1,000$
-• Пример при 100,000$: ~3.29$ в день, ~100$ в месяц
-
-<b>ПРАВИЛА:</b>
-<code>правила</code> — правила чата
-
-━━━━━━━━━━━━━━━━━"""
-    },
-    {
-        "title": "📋 <b>КОМАНДЫ - СТРАНИЦА 2/3</b>\n━━━━━━━━━━━━━━━━━",
-        "content": """<b>ЭКОНОМИКА:</b>
-
-<code>п [сумма]</code> — перевод суммы другому пользователю (ответьте командой на сообщение того кому хотите перевести)
-<code>промо [код]</code> — промокод
-<code>задонатить [сумма]</code> — пополнить
-<code>мой кабинет</code> — реферальная система
-
-<b>ВЗАИМОДЕЙСТВИЯ:</b>
-<code>рп</code> — список RP-команд
-<code>обнять</code>, <code>поцеловать</code> — RP команды
-
-━━━━━━━━━━━━━━━━━"""
-    },
-    {
-        "title": "📋 <b>КОМАНДЫ - СТРАНИЦА 3/3</b>\n━━━━━━━━━━━━━━━━━",
-        "content": """<b>МАГАЗИНЫ:</b>
-
-<code>вип</code> — VIP магазин
-<code>магазин питомцев</code> — питомцы
-<code>магазин тянок</code> — тянки
-<code>магазин машин</code> — машины
-<code>магазин домов</code> — список домов для покупки
-
-<b>ИНФОРМАЦИЯ:</b>
-
-<code>мой питомец</code> — питомец
-<code>мой дом</code> — информация про ваш дом
-<code>продать дом (название дома)</code> — продать свой текущий дом
-<code>моя тянка</code> — тянка
-<code>моя машина</code> — машина
-<code>мой бизнес</code> — бизнес
-<code>мой брак</code> — брак
-<code>браки</code> — все браки
-<code>мой профиль</code> — снежки
-
-━━━━━━━━━━━━━━━━━"""
-    }
-]
-
-
-# ================== ОБРАБОТЧИК ПАГИНАЦИИ КОМАНД ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("help_page_"))
-def callback_commands_page(call):
-    try:
-        page_num = int(call.data.split("_")[2]) - 1
-        if page_num < 0:
-            page_num = 0
-        if page_num >= len(COMMANDS_PAGES):
-            page_num = len(COMMANDS_PAGES) - 1
-        
-        page = COMMANDS_PAGES[page_num]
-        
-        kb = InlineKeyboardMarkup(row_width=3)
-        
-        # Кнопки навигации
-        nav_buttons = []
-        if page_num > 0:
-            nav_buttons.append(InlineKeyboardButton(" < ", callback_data=f"help_page_{page_num}"))
-        
-        nav_buttons.append(InlineKeyboardButton(f"{page_num+1}/{len(COMMANDS_PAGES)}", callback_data="no_action"))
-        
-        if page_num < len(COMMANDS_PAGES) - 1:
-            nav_buttons.append(InlineKeyboardButton(" > ", callback_data=f"help_page_{page_num+2}"))
-        
-        kb.row(*nav_buttons)
-        kb.add(InlineKeyboardButton("В главное меню", callback_data="back_to_help_main"))
-        
-        bot.edit_message_text(
-            f"{page['title']}\n\n{page['content']}",
-            call.message.chat.id,
-            call.message.message_id,
-            reply_markup=kb,
-            parse_mode="HTML"
-        )
-        
-        bot.answer_callback_query(call.id)
-        
-    except Exception as e:
-        logger.error(f"Ошибка в пагинации команд: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!")
-
-
-# ================== ОБРАБОТЧИКИ ДРУГИХ РАЗДЕЛОВ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("help_") and not c.data.startswith("help_page_") and not c.data.startswith("help_next_page_") and not c.data.startswith("help_prev_page_"))
-def callback_help_sections(call):
-    try:
-        if call.data == "no_action":
-            bot.answer_callback_query(call.id)
-            return
-            
-        section = call.data.split("_")[1]
-        
-        # Остальные разделы с чистым текстом
-        if section == "games":
-            text = (
-    "<b>ИГРЫ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-    
-    "<b>КАЗИНО:</b>\n"
-    "• <code>играть [ставка]</code> — Блэкджек\n"
-    "• <code>дверь [ставка]</code> — игра в двери, в 4 бомба, в 2 +0.50 к ставке, альтернативная команда: дв [ставка]\n"
-    "• <code>слот [ставка]</code> — игра в слоты\n"
-    "• <code>рулетка [ставка]</code> — Рулетка\n"
-    "   ├─ к/ч (красное/черное)\n"
-    "   ├─ 1-36 (ставьте на числа)\n"
-    "   └─ <code>го</code> — начинает игру\n"
-    "• <code>мины [ставка]</code> — Мины\n\n"
-    
-    "<b>СПОРТИВНЫЕ:</b>\n"
-    "• <code>рб [ставка] [орёл/решка]</code> — Монетка\n"
-    "• <code>футбол [ставка]</code> — Футбол\n"
-    "   ├─ Анимация с мячом и воротами ⚽🥅\n"
-    "   ├─ Шанс: 50/50\n"
-    "   └─ При победе: ×2 ставки\n"
-    "• <code>баскетбол [ставка]</code> — Баскетбол\n"
-    "   ├─ Анимация с мячом и корзиной 🏀🏀\n"
-    "   ├─ Шанс: 50/50\n"
-    "   └─ При победе: ×2 ставки\n"
-    "• <code>тир [ставка]</code> — Тир\n"
-    "   ├─ Анимация с дротиком и мишенью 🎯🎯\n"
-    "   ├─ Шанс: 50/50\n"
-    "   └─ При победе: ×2 ставки\n"
-    "• <code>кнб</code> — Крестики-нолики (только ответом на сообщение пользователя)\n\n"
-    
-    "<b>ИГРА 1 НА 1:</b>\n"
-    "• <code>кубик [ставка]</code> — Кубик (ответом на сообщение)\n"
-    "   ├─ Брось кубик против соперника 🎲\n"
-    "   ├─ У кого больше число - тот победил\n"
-    "   ├─ Выигрыш: все деньги (обе ставки)\n"
-    "   └─ При ничье: деньги возвращаются\n\n"
-    
-    "<b>ВЫИГРЫШИ:</b>\n"
-    "• Победа в казино: ×2 ставки\n"
-    "• Спортивные игры: ×2 ставки\n"
-    "• Кубик: все деньги (обе ставки)\n"
-    "━━━━━━━━━━━━━━━━━━━"
-)
-            
-        elif section == "vip":
-            text = (
-                "<b>VIP СИСТЕМА</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>ПРЕИМУЩЕСТВА:</b>\n"
-                "• Пассивный доход каждые 3 часа\n"
-                "• Бонус +5%—40% ко всем доходам\n"
-                "• Эксклюзивный статус\n\n"
-                
-                "<b>СТОИМОСТЬ:</b>\n"
-                "• VIP 1: 250,000$\n"
-                "• VIP 2: 500,000$\n"
-                "• VIP 3: 750,000$\n"
-                "• VIP 4: 1,000,000$\n"
-                "• VIP 5: 1,250,000$\n"
-                "• VIP 6: 1,500,000$\n"
-                "• VIP 7: 1,750,000$\n\n"
-                
-                "<b>ДОХОД В 3 ЧАСА:</b>\n"
-                "• VIP 1: 1,000$\n"
-                "• VIP 7: 20,000$\n\n"
-                
-                "<b>КОМАНДА:</b>\n"
-                "<code>вип</code>\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
-            
-        elif section == "tyanki":
-            text = (
-                "<b>ТЯНКИ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>КОМАНДЫ:</b>\n"
-                "<code>магазин тянок</code> — магазин\n"
-                "<code>купить тянку [номер]</code> — купить\n"
-                "<code>моя тянка</code> — информация\n"
-                "<code>продать тянку</code> — продать\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
-            
-        elif section == "pets":
-            text = (
-                "<b>ПИТОМЦЫ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>КОМАНДЫ:</b>\n"
-                "<code>магазин питомцев</code> — магазин чтобы купить питомца\n"
-                "<code>купить питомца [номер]</code> — купить определенного питомца\n"
-                "<code>мой питомец</code> — информация про питомца\n"
-                "<code>продать питомца</code> — продать своего питомца\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
-            
-        elif section == "marriage":
-            text = (
-                "<b>БРАК</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>КОМАНДЫ:</b>\n"
-                "<code>+брак</code> — предложить (ответом)\n"
-                "<code>+брак [ID]</code> — по ID - не работает временно\n"
-                "<code>мой брак</code> — информация\n"
-                "<code>браки</code> — все браки\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
-            
-        elif section == "donate":
-            text = (
-                "<b>ДОНАТ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>ПОПОЛНЕНИЕ:</b>\n"
-                "<code>задонатить [сумма]</code>\n\n"
-                
-                "<b>ПОДДЕРЖКА:</b>\n"
-                "@parvizwp\n"
-                "━━━━━━━━━━━━━━━━━━━"
-            )
-            
-        elif section == "snow":
-            text = (
-    "<b>🎮 ИГРЫ И ИВЕНТЫ</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-    
-    "<b>❄️ СНЕЖКИ (новогодний ивент):</b>\n"
-    "<code>снежок</code> — слепить снежок\n"
-    "<code>мой профиль</code> — статистика снежков\n"
-    "<code>ежедневный</code> — ежедневная награда\n"
-    "<code>топ снежков</code> — топ игроков\n"
-    "<code>снежный топ</code> — альтернативная команда\n\n"
-    
-    "<b>🗑️ СБОР МУСОРА (новый ивент):</b>\n"
-    "<code>начать сборку мусора</code> — начать сбор\n"
-    "<code>сборка мусора</code> — альтернативная команда\n"
-    "<code>мой инвентарь</code> — показать найденное\n"
-    "<code>мой инв</code> — краткая команда\n\n"
-    
-    "<b>📊 КУРС ОБМЕНА:</b>\n"
-    "• ❄️ 1 снежок = 50$\n"
-    "• 🌟 1 золотой снежок = 250$\n"
-    "• 🎯 5% шанс на золотой снежок\n\n"
-    
-    "<b>💰 НАЙТИ МОЖНО:</b>\n"
-    "• 🍂 Листья\n"
-    "• 🥤 Бутылка\n"
-    "• 📰 Бумага\n"
-    "• 📱 Телефон\n"
-    "• 💍 Кольцо\n"
-    "• и другие предметы...\n\n"
-    
-    "<i>💫 Каждые 2 секунды можно собирать мусор!\n"
-    "🎁 80% шанс найти что-то ценное!</i>\n"
-    "━━━━━━━━━━━━━━━━━━━"
-)
-            
-        elif section == "support":
-            text = (
-                "<b>ПОДДЕРЖКА</b>\n━━━━━━━━━━━━━━━━━━━\n\n"
-                
-                "<b>РАЗРАБОТЧИК:</b>\n"
-                "@parvizwp\n\n"
-                
-                "<b>ЧТО УКАЗАТЬ:</b>\n"
-                "• Ваш ID: <code>{}</code>\n"
-                "• Описание проблемы\n"
-                "• Скриншоты\n"
-                "━━━━━━━━━━━━━━━━━━━".format(call.from_user.id)
-            )
-            
-            # Для поддержки добавляем кнопку
-            kb = InlineKeyboardMarkup()
-            kb.add(InlineKeyboardButton("Написать разработчику", url="https://t.me/parvizwp"))
-            kb.add(InlineKeyboardButton("В главное меню", callback_data="back_to_help_main"))
-            
-            bot.edit_message_text(
-                text,
-                call.message.chat.id,
-                call.message.message_id,
-                reply_markup=kb,
-                parse_mode="HTML"
-            )
+        if not check_help_owner(call, user_id):
             return
         
-        # Общая клавиатура для всех разделов
-        kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("В главное меню", callback_data="back_to_help_main"))
+        user = call.from_user
+        mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        
+        text = (
+            "📖 <b>ПАНЕЛЬ ПОМОЩИ - СТРАНИЦА 2/2</b>\n"
+            f"👤 <b>Пользователь:</b> {mention}\n"
+            f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
+            "Выберите раздел:"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=1)
+        
+        for btn_text, callback in HELP_PAGES[2]:
+            kb.add(InlineKeyboardButton(btn_text, callback_data=f"{callback}_{user_id}"))
+        
+        kb.add(InlineKeyboardButton(" Назад", callback_data=f"help_back_{user_id}"))
         
         bot.edit_message_text(
             text,
@@ -12233,42 +11899,348 @@ def callback_help_sections(call):
             reply_markup=kb,
             parse_mode="HTML"
         )
-        
         bot.answer_callback_query(call.id)
         
     except Exception as e:
-        logger.error(f"Ошибка в разделе помощи: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!")
+        logger.error(f"Ошибка help_next_page: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
+# ---------- ОБРАБОТЧИК КНОПКИ НАЗАД (СТРАНИЦА 1) ----------
+@bot.callback_query_handler(func=lambda c: c.data.startswith("help_back_"))
+def help_back_page(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        if not check_help_owner(call, user_id):
+            return
+        
+        user = call.from_user
+        mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        
+        text = (
+            "📖 <b>ПАНЕЛЬ ПОМОЩИ - СТРАНИЦА 1/2</b>\n"
+            f"👤 <b>Пользователь:</b> {mention}\n"
+            f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
+            "Выберите раздел:"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=1)
+        
+        for btn_text, callback in HELP_PAGES[1]:
+            kb.add(InlineKeyboardButton(btn_text, callback_data=f"{callback}_{user_id}"))
+        
+        kb.add(InlineKeyboardButton(" Вперёд", callback_data=f"help_next_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=kb,
+            parse_mode="HTML"
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка help_back_page: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
-# ================== ВОЗВРАТ В ГЛАВНОЕ МЕНЮ ПОМОЩИ ==================
+# ---------- ОБРАБОТЧИК РАЗДЕЛОВ ПОМОЩИ ----------
+@bot.callback_query_handler(func=lambda c: c.data.startswith(("help_cmds_", "help_games_", "help_vip_", "help_tyanki_", 
+                                                              "help_pets_", "help_marriage_", "help_events_", "help_donate_")))
+def help_section_handler(call):
+    try:
+        parts = call.data.split("_")
+        section = parts[1]
+        user_id = int(parts[2])
+        
+        if not check_help_owner(call, user_id):
+            return
+        
+        if section == "cmds":
+            content = HELP_CONTENT["cmds"]
+        elif section == "games":
+            content = HELP_CONTENT["games"]
+        elif section == "vip":
+            content = HELP_CONTENT["vip"]
+        elif section == "tyanki":
+            content = HELP_CONTENT["tyanki"]
+        elif section == "pets":
+            content = HELP_CONTENT["pets"]
+        elif section == "marriage":
+            content = HELP_CONTENT["marriage"]
+        elif section == "events":
+            content = HELP_CONTENT["events"]
+        elif section == "donate":
+            content = HELP_CONTENT["donate"].format(user_id=user_id)
+        else:
+            content = "❌ Раздел не найден"
+        
+        kb = InlineKeyboardMarkup()
+        
+        if section in ["cmds", "games", "vip", "tyanki"]:
+            kb.add(InlineKeyboardButton(" Назад", callback_data=f"help_back_{user_id}"))
+        else:
+            kb.add(InlineKeyboardButton(" Назад", callback_data=f"help_next_{user_id}"))
+        
+        bot.edit_message_text(
+            content,
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=kb,
+            parse_mode="HTML"
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка help_section_handler: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ---------- ТЕКСТЫ ДЛЯ РАЗДЕЛОВ ----------
+# ВО ВСЕХ РАЗДЕЛАХ ЕСТЬ ОПИСАНИЯ КОМАНД, КРОМЕ "ИГРЫ" - ТАМ ТОЛЬКО КОМАНДЫ
+HELP_CONTENT = {
+    # ----- КОМАНДЫ (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
+    "cmds": """
+📋 <b>Основные команды</b>
+━━━━━━━━━━━━━━━━━━━
+
+[💰] <b>баланс</b> / <b>б</b> — твой текущий баланс
+[🏆] <b>топ</b> — топ-50 игроков по балансу
+[🎁] <b>бонус</b> — ежедневный бонус (1000-5000$)
+[🚜] <b>ферма</b> — фарм валюты (раз в 2 часа)
+[💸] <b>п [сумма]</b> — перевод денег (ответом)
+[🎫] <b>промо [название]</b> — активировать промокод
+[⭐] <b>задонатить [сумма]</b> — пополнить через Telegram Stars
+
+<b>🏦 БАНК MEOW BANK:</b>
+[🏛] <b>открыть счёт</b> — создать банковский счет (1.2% годовых)
+[📊] <b>мой счёт</b> — информация о банковском счете
+[📥] <b>пополнить счёт [сумма]</b> — внести деньги на счет
+[📤] <b>удалить счёт</b> — закрыть банковский счет
+
+<b>⚙️ ПРОЧЕЕ:</b>
+[📖] <b>правила бота</b> — правила бота для ознакомления
+[🤖] <b>бот</b> — позвать бота
+[🎭] <b>рп</b> — список RP-команд
+
+━━━━━━━━━━━━━━━━━━━
+""",
+
+    # ----- ИГРЫ (СТРАНИЦА 1) - ТОЛЬКО КОМАНДЫ, БЕЗ ОПИСАНИЙ -----
+    "games": """
+ <b>🕹️ Игры 🕹️</b>
+━━━━━━━━━━━━━━━━━━━
+
+[🃏] <b>играть [ставка]</b>
+[🚪] <b>дверь [ставка]</b>
+[🚪] <b>дв [ставка]</b>
+[🎰] <b>слот [ставка]</b>
+[🎡] <b>рулетка [ставка]</b>
+[💣] <b>мины [ставка]</b>
+[🔴] <b>[ставка] к/ч | Ставка на красное или чёрное</b>
+[🔢] <b>[ставка] 1-36 | Ставка на число</b>
+[⚽] <b>футбол [ставка]</b>
+[🏀] <b>баскетбол [ставка]</b>
+[🏀] <b>бс [ставка]</b>
+[🎯] <b>тир [ставка]</b>
+[🪙] <b>рб [ставка] [орёл/решка]</b>
+[🎲] <b>кубик [ставка]</b>
+[❌⭕] <b>кнб [ставка]</b>
+
+""",
+
+    # ----- VIP (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
+    "vip": """
+💎 <b>VIP Система</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>🥉 VIP 1 - Bronze</b>
+[💳] <b>вип</b> / <b>vip</b> — открыть магазин VIP
+[💰] <b>250,000$</b> — стоимость
+[📈] +5% бонус к доходу
+[⏱] 1,000$ / 3 часа
+
+<b>🥈 VIP 2 - Silver</b>
+[💰] <b>500,000$</b> — стоимость
+[📈] +10% бонус к доходу
+[⏱] 2,500$ / 3 часа
+
+<b>🥇 VIP 3 - Gold</b>
+[💰] <b>750,000$</b> — стоимость
+[📈] +15% бонус к доходу
+[⏱] 5,000$ / 3 часа
+
+<b>💎 VIP 4 - Platinum</b>
+[💰] <b>1,000,000$</b> — стоимость
+[📈] +20% бонус к доходу
+[⏱] 8,000$ / 3 часа
+
+<b>🔹 VIP 5 - Diamond</b>
+[💰] <b>1,250,000$</b> — стоимость
+[📈] +25% бонус к доходу
+[⏱] 11,000$ / 3 часа
+
+<b>👑 VIP 6 - Master</b>
+[💰] <b>1,500,000$</b> — стоимость
+[📈] +30% бонус к доходу
+[⏱] 14,000$ / 3 часа
+
+<b>🔥 VIP 7 - Legend</b>
+[💰] <b>1,750,000$</b> — стоимость
+[📈] +40% бонус к доходу
+[⏱] 20,000$ / 3 часа
+
+""",
+
+    # ----- ТЯНКИ (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
+    "tyanki": """
+🏧 <b>Тянки</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>🛍 КОМАНДЫ:</b>
+[🏪] <b>магазин тянок</b> — посмотреть всех тянок
+[💝] <b>купить тянку [имя]</b> — купить тянку
+[👩] <b>моя тянка</b> — информация о тянке
+[💔] <b>продать тянку</b> — продать тянку (получите 50% от стоимости)
+
+<b>📊 ДОСТУПНЫЕ ТЯНКИ:</b>
+[⚪] <b>катя</b> — 60,000$ | 600$/ч
+[🟢] <b>соня</b> — 100,000$ | 1,000$/ч
+[🟣] <b>айсель</b> — 300,000$ | 1,500$/ч
+[🟡] <b>эля</b> — 1,000,000$ | 2,000$/ч
+[🟡] <b>даша</b> — 2,500,000$ | 3,500$/ч
+[🔥] <b>ангелина</b> — 15,000,000$ | 8,000$/ч
+[🌈] <b>виктория</b> — 30,000,000$ | 15,000$/ч
+[💎] <b>миранда</b> — 50,000,000$ | 25,000$/ч
+[🌌] <b>сатори</b> — 100,000,000$ | 40,000$/ч
+[👑] <b>изабелла</b> — 250,000,000$ | 75,000$/ч
+[✨] <b>хельга</b> — 500,000,000$ | 125,000$/ч
+
+""",
+
+    # ----- ПИТОМЦЫ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
+    "pets": """
+🐾 <b>ПИТОМЦЫ</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>🛍 КОМАНДЫ:</b>
+[🏪] <b>магазин питомцев</b> — посмотреть всех питомцев
+[🐕] <b>купить питомца [номер]</b> — купить питомца
+[🐈] <b>мой питомец</b> — информация о питомце
+
+<b>⭐ РЕДКОСТИ И МНОЖИТЕЛИ:</b>
+[⚪] Обычный — x1.0
+[🔵] Редкий — x1.5
+[🟣] Эпический — x2.0
+[🟡] Легендарный — x3.0
+[🔴] Мифический — x5.0
+
+<b>📊 ДОСТУПНЫЕ ПИТОМЦЫ:</b>
+[⚪] <b>1. Кошка</b> — 10,000$
+[⚪] <b>2. Собака</b> — 20,000$
+[⚪] <b>6. Хомяк</b> — 5,000$
+[🔵] <b>3. Попугай</b> — 50,000$
+[🔵] <b>4. Кролик</b> — 100,000$
+[🟣] <b>5. Коровка</b> — 250,000$
+[🟣] <b>7. Лошадь</b> — 100,000$
+[🟡] <b>8. Фенек</b> — 150,000$
+[🔴] <b>9. Дракон</b> — 500,000$
+[🔴] <b>10. Феникс</b> — 750,000$
+
+""",
+
+    # ----- БРАК (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
+    "marriage": """
+💍 <b>Система брака</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>💌 КОМАНДЫ:</b>
+[💞] <b>+брак</b> — предложить брак (ответом)
+[💒] <b>мой брак</b> — информация о текущем браке
+[📜] <b>браки</b> — список всех активных браков
+
+<b>🏆 РАНГИ ОТНОШЕНИЙ:</b>
+[💕] <b>Начало отношений</b> — 0-30 дней
+[🌹] <b>Романтический период</b> — 30-180 дней
+[🍯] <b>Медовый месяц</b> — 180-365 дней
+[📜] <b>Бумажная свадьба</b> — 1 год
+[💍] <b>Стеклянная свадьба</b> — 2 года
+[💎] <b>Сапфировая свадьба</b> — 5 лет
+[👑] <b>Золотая свадьба</b> — 10+ лет
+
+""",
+
+    # ----- ИВЕНТЫ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
+    "events": """
+🏧 <b>Ивенты</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>🗑 СБОР МУСОРА:</b>
+[🗑] <b>начать сборку мусора</b> — начать сбор мусора
+[🗑] <b>сборка мусора</b> — альтернативная команда
+[📦] <b>мой инвентарь</b> — посмотреть найденные предметы
+
+<b>❄️ СНЕЖКИ:</b>
+[⛄] <b>снежок</b> — слепить снежок
+[⛄] <b>слепить снежок</b> — альтернативная команда
+[📊] <b>мой профиль</b> — профиль с информацией
+
+<b>⛏ ШАХТА:</b>
+[⛏] <b>моя шахта</b> — главное меню шахты
+[🔨] <b>копать</b> — добывать руду
+
+""",
+
+    # ----- ДОНАТ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
+    "donate": """
+💰 <b>Донат и поддержка</b>
+━━━━━━━━━━━━━━━━━━━
+
+<b>⭐ ПОПОЛНЕНИЕ:</b>
+[💸] <b>задонатить [сумма]</b> — пополнить баланс через Telegram Stars
+└ Курс: 1⭐ = 7,000$
+
+<b>🛠 ПОДДЕРЖКА:</b>
+[👨‍💻] <b>Разработчик:</b> Пармиджано
+[💬] <b>Чат бота:</b> @meowchatgame
+[📢] <b>Канал:</b> @meow_newsbot
+
+"""
+}
+
+# ---------- ВОЗВРАТ В ГЛАВНОЕ МЕНЮ (ОПЦИОНАЛЬНО) ----------
 @bot.callback_query_handler(func=lambda c: c.data == "back_to_help_main")
-def callback_back_to_help_main(call):
-    user = call.from_user
-    mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
-
-    text = (
-        "📖 <b>ПАНЕЛЬ ПОМОЩИ</b>\n"
-        f"👤 <b>Пользователь:</b> {mention}\n"
-        f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
-        "Выберите раздел:"
-    )
-
-    # Показываем первую страницу
-    kb = InlineKeyboardMarkup(row_width=1)
-    kb.add(InlineKeyboardButton("Команды", callback_data="help_page_1"))
-    kb.add(InlineKeyboardButton("Игры", callback_data="help_games"))
-    kb.add(InlineKeyboardButton("VIP", callback_data="help_vip"))
-    kb.add(InlineKeyboardButton(" > ", callback_data="help_next_page_2"))
-
-    bot.edit_message_text(
-        text,
-        call.message.chat.id,
-        call.message.message_id,
-        reply_markup=kb,
-        parse_mode="HTML"
-    )
-    bot.answer_callback_query(call.id)
+def back_to_help_main(call):
+    try:
+        user_id = call.from_user.id
+        user = call.from_user
+        mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
+        
+        text = (
+            "📖 <b>ПАНЕЛЬ ПОМОЩИ</b>\n"
+            f"👤 <b>Пользователь:</b> {mention}\n"
+            f"🆔 <b>ID:</b> <code>{user.id}</code>\n\n"
+            "Выберите раздел:"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=1)
+        
+        for btn_text, callback in HELP_PAGES[1]:
+            kb.add(InlineKeyboardButton(btn_text, callback_data=f"{callback}_{user_id}"))
+        
+        kb.add(InlineKeyboardButton(" Вперёд", callback_data=f"help_next_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            reply_markup=kb,
+            parse_mode="HTML"
+        )
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка back_to_help_main: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
 
 # ================== ОБРАБОТКА КНОПКИ ОТМЕНЫ ==================
