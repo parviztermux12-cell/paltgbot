@@ -6972,11 +6972,7 @@ def bot_response(message):
     else:
         # Если команда отправлена просто так
         bot.send_message(message.chat.id, response, parse_mode="HTML")
-# ================== ГЛОБАЛЬНАЯ ПРОВЕРКА НА ЧС ==================
-@bot.message_handler(func=lambda m: CHAT_ACCESS_BLOCK.get(m.chat.id))
-def ignore_blocked_chat(message):
-    """Если чат в ЧС — бот вообще не реагирует ни на что"""
-    return
+
 
 
 
