@@ -10554,6 +10554,7 @@ HELP_CONTENT = {
 
 [💰] <b>баланс</b> / <b>б</b> — твой текущий баланс
 [🏆] <b>топ</b> — топ-50 игроков по балансу
+[🍉] <b>мой профиль</b> — профиль с краткой информацией
 [🎁] <b>бонус</b> — ежедневный бонус (1000-15000$)
 [🚜] <b>ферма</b> — фарм валюты (раз в 2 часа)
 [💸] <b>п [сумма]</b> — перевод денег (ответом)
@@ -14689,76 +14690,74 @@ def check_tyanka_leave(user_id, user_data):
     tyanka = user_data.get("tyanka")
     if not tyanka:
         return False
-    
-    # Быстрая проверка условий ухода
-    if tyanka["satiety"] <= 0 or tyanka.get("mood", 100) <= 20:
+
+    # Быстрая проверка условий ухода (только сытость)
+    if tyanka["satiety"] <= 0:
         # Просто удаляем тянку без уведомлений
         user_data["tyanka"] = None
         save_casino_data()
-        logger.info(f"Тянка ушла от пользователя {user_id} (сытость: {tyanka['satiety']}, настроение: {tyanka.get('mood', 100)})")
+        logger.info(f"Тянка ушла от пользователя {user_id} (сытость: {tyanka['satiety']})")
         return True
-    
+
     return False
 
 # ================== ОПТИМИЗИРОВАННОЕ ОБНОВЛЕНИЕ СТАТИСТИКИ ТЯНКИ ==================
 def update_tyanka_stats(user_data):
-    """Обновляет сытость, настроение и накапливает доход (оптимизированная версия)"""
+    """Обновляет сытость и накапливает доход (оптимизированная версия)"""
     tyanka = user_data.get("tyanka")
     if not tyanka:
         return
-        
-    # Быстрая инициализация полей если их нет
-    if "mood" not in tyanka:
-        tyanka["mood"] = 100
+
+    # Быстрая инициализация полей если их нет (для совместимости)
     if "profit_accumulated" not in tyanka:
         tyanka["profit_accumulated"] = 0
+    if "total_earned" not in tyanka:
+        tyanka["total_earned"] = 0
 
     if "last_update" not in tyanka:
         tyanka["last_update"] = datetime.now().isoformat()
         return
-    
+
     last_update = datetime.fromisoformat(tyanka["last_update"])
     now = datetime.now()
     hours_passed = (now - last_update).total_seconds() / 3600
-    
+
     if hours_passed < 0.01:  # Меньше 36 секунд - не обновляем
         return
-    
+
     tyanka_info = TYANKA_DATA[tyanka["name"]]
-    
-    # Быстрое обновление показателей
+
+    # Быстрое обновление показателей (только сытость)
     satiety_lost = min(int(hours_passed * 3), tyanka["satiety"])
-    mood_lost = min(int(hours_passed * 2), tyanka.get("mood", 100))
-    
+
     if satiety_lost > 0:
         tyanka["satiety"] -= satiety_lost
-        tyanka["mood"] = max(0, tyanka.get("mood", 100) - mood_lost)
 
     # Прибыль только если сытость > 0
     if tyanka["satiety"] > 0:
         profit = int(tyanka_info["profit_per_hour"] * hours_passed)
         tyanka["profit_accumulated"] += profit
-    
+
     tyanka["last_update"] = now.isoformat()
-    
+
     # Быстрая проверка ухода (без сообщений)
-    if tyanka["satiety"] <= 0 or tyanka.get("mood", 100) <= 20:
+    if tyanka["satiety"] <= 0:
         user_data["tyanka"] = None
-        logger.info(f"Тянка автоматически ушла (сытость: {tyanka['satiety']}, настроение: {tyanka.get('mood', 100)})")
+        logger.info(f"Тянка автоматически ушла (сытость: {tyanka['satiety']})")
 
 # ================== МАГАЗИН ТЯНОК С ПАГИНАЦИЕЙ ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["магазин тянок", "тянки"])
 def tyanka_shop(message):
     user_id = message.from_user.id
-    
+
     # Разделяем тянок на две страницы
     tyanka_list = list(TYANKA_DATA.keys())
     half = len(tyanka_list) // 2
     page1_tyanki = tyanka_list[:half]
     page2_tyanki = tyanka_list[half:]
-    
+
     text = "💖 <b>Магазин тянок</b>\n\n"
-    
+
     # Показываем первую страницу тянок
     for name in page1_tyanki:
         data = TYANKA_DATA[name]
@@ -14774,29 +14773,29 @@ def tyanka_shop(message):
 
     # Создаем клавиатуру для первой страницы
     kb = InlineKeyboardMarkup(row_width=2)
-    
+
     # Создаем кнопки для первой страницы
     buttons_row1 = []
     for name in page1_tyanki[:2]:  # Первые 2 тянки в первом ряду
         buttons_row1.append(InlineKeyboardButton(name.capitalize(), callback_data=f"tyanka_buy_{name}"))
-    
+
     if buttons_row1:
         if len(buttons_row1) == 2:
             kb.row(buttons_row1[0], buttons_row1[1])
         else:
             kb.row(buttons_row1[0])
-    
+
     # Второй ряд для первой страницы (если есть)
     if len(page1_tyanki) > 2:
         buttons_row2 = []
         for name in page1_tyanki[2:4]:  # Следующие 2 тянки
             buttons_row2.append(InlineKeyboardButton(name.capitalize(), callback_data=f"tyanka_buy_{name}"))
-        
+
         if len(buttons_row2) == 2:
             kb.row(buttons_row2[0], buttons_row2[1])
         elif buttons_row2:
             kb.row(buttons_row2[0])
-    
+
     # Если есть вторая страница - кнопка "Далее"
     if page2_tyanki:
         kb.add(InlineKeyboardButton("Далее →", callback_data=f"tyanka_page_2_{user_id}"))
@@ -14809,16 +14808,16 @@ def tyanka_shop(message):
 def callback_tyanka_pagination(call):
     try:
         user_id = int(call.data.split("_")[3])
-        
+
         if call.from_user.id != user_id:
             bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
             return
-        
+
         page_num = int(call.data.split("_")[2])
         show_tyanka_page(call, page_num, user_id)
-        
+
         bot.answer_callback_query(call.id)
-        
+
     except Exception as e:
         logger.error(f"Ошибка в пагинации тянок: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
@@ -14831,16 +14830,16 @@ def show_tyanka_page(call, page_num, user_id):
     half = len(tyanka_list) // 2
     page1_tyanki = tyanka_list[:half]
     page2_tyanki = tyanka_list[half:]
-    
+
     text = "💖 <b>Магазин тянок</b>\n\n"
-    
+
     # Показываем тянок в зависимости от страницы
     if page_num == 2 and page2_tyanki:
         current_tyanki = page2_tyanki
     else:
         current_tyanki = page1_tyanki
         page_num = 1
-    
+
     for name in current_tyanki:
         data = TYANKA_DATA[name]
         text += (
@@ -14862,12 +14861,12 @@ def show_tyanka_page(call, page_num, user_id):
         # Первая кнопка в ряду
         name1 = current_tyanki[i]
         row_buttons.append(InlineKeyboardButton(name1.capitalize(), callback_data=f"tyanka_buy_{name1}"))
-        
+
         # Вторая кнопка в ряду (если есть)
         if i + 1 < len(current_tyanki):
             name2 = current_tyanki[i + 1]
             row_buttons.append(InlineKeyboardButton(name2.capitalize(), callback_data=f"tyanka_buy_{name2}"))
-        
+
         if len(row_buttons) == 2:
             kb.row(row_buttons[0], row_buttons[1])
         else:
@@ -14903,16 +14902,16 @@ def show_tyanka_page(call, page_num, user_id):
 def buy_tyanka_callback(call):
     try:
         tyanka_name = call.data.split("_")[2]
-        
+
         if tyanka_name not in TYANKA_DATA:
             bot.answer_callback_query(call.id, "❌ Тянка не найдена!")
             return
-            
+
         user_id = call.from_user.id
         user_data = get_user_data(user_id)
         tyanka_data = TYANKA_DATA[tyanka_name]
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
+
         # Проверяем, есть ли уже тянка
         if user_data.get("tyanka"):
             bot.edit_message_text(
@@ -14922,7 +14921,7 @@ def buy_tyanka_callback(call):
                 parse_mode="HTML"
             )
             return
-            
+
         # Проверяем баланс
         if user_data["balance"] < tyanka_data["price"]:
             bot.edit_message_text(
@@ -14932,20 +14931,19 @@ def buy_tyanka_callback(call):
                 parse_mode="HTML"
             )
             return
-            
+
         # Покупка тянки
         user_data["balance"] -= tyanka_data["price"]
+        # Убираем mood, добавляем total_earned
         user_data["tyanka"] = {
             "name": tyanka_name,
-            "price": tyanka_data["price"],
-            "profit_per_hour": tyanka_data["profit_per_hour"],
-            "feed_cost": tyanka_data["feed_cost"],
-            "rarity": tyanka_data["rarity"],
-            "satiety": 100,                # <<<<< ДОБАВЛЕНО
-            "last_income": datetime.now().isoformat()
+            "satiety": 100,
+            "profit_accumulated": 0,
+            "total_earned": 0,  # Новый счетчик общего заработка
+            "last_update": datetime.now().isoformat()
         }
         save_casino_data()
-        
+
         # Красивый ответ
         bot.edit_message_text(
             f"💖 {mention}, ты купил тянку «<b>{tyanka_name.capitalize()}</b>» за <b>{format_number(tyanka_data['price'])}$</b>\n\n"
@@ -14954,7 +14952,7 @@ def buy_tyanka_callback(call):
             call.message.message_id,
             parse_mode="HTML"
         )
-        
+
         bot.answer_callback_query(call.id, "✅ Тянка куплена!")
 
     except Exception as e:
@@ -14970,7 +14968,7 @@ def buy_tyanka_text(message):
         if len(parts) < 3:
             bot.send_message(message.chat.id, "❌ Используйте: купить тянку [имя]")
             return
-            
+
         tyanka_name = " ".join(parts[2:])
         handle_tyanka_buy(message.chat.id, user_id, tyanka_name, message.from_user.first_name, None)
 
@@ -14978,12 +14976,7 @@ def buy_tyanka_text(message):
         logger.error(f"Ошибка покупки тянки: {e}")
         bot.send_message(message.chat.id, "❌ Ошибка при покупке тянки!")
 
-@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_buy_"))
-def buy_tyanka_inline(call):
-    user_id = call.from_user.id
-    tyanka_name = call.data.split("_")[-1]
-    handle_tyanka_buy(call.message.chat.id, user_id, tyanka_name, call.from_user.first_name, call)
-
+# Вспомогательная функция для покупки
 def handle_tyanka_buy(chat_id, user_id, tyanka_name, buyer_name, call=None):
     user_data = get_user_data(user_id)
 
@@ -14997,15 +14990,16 @@ def handle_tyanka_buy(chat_id, user_id, tyanka_name, buyer_name, call=None):
             msg = f"❌ Недостаточно средств! Нужно {format_number(tyanka_info['price'])}$"
         else:
             user_data["balance"] -= tyanka_info["price"]
+            # Убираем mood, добавляем total_earned
             user_data["tyanka"] = {
                 "name": tyanka_name,
                 "satiety": 100,
-                "mood": 100,
-                "last_update": datetime.now().isoformat(),
-                "profit_accumulated": 0
+                "profit_accumulated": 0,
+                "total_earned": 0,
+                "last_update": datetime.now().isoformat()
             }
             save_casino_data()
-            
+
             msg = (f"🎉 <b>Поздравляем с покупкой!</b>\n\n"
                   f"👤 Покупатель: <b>{buyer_name}</b>\n"
                   f"💝 Тянка: <b>{tyanka_name.capitalize()}</b>\n"
@@ -15020,6 +15014,9 @@ def handle_tyanka_buy(chat_id, user_id, tyanka_name, buyer_name, call=None):
         bot.send_message(chat_id, msg, parse_mode="HTML")
 
 # ================== МОЯ ТЯНКА ==================
+# Константа для лимита заработка (во сколько раз можно заработать больше цены тянки)
+MAX_EARN_MULTIPLIER = 1.5
+
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["моя тянка", "моя тяшка"])
 def my_tyanka(message):
     user_id = message.from_user.id
@@ -15034,348 +15031,111 @@ def my_tyanka(message):
     info = TYANKA_DATA[tyanka["name"]]
     mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
 
+    # Расчет лимита заработка
+    max_earn = int(info["price"] * MAX_EARN_MULTIPLIER)
+    current_total_earned = tyanka.get("total_earned", 0)
+    earn_limit_reached = current_total_earned >= max_earn
+
     text = (
-        f"💞 Тянка <b>『{tyanka['name'].capitalize()}』</b>\n"
-        f"➤ Владелец: {mention}\n\n"
-        f"🍪 Сытость: {tyanka['satiety']}%\n"
-        f"😊 Настроение: {tyanka.get('mood', 100)}%\n"
-        f"💲 Доход в час: {format_number(info['profit_per_hour'])}$\n"
+        f"👩🏼 {mention}, информация о вашей тянке \"<b>{tyanka['name'].capitalize()}</b>\":\n\n"
+        f"🍪 Сытость: {tyanka['satiety']} ед.\n"
+        f"💸 Прибыль в час: {format_number(info['profit_per_hour'])} \n"
         f"🌟 Редкость: {info['rarity']}\n"
-        f"💰 Накоплено: {format_number(tyanka.get('profit_accumulated', 0))}$\n"
+        f"🧮 Вся прибыль: {format_number(current_total_earned)}/{format_number(max_earn)} \n\n"
+        f"🛠 <a href='https://t.me/meow_newsbot'>Канал разработчика</a>"
     )
 
+    if earn_limit_reached:
+        text += f"\n⛔ <b>Достигнут лимит заработка! Продайте тянку.</b>\n"
+    elif tyanka["satiety"] <= 30:
+        text += f"\n⚠️ <i>Тянка голодна! Покорми её!</i>\n"
+
     kb = InlineKeyboardMarkup(row_width=2)
-    kb.add(
-        InlineKeyboardButton("💰 Собрать", callback_data=f"tyanka_collect_{user_id}"),
-        InlineKeyboardButton("🍪 Покормить", callback_data=f"tyanka_feed_{user_id}")
-    )
-    kb.add(
-        InlineKeyboardButton("💎 Действия", callback_data=f"tyanka_actions_{user_id}"),
-        InlineKeyboardButton("❌ Продать", callback_data=f"tyanka_sell_{user_id}")
-    )
+    # Оставляем только нужные кнопки
+    collect_button = InlineKeyboardButton("💴 Собрать доход", callback_data=f"tyanka_collect_{user_id}")
+    feed_button = InlineKeyboardButton("🥞 Покормить", callback_data=f"tyanka_feed_{user_id}")
+    sell_button = InlineKeyboardButton("👸 Продать", callback_data=f"tyanka_sell_{user_id}")
+
+    # Делаем кнопку сбора неактивной, если лимит достигнут или нет прибыли (просто для вида, но callback все равно сработает, но проверим в обработчике)
+    # В telebot нет прямого способа сделать кнопку неактивной, поэтому просто добавим проверку в обработчике.
+    kb.add(collect_button, feed_button)
+    kb.add(sell_button)
 
     if info.get("image"):
         bot.send_photo(message.chat.id, info["image"], caption=text, parse_mode="HTML", reply_markup=kb)
     else:
         bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
 
-# ================== ОБНОВЛЕНИЕ СТАТИСТИКИ ТЯНКИ ==================
-def update_tyanka_stats(user_data):
-    """Обновляет сытость, настроение и накапливает доход"""
-    tyanka = user_data.get("tyanka")
-    if not tyanka:
-        return
-        
-    # Инициализация полей если их нет
-    if "mood" not in tyanka:
-        tyanka["mood"] = 100
-    if "profit_accumulated" not in tyanka:
-        tyanka["profit_accumulated"] = 0
-
-    if "last_update" not in tyanka:
-        tyanka["last_update"] = datetime.now().isoformat()
-        save_casino_data()
-        return
-    
-    last_update = datetime.fromisoformat(tyanka["last_update"])
-    now = datetime.now()
-    hours_passed = (now - last_update).total_seconds() / 3600
-    
-    if hours_passed < 0.01:  # Меньше 36 секунд - не обновляем
-        return
-    
-    tyanka_info = TYANKA_DATA[tyanka["name"]]
-    
-    # Уменьшаем сытость и настроение
-    satiety_lost = min(int(hours_passed * 3), tyanka["satiety"])
-    mood_lost = min(int(hours_passed * 2), tyanka.get("mood", 100))
-    
-    if satiety_lost > 0:
-        tyanka["satiety"] -= satiety_lost
-        tyanka["mood"] = max(0, tyanka.get("mood", 100) - mood_lost)
-
-    # Прибыль только если сытость > 0
-    if tyanka["satiety"] > 0:
-        profit = int(tyanka_info["profit_per_hour"] * hours_passed)
-        tyanka["profit_accumulated"] += profit
-    
-    tyanka["last_update"] = now.isoformat()
-    save_casino_data()
-
-
-# ================== ОБРАБОТКА КНОПКИ "НАЗАД" ДЛЯ ТЯНКИ ==================
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("back_tyanka_"))
-def callback_back_tyanka(call):
-    try:
-        user_id = int(call.data.split("_")[-1])
-        
-        if call.from_user.id != user_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
-            return
-
-        user_data = get_user_data(user_id)
-        if not user_data.get("tyanka"):
-            bot.answer_callback_query(call.id, "❌ У тебя нет тянки!")
-            return
-
-        # Возвращаемся к основному меню тянки
-        tyanka = user_data["tyanka"]
-        name = tyanka["name"]
-        mood = tyanka.get("mood", 100)
-        profit = TYANKA_DATA[name]["profit_per_hour"]
-        image = TYANKA_DATA[name]["image"]
-        info = TYANKA_DATA[name]
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-
-        kb = InlineKeyboardMarkup(row_width=2)
-        kb.add(
-            InlineKeyboardButton("💰 Собрать", callback_data=f"tyanka_collect_{user_id}"),
-            InlineKeyboardButton("🍪 Покормить", callback_data=f"tyanka_feed_{user_id}")
-        )
-        kb.add(
-            InlineKeyboardButton("💎 Действия", callback_data=f"tyanka_actions_{user_id}"),
-            InlineKeyboardButton("❌ Продать", callback_data=f"tyanka_sell_{user_id}")
-        )
-
-        caption = (
-            f"💞 Тянка <b>『{tyanka['name'].capitalize()}』</b>\n"
-            f"👤 Владелец: {mention}\n\n"
-            f"🍪 Сытость: {tyanka['satiety']}%\n"
-            f"😊 Настроение: {tyanka.get('mood', 100)}%\n"
-            f"💲 Доход в час: {format_number(info['profit_per_hour'])}$\n"
-            f"🌟 Редкость: {info['rarity']}\n"
-            f"💰 Накоплено: {format_number(tyanka.get('profit_accumulated', 0))}$\n"
-        )
-
-        # Редактируем сообщение обратно к основному меню тянки
-        bot.edit_message_media(
-            media=types.InputMediaPhoto(image, caption=caption, parse_mode="HTML"),
-            chat_id=call.message.chat.id,
-            message_id=call.message.message_id,
-            reply_markup=kb
-        )
-        
-        bot.answer_callback_query(call.id)
-        
-    except Exception as e:
-        logger.error(f"Ошибка в back_tyanka: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!")
-
-# ================== РАСШИРЕННЫЕ RP ДЕЙСТВИЯ ==================
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("tyanka_actions_"))
-def callback_tyanka_actions(call):
+# ================== ОБРАБОТЧИК КНОПКИ "ПРОДАТЬ" (НОВЫЙ) ==================
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("tyanka_sell_") and "confirm" not in c.data and "cancel" not in c.data)
+def callback_tyanka_sell_prompt(call):
     user_id = int(call.data.split("_")[-1])
 
+    # ЗАЩИТА: проверяем владельца
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
+        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!", show_alert=True)
         return
 
     user_data = get_user_data(user_id)
     if not user_data.get("tyanka"):
-        bot.answer_callback_query(call.id, "❌ У тебя нет тянки!")
-        return
-
-    kb = InlineKeyboardMarkup(row_width=2)
-    
-    # Романтические действия
-    kb.row(
-        InlineKeyboardButton("🤗 Обнять", callback_data=f"rp:hug:{user_id}"),
-        InlineKeyboardButton("💋 Поцеловать", callback_data=f"rp:kiss:{user_id}")
-    )
-    kb.row(
-        InlineKeyboardButton("🥰 Погладить", callback_data=f"rp:pet:{user_id}"),
-        InlineKeyboardButton("👐 Прижать", callback_data=f"rp:cuddle:{user_id}")
-    )
-    kb.row(
-        InlineKeyboardButton("💞 Признаться", callback_data=f"rp:confess:{user_id}"),
-        InlineKeyboardButton("🎁 Подарок", callback_data=f"rp:gift:{user_id}")
-    )
-    
-    # Игривые действия
-    kb.row(
-        InlineKeyboardButton("😂 Пощекотать", callback_data=f"rp:tickle:{user_id}"),
-        InlineKeyboardButton("💃 Танцевать", callback_data=f"rp:dance:{user_id}")
-    )
-    kb.row(
-        InlineKeyboardButton("🍫 Угостить", callback_data=f"rp:treat:{user_id}"),
-        InlineKeyboardButton("📸 Селфи", callback_data=f"rp:selfie:{user_id}")
-    )
-    
-    # Страстные действия
-    kb.row(
-        InlineKeyboardButton("🔥 Страсть", callback_data=f"rp:passion:{user_id}"),
-        InlineKeyboardButton("💘 Романтика", callback_data=f"rp:romance:{user_id}")
-    )
-    
-    # Негативные действия
-    kb.row(
-        InlineKeyboardButton("👊 Ударить", callback_data=f"rp:hit:{user_id}"),
-        InlineKeyboardButton("💥 Толкнуть", callback_data=f"rp:push:{user_id}")
-    )
-    kb.row(
-        InlineKeyboardButton("😾 Оскорбить", callback_data=f"rp:insult:{user_id}"),
-        InlineKeyboardButton("🍑 Шлёпнуть", callback_data=f"rp:slap:{user_id}")
-    )
-    
-    kb.row(InlineKeyboardButton("⬅️ Назад", callback_data=f"back_tyanka_{user_id}"))
-
-    bot.edit_message_caption(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        caption="🎭 <b>Выбери взаимодействие с тянкой:</b>\n\n💝 <i>Романтические действия улучшают настроение</i>\n💔 <i>Негативные действия ухудшают настроение</i>",
-        parse_mode="HTML",
-        reply_markup=kb
-    )
-
-# ================== ОБРАБОТКА RP ДЕЙСТВИЙ ==================
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("rp:"))
-def callback_rp_tyanka(call):
-    try:
-        _, action, user_id = call.data.split(":")
-        user_id = int(user_id)
-    except Exception:
-        bot.answer_callback_query(call.id, "❌ Ошибка данных!")
-        return
-
-    if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
-        return
-
-    user_data = get_user_data(user_id)
-    if not user_data.get("tyanka"):
-        bot.answer_callback_query(call.id, "❌ У тебя нет тянки!")
+        bot.answer_callback_query(call.id, "❌ У тебя нет тянки!", show_alert=True)
         return
 
     tyanka_name = user_data["tyanka"]["name"]
+    tyanka_info = TYANKA_DATA[tyanka_name]
+    refund = tyanka_info["price"] // 2
     mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
 
-    # Расширенный список действий
-    actions_data = {
-        # Романтические (+ настроение)
-        "hug": {"text": f"🤗 {mention} нежно обнял(а) свою тянку {tyanka_name.capitalize()}, чувствуя как бьются их сердца в унисон 💖", "mood": +5},
-        "kiss": {"text": f"💋 {mention} страстно поцеловал(а) свою тянку {tyanka_name.capitalize()}, наполняя мир романтикой 💕", "mood": +8},
-        "pet": {"text": f"🥰 {mention} нежно погладил(а) свою тянку {tyanka_name.capitalize()} по голове, вызывая у неё счастливую улыбку ✨", "mood": +4},
-        "cuddle": {"text": f"👐 {mention} крепко прижал(а) к себе тянку {tyanka_name.capitalize()}, ощущая её тепло и близость 🌸", "mood": +6},
-        "confess": {"text": f"💞 {mention} признался(ась) в любви своей тянке {tyanka_name.capitalize()}, от чего у той забилось сердце чаще 💘", "mood": +10},
-        "gift": {"text": f"🎁 {mention} подарил(а) своей тянке {tyanka_name.capitalize()} красивый подарок, вызвав у неё слёзы счастья 🎀", "mood": +7},
-        
-        # Игривые (+ настроение)
-        "tickle": {"text": f"😂 {mention} начал(а) щекотать свою тянку {tyanka_name.capitalize()}, заполняя комнату звонким смехом 🎈", "mood": +5},
-        "dance": {"text": f"💃 {mention} закружил(а) в танце свою тянку {tyanka_name.capitalize()}, создавая магию момента 🎵", "mood": +6},
-        "treat": {"text": f"🍫 {mention} угостил(а) свою тянку {tyanka_name.capitalize()} вкусным десертом, вызвав у неё восторг 🍰", "mood": +4},
-        "selfie": {"text": f"📸 {mention} сделал(а) милое селфи со своей тянкой {tyanka_name.capitalize()}, запечатлев счастливый момент 🤳", "mood": +3},
-        
-        # Страстные (+ настроение)
-        "passion": {"text": f"🔥 {mention} проявил(а) страсть к своей тянке {tyanka_name.capitalize()}, разжигая огонь в их отношениях 💞", "mood": +9},
-        "romance": {"text": f"💘 {mention} устроил(а) романтический вечер для своей тянки {tyanka_name.capitalize()}, создавая сказку 🥂", "mood": +8},
-        
-        # Негативные (- настроение)
-        "hit": {"text": f"👊 {mention} грубо ударил(а) свою тянку {tyanka_name.capitalize()}, причинив ей боль 😢", "mood": -15},
-        "push": {"text": f"💥 {mention} резко толкнул(а) свою тянку {tyanka_name.capitalize()}, вызвав у неё слёзы 💔", "mood": -12},
-        "insult": {"text": f"😾 {mention} оскорбил(а) свою тянку {tyanka_name.capitalize()}, ранив её чувства 🌧️", "mood": -20},
-        "slap": {"text": f"🍑 {mention} шлёпнул(а) свою тянку {tyanka_name.capitalize()}, вызвав у неё обиду 😞", "mood": -10}
-    }
+    # Текст подтверждения
+    text = (
+        f"{mention}, вы точно хотите продать свою тянку?\n\n"
+        f"👋 Тянка: <b>{tyanka_name.capitalize()}</b>\n"
+        f"💰 После продажи получите: <code>{format_number(refund)}$</code>"
+    )
 
-    if action in actions_data:
-        action_data = actions_data[action]
-        bot.send_message(call.message.chat.id, action_data["text"], parse_mode="HTML")
-        
-        # Обновляем настроение
-        user_data["tyanka"]["mood"] = max(0, min(100, 
-            user_data["tyanka"].get("mood", 100) + action_data["mood"]
-        ))
-        
-        save_casino_data()
-        
-        # Проверяем, не ушла ли тянка после действия
-        check_tyanka_leave(user_id, user_data)
-        
-        bot.answer_callback_query(call.id, f"💝 Настроение изменилось на {action_data['mood']:+d}")
+    kb = InlineKeyboardMarkup(row_width=2)
+    kb.add(
+        InlineKeyboardButton("✅ Да", callback_data=f"tyanka_sell_confirm_{user_id}"),
+        InlineKeyboardButton("❌ Нет", callback_data=f"tyanka_sell_cancel_{user_id}")
+    )
 
-# ================== КОРМЛЕНИЕ ТЯНКИ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_feed_"))
-def callback_tyanka_feed(call):
+    # Редактируем сообщение (предполагаем, что это то же сообщение с тянкой)
+    try:
+        # Пытаемся отредактировать как фото
+        bot.edit_message_caption(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            caption=text,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+    except:
+        # Если не вышло, пробуем как текст
+        try:
+            bot.edit_message_text(
+                text,
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                parse_mode="HTML",
+                reply_markup=kb
+            )
+        except Exception as e:
+            logger.error(f"Не удалось отредактировать сообщение для продажи: {e}")
+            bot.answer_callback_query(call.id, "❌ Ошибка интерфейса!", show_alert=True)
+
+
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("tyanka_sell_confirm_"))
+def callback_tyanka_sell_confirm(call):
     user_id = int(call.data.split("_")[-1])
 
+    # ЗАЩИТА: проверяем владельца
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
+        bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
         return
 
     user_data = get_user_data(user_id)
     if not user_data.get("tyanka"):
-        bot.answer_callback_query(call.id, "❌ У вас нет тянки!")
-        return
-
-    tyanka_name = user_data["tyanka"]["name"]
-    feed_cost = TYANKA_DATA[tyanka_name]["feed_cost"]
-
-    if user_data["balance"] < feed_cost:
-        bot.answer_callback_query(call.id, f"❌ Недостаточно средств! Нужно {format_number(feed_cost)}$")
-        return
-
-    user_data["balance"] -= feed_cost
-    user_data["tyanka"]["satiety"] = 100
-    user_data["tyanka"]["mood"] = min(100, user_data["tyanka"].get("mood", 100) + 15)
-    save_casino_data()
-    
-    # Кликабельный ник с ссылкой
-    user_mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-    
-    bot.send_message(call.message.chat.id, 
-                    f"🍽️ <b>{user_mention} накормил(а) свою тянку {tyanka_name.capitalize()}!</b>\n"
-                    f"💸 Стоимость: <code>{format_number(feed_cost)}$</code>\n"
-                    f"😊 Настроение: +15%\n"
-                    f"🍪 Сытость: 100%", 
-                    parse_mode="HTML")
-    bot.answer_callback_query(call.id, "✅ Тянка накормлена!")
-
-# ================== СБОР ДОХОДА ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_collect_"))
-def callback_tyanka_collect(call):
-    user_id = int(call.data.split("_")[-1])
-
-    if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
-        return
-
-    user_data = get_user_data(user_id)
-    if not user_data.get("tyanka"):
-        bot.answer_callback_query(call.id, "❌ У вас нет тянки!")
-        return
-
-    update_tyanka_stats(user_data)
-    profit = user_data["tyanka"].get("profit_accumulated", 0)
-
-    if profit <= 0:
-        bot.answer_callback_query(call.id, "❌ Нет накопленной прибыли!")
-        return
-
-    user_data["balance"] += profit
-    user_data["tyanka"]["profit_accumulated"] = 0
-    save_casino_data()
-    
-    # Кликабельный ник с ссылкой
-    user_mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-    
-    bot.send_message(call.message.chat.id, 
-                    f"💰 <b>{user_mention} собрал(а) доход с тянки!</b>\n"
-                    f"💵 Получено: <code>{format_number(profit)}$</code>\n"
-                    f"💳 Баланс: <code>{format_number(user_data['balance'])}$</code>", 
-                    parse_mode="HTML")
-    bot.answer_callback_query(call.id, f"✅ Собрано {format_number(profit)}$!")
-
-# ================== ПРОДАЖА ТЯНКИ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_sell_"))
-def callback_tyanka_sell(call):
-    user_id = int(call.data.split("_")[-1])
-
-    if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
-        return
-
-    user_data = get_user_data(user_id)
-    if not user_data.get("tyanka"):
-        bot.answer_callback_query(call.id, "❌ У вас нет тянки!")
+        bot.answer_callback_query(call.id, "❌ У тебя нет тянки!", show_alert=True)
         return
 
     tyanka_name = user_data["tyanka"]["name"]
@@ -15386,24 +15146,152 @@ def callback_tyanka_sell(call):
     user_data["tyanka"] = None
     save_casino_data()
 
+    mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+
+    # Успешная продажа
+    success_text = f"✅ {mention}, тянка успешно продана!"
+    try:
+        bot.edit_message_caption(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            caption=success_text,
+            parse_mode="HTML"
+        )
+    except:
+        try:
+            bot.edit_message_text(
+                success_text,
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                parse_mode="HTML"
+            )
+        except Exception as e:
+            logger.error(f"Не удалось отредактировать сообщение об успешной продаже: {e}")
+            bot.send_message(call.message.chat.id, success_text, parse_mode="HTML")
+
+    bot.answer_callback_query(call.id, f"✅ Продано за {format_number(refund)}$")
+
+
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("tyanka_sell_cancel_"))
+def callback_tyanka_sell_cancel(call):
+    user_id = int(call.data.split("_")[-1])
+
+    # ЗАЩИТА: проверяем владельца
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+        return
+
+    # Просто возвращаем пользователя в меню его тянки
+    # Для этого создаем фейковый объект сообщения и вызываем функцию my_tyanka
+    class FakeMessage:
+        def __init__(self, chat, from_user):
+            self.chat = chat
+            self.from_user = from_user
+            self.chat_id = chat.id
+
+    fake_msg = FakeMessage(call.message.chat, call.from_user)
+    my_tyanka(fake_msg)
+    bot.answer_callback_query(call.id, "❌ Продажа отменена")
+
+
+# ================== КОРМЛЕНИЕ ТЯНКИ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_feed_"))
+def callback_tyanka_feed(call):
+    user_id = int(call.data.split("_")[-1])
+
+    # ЗАЩИТА: проверяем владельца
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!", show_alert=True)
+        return
+
+    user_data = get_user_data(user_id)
+    if not user_data.get("tyanka"):
+        bot.answer_callback_query(call.id, "❌ У вас нет тянки!", show_alert=True)
+        return
+
+    tyanka_name = user_data["tyanka"]["name"]
+    feed_cost = TYANKA_DATA[tyanka_name]["feed_cost"]
+
+    if user_data["balance"] < feed_cost:
+        bot.answer_callback_query(call.id, f"❌ Недостаточно средств! Нужно {format_number(feed_cost)}$", show_alert=True)
+        return
+
+    user_data["balance"] -= feed_cost
+    user_data["tyanka"]["satiety"] = 100
+    save_casino_data()
+
     # Кликабельный ник с ссылкой
     user_mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
 
-    bot.send_message(call.message.chat.id, 
-                    f"💔 <b>{user_mention} продал(а) тянку!</b>\n"
-                    f"👋 Тянка: <b>{tyanka_name.capitalize()}</b>\n"
-                    f"💰 Получено: <code>{format_number(refund)}$</code>\n"
-                    f"💳 Баланс: <code>{format_number(user_data['balance'])}$</code>", 
+    bot.send_message(call.message.chat.id,
+                    f"🍽️ <b>{user_mention} накормил(а) свою тянку {tyanka_name.capitalize()}!</b>\n"
+                    f"💸 Стоимость: <code>{format_number(feed_cost)}$</code>\n"
+                    f"🍪 Сытость: 100%",
                     parse_mode="HTML")
-    bot.answer_callback_query(call.id, f"✅ Тянка продана за {format_number(refund)}$")
+    bot.answer_callback_query(call.id, "✅ Тянка накормлена!")
 
-# ================== КНОПКА НАЗАД ==================
+# ================== СБОР ДОХОДА ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("tyanka_collect_"))
+def callback_tyanka_collect(call):
+    user_id = int(call.data.split("_")[-1])
+
+    # ЗАЩИТА: проверяем владельца
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!", show_alert=True)
+        return
+
+    user_data = get_user_data(user_id)
+    if not user_data.get("tyanka"):
+        bot.answer_callback_query(call.id, "❌ У вас нет тянки!", show_alert=True)
+        return
+
+    update_tyanka_stats(user_data)
+    tyanka = user_data["tyanka"]
+    info = TYANKA_DATA[tyanka["name"]]
+
+    # Проверка лимита заработка
+    max_earn = int(info["price"] * MAX_EARN_MULTIPLIER)
+    current_total_earned = tyanka.get("total_earned", 0)
+
+    if current_total_earned >= max_earn:
+        bot.answer_callback_query(call.id, "⛔ Тянка больше не приносит доход! Продайте её.", show_alert=True)
+        return
+
+    profit = tyanka.get("profit_accumulated", 0)
+
+    if profit <= 0:
+        bot.answer_callback_query(call.id, "❌ Нет накопленной прибыли!", show_alert=True)
+        return
+
+    # Начисляем прибыль и обновляем total_earned
+    user_data["balance"] += profit
+    tyanka["profit_accumulated"] = 0
+
+    # Важно: обновляем total_earned, но не даем ему превысить лимит
+    new_total = current_total_earned + profit
+    tyanka["total_earned"] = min(new_total, max_earn)
+
+    save_casino_data()
+
+    # Кликабельный ник с ссылкой
+    user_mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+
+    bot.send_message(call.message.chat.id,
+                    f"💰 <b>{user_mention} собрал(а) доход с тянки!</b>\n"
+                    f"💵 Получено: <code>{format_number(profit)}$</code>\n"
+                    f"💳 Баланс: <code>{format_number(user_data['balance'])}$</code>",
+                    parse_mode="HTML")
+    bot.answer_callback_query(call.id, f"✅ Собрано {format_number(profit)}$!")
+
+
+# ================== КНОПКА НАЗАД (обновлена с новым текстом) ==================
 @bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("back_tyanka_"))
 def callback_back_tyanka(call):
     user_id = int(call.data.split("_")[-1])
 
+    # ЗАЩИТА: проверяем владельца
     if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!")
+        bot.answer_callback_query(call.id, "❌ Это не твоя тянка!", show_alert=True)
         return
 
     user_data = get_user_data(user_id)
@@ -15417,9 +15305,9 @@ def callback_back_tyanka(call):
         return
 
     update_tyanka_stats(user_data)
-    
-    # Проверяем, не ушла ли тянка (используем оптимизированную версию)
-    if check_tyanka_leave_silent(user_data):
+
+    # Проверяем, не ушла ли тянка
+    if check_tyanka_leave(user_id, user_data):
         bot.edit_message_caption(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
@@ -15430,52 +15318,51 @@ def callback_back_tyanka(call):
 
     tyanka = user_data["tyanka"]
     info = TYANKA_DATA[tyanka["name"]]
-    
-    # Кликабельный ник с ссылкой
-    mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
 
-    # Предупреждения
-    warnings = ""
-    if tyanka["satiety"] <= 30:
-        warnings += "⚠️ <i>Тянка голодна! Покорми её!</i>\n"
-    if tyanka.get("mood", 100) <= 30:
-        warnings += "⚠️ <i>Тянка грустит! Удели ей внимание!</i>\n"
+    # Кликабельная ссылка на пользователя
+    user_mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
 
-    # Красивая рамка с моноширинным шрифтом
+    # Расчет лимита заработка
+    max_earn = int(info["price"] * MAX_EARN_MULTIPLIER)
+    current_total_earned = tyanka.get("total_earned", 0)
+    earn_limit_reached = current_total_earned >= max_earn
+
+    # 👩🏼 НОВЫЙ ТЕКСТ
     text = (
-        f"<b>🌸 ТВОЯ ТЯНКА</b>\n"
-        f"<code>┌──────────────────┐</code>\n"
-        f"<code>│</code> <b>Владелец:</b> {mention}\n"
-        f"<code>│</code> <b>Имя:</b> {tyanka['name'].capitalize()}\n"
-        f"<code>│</code> <b>Сытость:</b> {tyanka['satiety']}%\n"
-        f"<code>│</code> <b>Настроение:</b> {tyanka.get('mood', 100)}%\n"
-        f"<code>│</code> <b>Доход/час:</b> {format_number(info['profit_per_hour'])}$\n"
-        f"<code>│</code> <b>Редкость:</b> {info['rarity']}\n"
-        f"<code>│</code> <b>Накоплено:</b> {format_number(tyanka.get('profit_accumulated', 0))}$\n"
+        f"👩🏼 {user_mention}, информация о вашей тянке \"{tyanka['name'].capitalize()}\":\n\n"
+        f"🍪 Сытость: {tyanka['satiety']} ед.\n"
+        f"💸 Прибыль в час: {format_number(info['profit_per_hour'])}\n"
+        f"🌟 Редкость: {info['rarity']}\n"
+        f"🧮 Вся прибыль: {format_number(current_total_earned)}/{format_number(max_earn)}\n\n"
+        f"🛠 <a href='https://t.me/meow_newsbot'>Канал разработчика</a>"
     )
-
-    if warnings:
-        text += f"<code>│</code>\n<code>│</code> {warnings}"
-
-    text += f"<code>└──────────────────┘</code>"
 
     kb = InlineKeyboardMarkup(row_width=2)
     kb.add(
-        InlineKeyboardButton("💰 Собрать доход", callback_data=f"tyanka_collect_{user_id}"),
-        InlineKeyboardButton("🍪 Покормить", callback_data=f"tyanka_feed_{user_id}")
+        InlineKeyboardButton("💴 Собрать доход", callback_data=f"tyanka_collect_{user_id}"),
+        InlineKeyboardButton("🥞 Покормить", callback_data=f"tyanka_feed_{user_id}")
     )
-    kb.add(
-        InlineKeyboardButton("🎭 Взаимодействия", callback_data=f"tyanka_actions_{user_id}"),
-        InlineKeyboardButton("💔 Продать", callback_data=f"tyanka_sell_{user_id}")
-    )
+    kb.add(InlineKeyboardButton("👸 Продать", callback_data=f"tyanka_sell_{user_id}"))
 
-    bot.edit_message_caption(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        caption=text,
-        parse_mode="HTML",
-        reply_markup=kb
-    )
+    try:
+        # Пробуем отредактировать подпись к фото
+        bot.edit_message_caption(
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            caption=text,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+    except:
+        # Если не получилось, редактируем как обычный текст
+        bot.edit_message_text(
+            text,
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+    
     
 # ================== КОМАНДЫ БИЗНЕСА (ИСПРАВЛЕННАЯ ВЕРСИЯ) ==================
 
@@ -16689,96 +16576,60 @@ def car_wash(call):
         logger.error(f"Ошибка car_wash: {e}")
         bot.send_message(call.message.chat.id, "❌ Ошибка при мойке машины.")
 
-# ================== КОМАНДЫ БАНКА ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("банк положить"))
-def bank_deposit(message):
-    try:
-        user_id = message.from_user.id
-        user_data = get_user_data(user_id)
-        
-        amount = int(message.text.split()[2])
-        
-        if amount <= 0:
-            bot.reply_to(message, "❌ Сумма должна быть положительной!")
-            return
-            
-        if user_data["balance"] < amount:
-            bot.reply_to(message, "❌ Недостаточно средств на балансе!")
-            return
-            
-        user_data["balance"] -= amount
-        user_data["bank_balance"] += amount
-        save_casino_data()
-        
-        bot.reply_to(message, f"✅ Вы положили {format_number(amount)}$ на банковский счет!\n"
-                             f"💰 Баланс: {format_number(user_data['balance'])}$\n"
-                             f"🏦 Банк: {format_number(user_data['bank_balance'])}$")
-        logger.info(f"Пользователь {message.from_user.username} положил {amount}$ в банк")
-        
-    except (IndexError, ValueError):
-        bot.reply_to(message, "❌ Используйте: банк положить [сумма]")
-    except Exception as e:
-        bot.reply_to(message, "❌ Ошибка операции с банком!")
-        logger.error(f"Ошибка банковской операции: {e}")
+# ================== СТАТИСТИКА ПЕРЕВОДОВ (JSON) ==================
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("банк снять"))
-def bank_withdraw(message):
-    try:
-        user_id = message.from_user.id
-        user_data = get_user_data(user_id)
-        
-        amount = int(message.text.split()[2])
-        
-        if amount <= 0:
-            bot.reply_to(message, "❌ Сумма должна быть положительной!")
-            return
-            
-        if user_data["bank_balance"] < amount:
-            bot.reply_to(message, "❌ Недостаточно средств на банковском счете!")
-            return
-            
-        user_data["bank_balance"] -= amount
-        user_data["balance"] += amount
-        save_casino_data()
-        
-        bot.reply_to(message, f"✅ Вы сняли {format_number(amount)}$ с банковского счета!\n"
-                             f"💰 Баланс: {format_number(user_data['balance'])}$\n"
-                             f"🏦 Банк: {format_number(user_data['bank_balance'])}$")
-        logger.info(f"Пользователь {message.from_user.username} снял {amount}$ из банка")
-        
-    except (IndexError, ValueError):
-        bot.reply_to(message, "❌ Используйте: банк снять [сумма]")
-    except Exception as e:
-        bot.reply_to(message, "❌ Ошибка операции с банком!")
-        logger.error(f"Ошибка банковской операции: {e}")
+TRANSFER_STATS_FILE = "transfer_stats.json"
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == "банк баланс")
-def bank_balance(message):
-    user_id = message.from_user.id
-    user_data = get_user_data(user_id)
+def load_transfer_stats():
+    """Загружает статистику переводов из JSON"""
+    try:
+        if os.path.exists(TRANSFER_STATS_FILE):
+            with open(TRANSFER_STATS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        logger.error(f"Ошибка загрузки статистики переводов: {e}")
+        return {}
+
+def save_transfer_stats(stats):
+    """Сохраняет статистику переводов в JSON"""
+    try:
+        with open(TRANSFER_STATS_FILE, "w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.error(f"Ошибка сохранения статистики переводов: {e}")
+
+def update_transfer_stats(user_id, amount, is_sender=True):
+    """Обновляет статистику переводов пользователя"""
+    stats = load_transfer_stats()
+    user_id_str = str(user_id)
     
-    # Начисляем проценты
-    if user_data["bank_balance"] > 0:
-        last_interest_date = datetime.strptime(user_data["last_interest_date"], "%Y-%m-%d").date()
-        days_passed = (date.today() - last_interest_date).days
-        
-        if days_passed > 0:
-            interest = user_data["bank_balance"] * (config["bank_interest_rate"] / 100) * days_passed
-            user_data["bank_balance"] += interest
-            user_data["last_interest_date"] = date.today().isoformat()
-            save_casino_data()
-            
-            bot.reply_to(message, f"🏦 Ваш банковский счет: {format_number(user_data['bank_balance'])}$\n"
-                                 f"💹 Начислено процентов: {format_number(interest)}$\n"
-                                 f"📈 Процентная ставка: {config['bank_interest_rate']}% в день")
-        else:
-            bot.reply_to(message, f"🏦 Ваш банковский счет: {format_number(user_data['bank_balance'])}$\n"
-                                 f"📈 Процентная ставка: {config['bank_interest_rate']}% в день")
+    if user_id_str not in stats:
+        stats[user_id_str] = {
+            "total_sent": 0,
+            "total_received": 0
+        }
+    
+    if is_sender:
+        stats[user_id_str]["total_sent"] += amount
     else:
-        bot.reply_to(message, "🏦 У вас нет средств на банковском счете\n"
-                             f"📈 Процентная ставка: {config['bank_interest_rate']}% в день")
+        stats[user_id_str]["total_received"] += amount
     
-    logger.info(f"Пользователь {message.from_user.username} запросил банковский баланс")
+    save_transfer_stats(stats)
+    return stats[user_id_str]
+
+def get_user_transfer_stats(user_id):
+    """Получает статистику переводов пользователя"""
+    stats = load_transfer_stats()
+    user_id_str = str(user_id)
+    
+    if user_id_str not in stats:
+        return {
+            "total_sent": 0,
+            "total_received": 0
+        }
+    
+    return stats[user_id_str]
 
 # ================== 💳 КРАСИВЫЙ ПЕРЕВОД ДЕНЕГ ==================
 
@@ -16791,104 +16642,121 @@ def transfer_money(message):
             bot.reply_to(message, "❌ Ответьте на сообщение пользователя, которому хотите перевести деньги.")
             return
 
-        sender_id = message.from_user.id  
-        recipient_id = message.reply_to_message.from_user.id  
+        sender_id = message.from_user.id
+        recipient_id = message.reply_to_message.from_user.id
 
-        if sender_id == recipient_id:  
-            bot.reply_to(message, "❌ Нельзя переводить деньги самому себе!")  
-            return  
+        if sender_id == recipient_id:
+            bot.reply_to(message, "❌ Нельзя переводить деньги самому себе!")
+            return
 
-        parts = message.text.split()  
-        if len(parts) < 2:  
-            bot.reply_to(message, "❌ Использование: п [сумма] (например: п 1000, п 2k, п 5к, п 1kk, п 3кк)")  
-            return  
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "❌ Использование: п [сумма] (например: п 1000, п 2k, п 5к, п 1kk, п 3кк)")
+            return
 
-        # Поддержка суффиксов 'k', 'к' (тысячи) и 'kk', 'кк' (миллионы)  
-        amount_text = parts[1].lower()  
-        
-        if amount_text.endswith("kk") or amount_text.endswith("кк"):  
-            amount = int(float(amount_text[:-2]) * 1000000)  
-        elif amount_text.endswith("k") or amount_text.endswith("к"):  
-            amount = int(float(amount_text[:-1]) * 1000)  
-        else:  
+        # Поддержка суффиксов 'k', 'к' (тысячи) и 'kk', 'кк' (миллионы)
+        amount_text = parts[1].lower()
+
+        if amount_text.endswith("kk") or amount_text.endswith("кк"):
+            amount = int(float(amount_text[:-2]) * 1000000)
+        elif amount_text.endswith("k") or amount_text.endswith("к"):
+            amount = int(float(amount_text[:-1]) * 1000)
+        else:
             try:
                 amount = int(amount_text)
             except ValueError:
                 bot.reply_to(message, "❌ Неверный формат суммы!")
                 return
 
-        if amount <= 0:  
-            bot.reply_to(message, "❌ Сумма должна быть положительной!")  
-            return  
+        if amount <= 0:
+            bot.reply_to(message, "❌ Сумма должна быть положительной!")
+            return
 
-        sender_data = get_user_data(sender_id)  
-        recipient_data = get_user_data(recipient_id)  
+        sender_data = get_user_data(sender_id)
+        recipient_data = get_user_data(recipient_id)
 
-        if sender_data["balance"] < amount:  
-            bot.reply_to(message, f"❌ Недостаточно средств! Ваш баланс: {format_number(sender_data['balance'])}$")  
-            return  
+        if sender_data["balance"] < amount:
+            bot.reply_to(message, f"❌ Недостаточно средств! Ваш баланс: {format_number(sender_data['balance'])}$")
+            return
 
-        # ПРОВЕРКА ЛИМИТОВ (без функции apply_transfer_limits)
-        # Простая проверка на максимальный баланс получателя
-        max_balance = 1000000000000000000000000000000  # Значение из ваших настроек
-        
+        # ПРОВЕРКА ЛИМИТОВ
+        max_balance = 1000000000000000000000000000000
+
         if recipient_data["balance"] + amount > max_balance:
             bot.reply_to(message, f"❌ У получателя достигнут максимальный баланс ({format_number(max_balance)}$)!")
             return
-        
-        # Применяем комиссию 10% если сумма большая
+
+        # Применяем комиссию 10% если сумма больше 100,000
         fee = 0
         net_amount = amount
-        
-        # Если сумма больше 100,000, берем комиссию 10%
         if amount > 100000:
-            fee = int(amount * 0.10)  # 10% комиссия
+            fee = int(amount * 0.10)
             net_amount = amount - fee
 
-        # Переводим  
-        sender_data["balance"] -= amount  
-        recipient_data["balance"] = min(  
+        # Переводим
+        sender_data["balance"] -= amount
+        recipient_data["balance"] = min(
             recipient_data["balance"] + net_amount, max_balance
-        )  
-        save_casino_data()  
-
-        # Кликабельные имена  
-        sender_name = f"<a href='tg://user?id={sender_id}'>{message.from_user.first_name}</a>"  
-        recipient_name = f"<a href='tg://user?id={recipient_id}'>{message.reply_to_message.from_user.first_name}</a>"  
-
-        # Простое сообщение без кнопок и излишеств  
-        text = (  
-            f"✅ <b>Перевод выполнен успешно!</b>\n\n"
-            f"👤 <b>Отправитель:</b> {sender_name}\n"
-            f"👤 <b>Получатель:</b> {recipient_name}\n"
-            f"💰 <b>Сумма перевода:</b> {format_number(amount)}$\n"
         )
+        save_casino_data()
         
-        if fee > 0:
-            text += f"📉 <b>Комиссия (10%):</b> {format_number(fee)}$\n"
-            text += f"💸 <b>Зачислено получателю:</b> {format_number(net_amount)}$\n"
-        
-        text += f"\n📊 <b>Ваш текущий баланс:</b> {format_number(sender_data['balance'])}$"
-        
-        # Добавляем ссылку на чат
-        text += f"\n\n💬 <a href='https://t.me/meowchatgame'>Присоединяйтесь в наш чат!</a>"
+        # Сохраняем статистику переводов
+        update_transfer_stats(sender_id, amount, is_sender=True)
+        update_transfer_stats(recipient_id, net_amount, is_sender=False)
 
-        bot.send_message(  
-            message.chat.id,  
-            text,  
+        # Кликабельные имена
+        sender_name = f"<a href='tg://user?id={sender_id}'>{message.from_user.first_name}</a>"
+        recipient_name = f"<a href='tg://user?id={recipient_id}'>{message.reply_to_message.from_user.first_name}</a>"
+
+        # НОВЫЙ, МИНИМАЛИСТИЧНЫЙ ТЕКСТ
+        text = (
+            f"🥥 Вы успешно перевели пользователю {recipient_name}\n"
+            f"🍉 Сумма перевода: <code>{format_number(amount)}$</code>"
+        )
+
+        bot.send_message(
+            message.chat.id,
+            text,
             parse_mode="HTML",
             disable_web_page_preview=True
-        )  
+        )
 
-        logger.info(  
-            f"Перевод: {message.from_user.first_name} → {message.reply_to_message.from_user.first_name} | {amount}$"  
-        )  
+        logger.info(
+            f"Перевод: {message.from_user.first_name} → {message.reply_to_message.from_user.first_name} | {amount}$"
+        )
 
-    except (IndexError, ValueError) as e:  
+    except (IndexError, ValueError) as e:
         bot.reply_to(message, f"❌ Неверный формат! Использование: п [сумма] (например: п 1000, п 2k, п 5к, п 1kk, п 3кк)\nОшибка: {e}")
-    except Exception as e:  
-        logger.error(f"Ошибка перевода: {e}")  
+    except Exception as e:
+        logger.error(f"Ошибка перевода: {e}")
         bot.reply_to(message, "❌ Произошла ошибка при переводе средств!")
+
+# ================== МОЙ ПРОФИЛЬ (СО СТАТИСТИКОЙ ПЕРЕВОДОВ) ==================
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мой профиль", "профиль"])
+def my_profile(message):
+    """Показывает профиль пользователя со статистикой"""
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+    mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
+    
+    # Получаем данные пользователя
+    user_data = get_user_data(user_id)
+    transfer_stats = get_user_transfer_stats(user_id)
+    
+    # Сумма всех переводов = отправлено + получено
+    total_transfers = transfer_stats["total_sent"] + transfer_stats["total_received"]
+    
+    # Формируем текст профиля
+    text = (
+        f"👤 Информация про тебя:\n\n"
+        f"🥭 ID: <code>{user_id}</code>\n"
+        f"🥥 Баланс: <code>{format_number(user_data['balance'])}$</code>\n"
+        f"🥞 Сумма всех переводов: <code>{format_number(total_transfers)}$</code>"
+    )
+    
+    # Отправляем ответом на сообщение пользователя
+    bot.reply_to(message, text, parse_mode="HTML")
 
 # ================== ПРОМОКОДЫ ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("промо "))
