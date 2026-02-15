@@ -787,7 +787,7 @@
   "пятница": {
     "amount": 50000,
     "max_activations": 10,
-    "current_activations": 9,
+    "current_activations": 10,
     "activated_by": [
       777000,
       7174147624,
@@ -797,7 +797,48 @@
       8589562480,
       7696828602,
       8293448450,
+      8084177547,
+      809656806
+    ]
+  },
+  "обновочка": {
+    "amount": 100000,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      777000,
+      8293448450,
+      1448932943,
+      7696828602,
+      7783358221,
+      297605799,
+      8168027201,
+      7060923750,
+      8483733925,
+      5118621637
+    ]
+  },
+  "K3U0M7NC": {
+    "amount": 1945,
+    "max_activations": 17,
+    "current_activations": 5,
+    "activated_by": [
+      8168027201,
+      7696828602,
+      7526512670,
+      8293448450,
       8084177547
+    ]
+  },
+  "0SOQZWTJ": {
+    "amount": 2888,
+    "max_activations": 10,
+    "current_activations": 4,
+    "activated_by": [
+      8168027201,
+      7060923750,
+      8483733925,
+      7526512670
     ]
   }
 }
