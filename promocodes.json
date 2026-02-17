@@ -914,5 +914,86 @@
       6512241065,
       8232024665
     ]
+  },
+  "parvizka": {
+    "amount": 350000,
+    "max_activations": 3,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      7307656251,
+      5317756229
+    ]
+  },
+  "7": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5046894194
+    ]
+  },
+  "15": {
+    "amount": 50000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5046894194
+    ]
+  },
+  "222": {
+    "amount": 1000000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7158187651
+    ]
+  },
+  "229": {
+    "amount": 500000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      5694141752
+    ]
+  },
+  "29": {
+    "amount": 555555,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8335186885
+    ]
+  },
+  "Z0CNEC43": {
+    "amount": 3235,
+    "max_activations": 7,
+    "current_activations": 6,
+    "activated_by": [
+      7696828602,
+      8168027201,
+      8483733925,
+      7060923750,
+      7158187651,
+      1248832437
+    ]
+  },
+  "4531": {
+    "amount": 10000000,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7158187651
+    ]
+  },
+  "HUYMDWDO": {
+    "amount": 3377,
+    "max_activations": 14,
+    "current_activations": 3,
+    "activated_by": [
+      8293448450,
+      7158187651,
+      7696828602
+    ]
   }
 }

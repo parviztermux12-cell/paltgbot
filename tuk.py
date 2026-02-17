@@ -1693,618 +1693,162 @@ def unban_user(message):
     
   
 
+# =========================================================
+# 🏴‍☠️ Игра "Сундуки сокровища" PRO
+# =========================================================
 
-# ================== СИСТЕМА СБОРА МУСОРА С АВТО-СБОРОКОЙ ==================
-TRASH_DB = "trash.db"
-AUTO_TRASH_PRICE = 330000  # 240к за авто-сбор
-AUTO_TRASH_TIME = 40 * 60  # 40 минут
-AUTO_TRASH_USERS = {}
+treasure_games = {}
 
-# Инициализация базы данных для мусора
-def init_trash_db():
-    conn = sqlite3.connect(TRASH_DB)
-    c = conn.cursor()
-    
-    # Таблица для инвентаря пользователей
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS trash_inventory (
-            user_id INTEGER PRIMARY KEY,
-            items TEXT DEFAULT '{}',
-            last_collected_time REAL DEFAULT 0,
-            auto_trash_ends REAL DEFAULT 0
-        )
-    """)
-    
-    conn.commit()
-    conn.close()
+CHEST = "📦"
+OPEN = "🗝"
+GOLD = "💎"
+JACKPOT = "👑"
+EMPTY = "💀"
 
-init_trash_db()
+WIN_CHANCE = 0.4      # 40% шанс выиграть
+JACKPOT_CHANCE = 0.1  # 10% шанс джекпота среди побед
 
-# Данные мусора (сниженные цены)
-TRASH_ITEMS = {
-    "🍂 Листья": {"price": 50, "emoji": "🍂"},
-    "🥤 Бутылка": {"price": 120, "emoji": "🥤"},
-    "📰 Бумага": {"price": 80, "emoji": "📰"},
-    "🍌 Банан": {"price": 60, "emoji": "🍌"},
-    "🚬 Окурок": {"price": 100, "emoji": "🚬"},
-    "🧦 Носок": {"price": 120, "emoji": "🧦"},
-    "🧴 Флакон": {"price": 250, "emoji": "🧴"},
-    "🍕 Пицца": {"price": 90, "emoji": "🍕"},
-    "🥫 Банка": {"price": 100, "emoji": "🥫"},
-    "📱 Телефон": {"price": 1000, "emoji": "📱"},
-    "🧩 Игрушка": {"price": 500, "emoji": "🧩"},
-    "💄 Помада": {"price": 750, "emoji": "💄"},
-    "🧢 Кепка": {"price": 250, "emoji": "🧢"},
-    "🍬 Фантик": {"price": 60, "emoji": "🍬"},
-    "💍 Кольцо": {"price": 7500, "emoji": "💍"}
-}
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("клад "))
+def treasure_game_start(message):
+    user_id = message.from_user.id
+    args = message.text.split()
 
-def get_user_trash_inventory(user_id):
-    """Получает инвентарь пользователя"""
-    conn = sqlite3.connect(TRASH_DB)
-    c = conn.cursor()
-    
-    c.execute("SELECT items, last_collected_time, auto_trash_ends FROM trash_inventory WHERE user_id = ?", (user_id,))
-    result = c.fetchone()
-    
-    if not result:
-        # Создаем запись если нет
-        c.execute("INSERT INTO trash_inventory (user_id) VALUES (?)", (user_id,))
-        conn.commit()
-        conn.close()
-        return {"items": {}, "last_collected_time": 0, "auto_trash_ends": 0}
-    
-    items_json, last_collected_time, auto_trash_ends = result
-    
+    if len(args) != 2:
+        bot.reply_to(message, "❌ Использование: <code>клад (ставка)</code>", parse_mode="HTML")
+        return
+
     try:
-        items = json.loads(items_json) if items_json else {}
+        bet = int(args[1])
+        if bet <= 0:
+            raise ValueError
     except:
-        items = {}
-    
-    conn.close()
-    return {
-        "items": items,
-        "last_collected_time": last_collected_time,
-        "auto_trash_ends": auto_trash_ends
+        bot.reply_to(message, "❌ Ставка должна быть положительным числом.")
+        return
+
+    user_data = get_user_data(user_id)
+
+    if user_data["balance"] < bet:
+        bot.reply_to(message, "❌ Недостаточно средств.")
+        return
+
+    # списываем ставку
+    user_data["balance"] -= bet
+    save_casino_data()
+
+    # определяем будет ли выигрыш
+    is_win = random.random() < WIN_CHANCE
+    win_chest = random.randint(1, 3)
+
+    jackpot = False
+    multiplier = 0
+
+    if is_win:
+        if random.random() < JACKPOT_CHANCE:
+            multiplier = 5
+            jackpot = True
+        else:
+            multiplier = 3
+
+    treasure_games[user_id] = {
+        "bet": bet,
+        "win_chest": win_chest,
+        "is_win": is_win,
+        "multiplier": multiplier,
+        "jackpot": jackpot
     }
 
-def update_user_trash_inventory(user_id, items=None, last_collected_time=None, auto_trash_ends=None):
-    """Обновляет инвентарь пользователя"""
-    conn = sqlite3.connect(TRASH_DB)
-    c = conn.cursor()
-    
-    # Получаем текущие данные
-    c.execute("SELECT items, last_collected_time, auto_trash_ends FROM trash_inventory WHERE user_id = ?", (user_id,))
-    result = c.fetchone()
-    
-    if not result:
-        current_items = {}
-        current_last_time = 0
-        current_auto_ends = 0
-    else:
-        items_json, current_last_time, current_auto_ends = result
-        try:
-            current_items = json.loads(items_json) if items_json else {}
-        except:
-            current_items = {}
-    
-    # Обновляем только переданные значения
-    if items is not None:
-        current_items = items
-    if last_collected_time is not None:
-        current_last_time = last_collected_time
-    if auto_trash_ends is not None:
-        current_auto_ends = auto_trash_ends
-    
-    items_json = json.dumps(current_items)
-    c.execute("""
-        INSERT OR REPLACE INTO trash_inventory 
-        (user_id, items, last_collected_time, auto_trash_ends) 
-        VALUES (?, ?, ?, ?)
-    """, (user_id, items_json, current_last_time, current_auto_ends))
-    
-    conn.commit()
-    conn.close()
-
-def can_collect_trash(user_id):
-    """Проверяет, может ли пользователь собирать мусор"""
-    inventory = get_user_trash_inventory(user_id)
-    current_time = time.time()
-    return current_time - inventory["last_collected_time"] >= 2  # 2 секунды кулдаун
-
-def get_random_trash():
-    """Возвращает случайный мусор с учетом вероятностей"""
-    # 70% шанс найти что-то, 30% шанс ничего не найти
-    if random.random() > 0.7:
-        return None
-    
-    # Взвешенная вероятность: более дешевые предметы встречаются чаще
-    weighted_items = []
-    for item_name, item_data in TRASH_ITEMS.items():
-        weight = 15 if item_data["price"] < 500 else 8 if item_data["price"] < 2000 else 3 if item_data["price"] < 5000 else 1
-        weighted_items.extend([item_name] * weight)
-    
-    return random.choice(weighted_items)
-
-def add_item_to_inventory(user_id, item_name):
-    """Добавляет предмет в инвентарь пользователя"""
-    inventory = get_user_trash_inventory(user_id)
-    items = inventory["items"]
-    
-    if item_name in items:
-        items[item_name] += 1
-    else:
-        items[item_name] = 1
-    
-    update_user_trash_inventory(user_id, items, time.time(), inventory["auto_trash_ends"])
-    return items
-
-def calculate_total_value(items):
-    """Вычисляет общую стоимость всех предметов"""
-    total = 0
-    for item_name, count in items.items():
-        if item_name in TRASH_ITEMS:
-            total += TRASH_ITEMS[item_name]["price"] * count
-    return total
-
-def is_auto_trash_active(user_id):
-    """Проверяет, активна ли авто-сборка у пользователя"""
-    inventory = get_user_trash_inventory(user_id)
-    return time.time() < inventory["auto_trash_ends"]
-
-def check_button_owner(call, user_id):
-    """Проверяет владельца кнопки"""
-    if call.from_user.id != user_id:
-        bot.answer_callback_query(call.id, "🚫 Это не твоя кнопка", show_alert=True)
-        return False
-    return True
-
-def start_auto_trash(user_id):
-    """Запускает авто-сборку мусора"""
-    if user_id in AUTO_TRASH_USERS:
-        return
-    
-    end_time = time.time() + AUTO_TRASH_TIME
-    AUTO_TRASH_USERS[user_id] = end_time
-    
-    # Сохраняем время окончания в базу
-    inventory = get_user_trash_inventory(user_id)
-    update_user_trash_inventory(
-        user_id, 
-        inventory["items"], 
-        inventory["last_collected_time"], 
-        end_time
+    kb = InlineKeyboardMarkup(row_width=1)
+    kb.add(
+        InlineKeyboardButton(f"{CHEST} ⚓ Первый сундук", callback_data=f"treasure_{user_id}_1"),
+        InlineKeyboardButton(f"{CHEST} 🗺 Второй сундук", callback_data=f"treasure_{user_id}_2"),
+        InlineKeyboardButton(f"{CHEST} 🏝 Третий сундук", callback_data=f"treasure_{user_id}_3"),
     )
-    
-    def auto_collect_loop():
-        """Цикл авто-сбора"""
-        start_time = time.time()
-        items_collected = 0
-        
-        while time.time() < AUTO_TRASH_USERS.get(user_id, 0):
-            # Собираем мусор каждую секунду
-            item = get_random_trash()
-            if item:
-                add_item_to_inventory(user_id, item)
-                items_collected += 1
-            
-            time.sleep(1)
-        
-        # Удаляем из активных сборок
-        AUTO_TRASH_USERS.pop(user_id, None)
-        
-        # Обнуляем время окончания в базе
-        inventory = get_user_trash_inventory(user_id)
-        update_user_trash_inventory(
-            user_id, 
-            inventory["items"], 
-            inventory["last_collected_time"], 
-            0
-        )
-        
-        logger.info(f"✅ Авто-сборка завершена для {user_id}, собрано предметов: {items_collected}")
-    
-    # Запускаем в отдельном потоке
-    thread = threading.Thread(target=auto_collect_loop, daemon=True)
-    thread.start()
-    
-    logger.info(f"🚗 Авто-сборка запущена для {user_id} на 40 минут")
 
-# ================== КОМАНДА: НАЧАТЬ СБОРКУ МУСОРА ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["начать сборку мусора", "сборка мусора"])
-def start_trash_collection(message):
-    """Начинает сбор мусора"""
-    user_id = message.from_user.id
-    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-    
-    text = f"{mention}, Начни собирать мусор и зарабатывать на этом деньги по кнопке ниже ↓"
-    
-    kb = InlineKeyboardMarkup()
-    
-    # Проверяем, активна ли авто-сборка
-    if is_auto_trash_active(user_id):
-        auto_time_left = get_user_trash_inventory(user_id)["auto_trash_ends"] - time.time()
-        minutes_left = int(auto_time_left // 60)
-        seconds_left = int(auto_time_left % 60)
-        text += f"\n\n🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
+    bot.reply_to(
+        message,
+        f"🏴‍☠️ <b>Пират:</b>\n\n"
+        f"Один сундук скрывает сокровище...\n"
+        f"🎲 Ставка: <b>{bet}$</b>\n\n"
+        f"Выбирай сундук",
+        parse_mode="HTML",
+        reply_markup=kb
+    )
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("treasure_"))
+def treasure_choose(call):
+    parts = call.data.split("_")
+    owner_id = int(parts[1])
+    chosen = int(parts[2])
+
+    if call.from_user.id != owner_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+        return
+
+    if owner_id not in treasure_games:
+        bot.answer_callback_query(call.id, "❌ Игра не найдена.")
+        return
+
+    game = treasure_games.pop(owner_id)
+    bet = game["bet"]
+    win_chest = game["win_chest"]
+    is_win = game["is_win"]
+    multiplier = game["multiplier"]
+    jackpot = game["jackpot"]
+
+    # АНИМАЦИЯ ОТКРЫТИЯ
+    bot.edit_message_text(
+        "🗝 Открываем сундук...",
+        call.message.chat.id,
+        call.message.message_id
+    )
+
+    time.sleep(0.2)
+
+    user_data = get_user_data(owner_id)
+
+    if is_win and chosen == win_chest:
+        win_amount = bet * multiplier
+        user_data["balance"] += win_amount
+
+        if jackpot:
+            result_text = (
+                f"{JACKPOT} <b>ДЖЕКПОТ!!!</b>\n\n"
+                f"Ты сорвал x5 🔥\n"
+                f"💰 Выигрыш: <b>{win_amount}$</b>"
+            )
+        else:
+            result_text = (
+                f"{GOLD} <b>СОКРОВИЩЕ!</b>\n\n"
+                f"💰 Выигрыш: <b>{win_amount}$</b>"
+            )
     else:
-        # Только если авто-сборка НЕ активна - показываем кнопку ручного сбора
-        kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-    
-    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+        result_text = (
+            f"{EMPTY} <b>Пусто...</b>\n\n"
+            f"Сокровища были в сундуке №{win_chest}"
+        )
 
-# ================== КНОПКА: СОБРАТЬ МУСОР ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("collect_trash_"))
-def collect_trash_callback(call):
-    """Обработка сбора мусора"""
-    try:
-        user_id = int(call.data.split("_")[2])
-        if not check_button_owner(call, user_id):
-            return
-        
-        # Проверяем, активна ли авто-сборка
-        if is_auto_trash_active(user_id):
-            bot.answer_callback_query(call.id, "🚫 Авто-сборка активна! Подожди её завершения", show_alert=True)
-            return
+    save_casino_data()
 
-        # Проверяем кулдаун (тихо, без уведомлений)
-        if not can_collect_trash(user_id):
-            return
-
-        found_item = get_random_trash()
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-
-        # Создаем клавиатуру
-        kb = InlineKeyboardMarkup()
-        
-        # Проверяем активную авто-сборку
-        if is_auto_trash_active(user_id):
-            auto_time_left = get_user_trash_inventory(user_id)["auto_trash_ends"] - time.time()
-            minutes_left = int(auto_time_left // 60)
-            seconds_left = int(auto_time_left % 60)
-            text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
+    # Показываем все сундуки
+    kb = InlineKeyboardMarkup(row_width=1)
+    for i in range(1, 4):
+        if i == win_chest and is_win:
+            text = f"{GOLD} Сундук №{i}"
         else:
-            kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
-            
-            if found_item:
-                add_item_to_inventory(user_id, found_item)
-                item_data = TRASH_ITEMS[found_item]
-                text = f"{mention}, собирая мусор ты нашёл <code>{found_item}</code> (стоимость: {item_data['price']}$)"
-            else:
-                text = f"{mention}, собирая мусор ты не нашёл ничего ценного."
+            text = f"{EMPTY} Сундук №{i}"
+        kb.add(InlineKeyboardButton(text, callback_data="none"))
 
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        bot.answer_callback_query(call.id)
-    except Exception as e:
-        logger.error(f"Ошибка сбора мусора: {e}")
+    bot.edit_message_text(
+        f"{result_text}\n\n🎲 Ставка: <b>{bet}$</b>",
+        call.message.chat.id,
+        call.message.message_id,
+        parse_mode="HTML",
+        reply_markup=kb
+    )
 
-# ================== КНОПКА: КУПИТЬ АВТО-СБОРКУ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("buy_autotrash_"))
-def buy_autotrash(call):
-    """Покупка авто-сборки мусора"""
-    try:
-        user_id = int(call.data.split("_")[2])
-        if not check_button_owner(call, user_id):
-            return
-        
-        # Проверяем, не активна ли уже авто-сборка
-        if is_auto_trash_active(user_id):
-            bot.answer_callback_query(call.id, "🚫 У тебя уже активна авто-сборка!", show_alert=True)
-            return
-        
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        text = (
-            f"{mention}, вы точно хотите купить авто-сборку мусора за <b>{format_number(AUTO_TRASH_PRICE)}$</b>?\n\n"
-            f"🚗 <b>Авто-сборка на 40 минут</b>\n"
-            f"⏱ <i>Будет собирать мусор каждую секунду автоматически</i>\n"
-            f"💰 <i>Пока активна - ручной сбор отключен</i>"
-        )
-        
-        kb = InlineKeyboardMarkup(row_width=2)
-        kb.add(
-            InlineKeyboardButton("✅", callback_data=f"confirm_autotrash_{user_id}"),
-            InlineKeyboardButton("❌", callback_data=f"cancel_autotrash_{user_id}")
-        )
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        bot.answer_callback_query(call.id)
-    except Exception as e:
-        logger.error(f"Ошибка покупки авто-сбора: {e}")
+    bot.answer_callback_query(call.id)
 
-# ================== КНОПКА: ПОДТВЕРДИТЬ ПОКУПКУ АВТО-СБОРКИ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("confirm_autotrash_"))
-def confirm_autotrash(call):
-    """Подтверждение покупки авто-сборки"""
-    try:
-        user_id = int(call.data.split("_")[2])
-        if not check_button_owner(call, user_id):
-            return
-        
-        # Проверяем баланс
-        user_data = get_user_data(user_id)
-        if user_data["balance"] < AUTO_TRASH_PRICE:
-            bot.answer_callback_query(call.id, "❌ Недостаточно средств!", show_alert=True)
-            return
-        
-        # Проверяем, не активна ли уже авто-сборка
-        if is_auto_trash_active(user_id):
-            bot.answer_callback_query(call.id, "🚫 У тебя уже активна авто-сборка!", show_alert=True)
-            return
-        
-        # Списываем деньги
-        user_data["balance"] -= AUTO_TRASH_PRICE
-        save_casino_data()
-        
-        # Запускаем авто-сборку
-        start_auto_trash(user_id)
-        
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        text = (
-            f"✅ {mention}, авто-сборка мусора активирована на <b>40 минут</b>!\n\n"
-            f"🚗 <b>Теперь мусор собирается автоматически</b>\n"
-            f"⏱ <i>Ручной сбор временно отключен</i>\n"
-            f"💰 Списано: {format_number(AUTO_TRASH_PRICE)}$\n"
-            f"💵 Баланс: {format_number(user_data['balance'])}$"
-        )
-        
-        # Обновляем сообщение
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML"
-        )
-        bot.answer_callback_query(call.id, "✅ Авто-сборка активирована!")
-        
-    except Exception as e:
-        logger.error(f"Ошибка активации авто-сбора: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при активации!", show_alert=True)
-
-# ================== КНОПКА: ОТМЕНА ПОКУПКИ АВТО-СБОРКИ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("cancel_autotrash_"))
-def cancel_autotrash(call):
-    """Отмена покупки авто-сборки"""
-    try:
-        user_id = int(call.data.split("_")[2])
-        if not check_button_owner(call, user_id):
-            return
-        
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        # Возвращаем к обычному сбору
-        kb = InlineKeyboardMarkup()
-        
-        # Проверяем активную авто-сборку
-        if is_auto_trash_active(user_id):
-            auto_time_left = get_user_trash_inventory(user_id)["auto_trash_ends"] - time.time()
-            minutes_left = int(auto_time_left // 60)
-            seconds_left = int(auto_time_left % 60)
-            text = f"{mention}, 🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
-        else:
-            kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
-            text = f"{mention}, сборка мусора\n\nНажми кнопку ниже чтобы собрать мусор"
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        bot.answer_callback_query(call.id, "❌ Покупка отменена")
-        
-    except Exception as e:
-        logger.error(f"Ошибка отмены авто-сбора: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при отмене!", show_alert=True)
-
-# ================== КОМАНДА: МОЙ ИНВЕНТАРЬ ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мой инвентарь", "мой инв", "инв"])
-def show_trash_inventory(message):
-    """Показывает инвентарь пользователя"""
-    user_id = message.from_user.id
-    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-    
-    inventory = get_user_trash_inventory(user_id)
-    items = inventory["items"]
-    
-    if not items:
-        text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
-    else:
-        text = f"{mention}, в твоём мусорном пакете лежат:\n\n"
-        
-        total_value = 0
-        for item_name, count in items.items():
-            if item_name in TRASH_ITEMS:
-                item_data = TRASH_ITEMS[item_name]
-                item_value = item_data["price"] * count
-                total_value += item_value
-                text += f"{item_data['emoji']} {item_name} ×{count} — {format_number(item_value)}$\n"
-        
-        text += f"\n💰 Продать всё можно за <b>{format_number(total_value)}$</b>"
-    
-    # Проверяем активную авто-сборку
-    if is_auto_trash_active(user_id):
-        auto_time_left = inventory["auto_trash_ends"] - time.time()
-        minutes_left = int(auto_time_left // 60)
-        seconds_left = int(auto_time_left % 60)
-        text += f"\n\n🚗 <b>Авто-сборка активна! Осталось: {minutes_left} минут {seconds_left} секунд</b>"
-    
-    # Создаем клавиатуру
-    kb = InlineKeyboardMarkup()
-    
-    if items:
-        kb.add(InlineKeyboardButton("💰 Продать всё", callback_data=f"sell_all_trash_{user_id}"))
-    
-    # Показываем кнопку ручного сбора ТОЛЬКО если авто-сборка НЕ активна
-    if not is_auto_trash_active(user_id):
-        kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-    
-    # Показываем кнопку покупки авто-сборки только если она не активна
-    if not is_auto_trash_active(user_id):
-        kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
-    
-    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
-
-# ================== КНОПКА: ПРОДАТЬ ВСЁ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("sell_all_trash_"))
-def sell_all_trash_callback(call):
-    """Обработка продажи всего мусора"""
-    try:
-        user_id = int(call.data.split("_")[3])
-        if not check_button_owner(call, user_id):
-            return
-        
-        inventory = get_user_trash_inventory(user_id)
-        items = inventory["items"]
-        
-        if not items:
-            bot.answer_callback_query(call.id, "❌ Твой мусорный пакет пуст!", show_alert=True)
-            return
-        
-        total_value = calculate_total_value(items)
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        text = f"{mention}, ты хочешь продать все вещи за <b>{format_number(total_value)}$</b>?\n\nВы точно хотите продать все вещи?"
-        
-        kb = InlineKeyboardMarkup(row_width=2)
-        kb.add(
-            InlineKeyboardButton("✅", callback_data=f"confirm_sell_all_{user_id}"),
-            InlineKeyboardButton("❌", callback_data=f"cancel_sell_all_{user_id}")
-        )
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        
-        bot.answer_callback_query(call.id)
-        
-    except Exception as e:
-        logger.error(f"Ошибка продажи мусора: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
-
-# ================== КНОПКА: ПОДТВЕРДИТЬ ПРОДАЖУ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("confirm_sell_all_"))
-def confirm_sell_all_callback(call):
-    """Подтверждение продажи всего мусора"""
-    try:
-        user_id = int(call.data.split("_")[3])
-        if not check_button_owner(call, user_id):
-            return
-        
-        # Получаем инвентарь и вычисляем стоимость
-        inventory = get_user_trash_inventory(user_id)
-        items = inventory["items"]
-        total_value = calculate_total_value(items)
-        
-        # Начисляем деньги на баланс
-        user_data = get_user_data(user_id)
-        user_data["balance"] += total_value
-        save_casino_data()
-        
-        # Очищаем инвентарь
-        update_user_trash_inventory(user_id, {}, inventory["last_collected_time"], inventory["auto_trash_ends"])
-        
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        text = f"{mention}, ты продал все найденные вещи за <b>{format_number(total_value)}$</b>. Деньги уже на твоём счёту работяга 😸"
-        
-        # Обновляем сообщение без кнопок
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML"
-        )
-        
-        bot.answer_callback_query(call.id, f"✅ Получено: {format_number(total_value)}$")
-        
-    except Exception as e:
-        logger.error(f"Ошибка подтверждения продажи: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при продаже!", show_alert=True)
-
-# ================== КНОПКА: ОТМЕНИТЬ ПРОДАЖУ ==================
-@bot.callback_query_handler(func=lambda c: c.data.startswith("cancel_sell_all_"))
-def cancel_sell_all_callback(call):
-    """Отмена продажи всего мусора"""
-    try:
-        user_id = int(call.data.split("_")[3])
-        if not check_button_owner(call, user_id):
-            return
-        
-        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
-        # Возвращаем к просмотру инвентаря
-        inventory = get_user_trash_inventory(user_id)
-        items = inventory["items"]
-        
-        if items:
-            text = f"{mention}, в твоём мусорном пакете лежат:\n\n"
-            
-            total_value = 0
-            for item_name, count in items.items():
-                if item_name in TRASH_ITEMS:
-                    item_data = TRASH_ITEMS[item_name]
-                    item_value = item_data["price"] * count
-                    total_value += item_value
-                    text += f"{item_data['emoji']} {item_name} ×{count} — {format_number(item_value)}$\n"
-            
-            text += f"\n💰 Продать все можно за <b>{format_number(total_value)}$</b>"
-            
-            kb = InlineKeyboardMarkup()
-            kb.add(InlineKeyboardButton("💰 Продать всё", callback_data=f"sell_all_trash_{user_id}"))
-            
-            # Показываем кнопку ручного сбора ТОЛЬКО если авто-сборка НЕ активна
-            if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            
-            # Показываем кнопку покупки авто-сборки только если она не активна
-            if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
-        else:
-            text = f"{mention}, твой мусорный пакет пуст. Начни собирать мусор!"
-            kb = InlineKeyboardMarkup()
-            
-            # Показываем кнопку ручного сбора ТОЛЬКО если авто-сборка НЕ активна
-            if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🗑️ Собрать мусор", callback_data=f"collect_trash_{user_id}"))
-            
-            if not is_auto_trash_active(user_id):
-                kb.add(InlineKeyboardButton("🚗 Купить авто-сборку", callback_data=f"buy_autotrash_{user_id}"))
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        
-        bot.answer_callback_query(call.id, "❌ Продажа отменена")
-        
-    except Exception as e:
-        logger.error(f"Ошибка отмены продажи: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка при отмене!", show_alert=True)
-
-print("✅ Система сбора мусора с авто-сборкой загружена и готова к работе! 🗑️🚗")
 
 # ================== БАНКОВСКАЯ СИСТЕМА MEOW BANK ==================
 BANK_DB = "meow_bank.db"
@@ -8503,6 +8047,565 @@ def shooting_game(message):
 
 print("✅ Игры футбол/баскетбол/тир с честными 50/50 загружены! ⚽🏀🎯")
 
+# ================== ИГРА "ПИРАМИДА" С ЭМОДЗИ ==================
+# 10 уровней, на каждом уровне свой эмодзи
+# В каждом уровне 4 кнопки с ОДИНАКОВЫМ эмодзи
+# Только 1 клетка проход, 3 - проигрыш
+
+# Эмодзи для каждого уровня (все 4 кнопки уровня имеют одинаковый эмодзи)
+PYRAMID_EMOJIS = [
+    "🪨",  # Уровень 1 - Камень
+    "🌿",  # Уровень 2 - Трава
+    "🔥",  # Уровень 3 - Огонь
+    "💧",  # Уровень 4 - Вода
+    "🌪️",  # Уровень 5 - Вихрь
+    "❄️",  # Уровень 6 - Лёд
+    "⚡",  # Уровень 7 - Молния
+    "💎",  # Уровень 8 - Алмаз
+    "👑",  # Уровень 9 - Корона
+    "🌟"   # Уровень 10 - Звезда
+]
+
+# Множители для каждого уровня
+PYRAMID_MULTIPLIERS = [1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 7.0, 10.0, 15.0]
+
+# Хранилище активных игр
+active_pyramid_games = {}
+
+def generate_pyramid_keyboard(user_id, game_id, level, show_all=False):
+    """Создает клавиатуру для текущего уровня пирамиды"""
+    kb = InlineKeyboardMarkup(row_width=2)
+    
+    # Получаем данные игры
+    game = active_pyramid_games.get(game_id, {})
+    if not game:
+        return kb
+    
+    # Эмодзи для текущего уровня
+    current_emoji = PYRAMID_EMOJIS[level]
+    
+    # Генерируем 4 клетки (A, B, C, D) с ОДИНАКОВЫМ эмодзи
+    buttons = []
+    for i, cell in enumerate(["A", "B", "C", "D"]):
+        if show_all:
+            # Режим показа результатов (после окончания игры)
+            if cell == game["correct_cells"][level]:
+                text = f"✅ {current_emoji} (проход)"
+            else:
+                text = f"❌ {current_emoji}"
+        else:
+            # Обычный режим игры - все кнопки одинаковые
+            text = f"{current_emoji} Клетка {cell}"
+        
+        buttons.append(
+            InlineKeyboardButton(
+                text, 
+                callback_data=f"pyramid_cell_{game_id}_{cell}_{user_id}" if not show_all else "pyramid_finished"
+            )
+        )
+    
+    # Располагаем кнопки в 2 ряда по 2
+    kb.add(buttons[0], buttons[1])
+    kb.add(buttons[2], buttons[3])
+    
+    # Кнопка "Забрать выигрыш" (только во время игры)
+    if not show_all:
+        if level == 0:
+            current_win = game["bet"]
+            mult_text = "1x"
+        else:
+            current_mult = PYRAMID_MULTIPLIERS[level - 1]
+            current_win = int(game["bet"] * current_mult)
+            mult_text = f"{current_mult}x"
+        
+        kb.add(InlineKeyboardButton(
+            f"💰 Забрать {format_number(current_win)}$ ({mult_text})", 
+            callback_data=f"pyramid_cashout_{game_id}_{user_id}"
+        ))
+    
+    return kb
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("пирамида"))
+def pyramid_start(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
+        # Парсим ставку
+        parts = message.text.split()
+        if len(parts) < 2:
+            # Красивое описание игры
+            rules_text = (
+                f"🏛️ <b>ПИРАМИДА</b> | {mention}\n\n"
+                f"<b>📜 ПРАВИЛА:</b>\n"
+                f"• 10 уровней пирамиды\n"
+                f"• На каждом уровне свой символ: {PYRAMID_EMOJIS[0]} → {PYRAMID_EMOJIS[1]} → {PYRAMID_EMOJIS[2]} ...\n"
+                f"• 4 клетки, только 1 ведёт дальше\n"
+                f"• Остальные 3 - проигрыш\n\n"
+                f"<b>📈 МНОЖИТЕЛИ:</b>\n"
+            )
+            
+            # Добавляем множители красиво
+            for i in range(0, 10, 2):
+                if i+1 < 10:
+                    rules_text += f"• Ур.{i+1}: {PYRAMID_EMOJIS[i]} x{PYRAMID_MULTIPLIERS[i]}  |  Ур.{i+2}: {PYRAMID_EMOJIS[i+1]} x{PYRAMID_MULTIPLIERS[i+1]}\n"
+                else:
+                    rules_text += f"• Ур.{i+1}: {PYRAMID_EMOJIS[i]} x{PYRAMID_MULTIPLIERS[i]}\n"
+            
+            rules_text += f"\n💰 <b>Твой баланс:</b> {format_number(get_user_data(user_id)['balance'])}$\n"
+            rules_text += f"📝 <b>Пример:</b> <code>пирамида 1000</code>"
+            
+            bot.reply_to(message, rules_text, parse_mode="HTML")
+            return
+        
+        try:
+            bet = int(parts[1])
+            if bet < 100:
+                bot.reply_to(message, "❌ Минимальная ставка: 100$")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Ставка должна быть числом!")
+            return
+        
+        user_data = get_user_data(user_id)
+        if user_data["balance"] < bet:
+            bot.reply_to(message, f"❌ Недостаточно средств! Твой баланс: {format_number(user_data['balance'])}$")
+            return
+        
+        # Списываем ставку
+        user_data["balance"] -= bet
+        save_casino_data()
+        
+        # Генерируем правильные клетки для всех 10 уровней
+        correct_cells = []
+        for _ in range(10):
+            correct_cells.append(random.choice(["A", "B", "C", "D"]))
+        
+        # Создаем игру
+        game_id = str(uuid.uuid4())[:8]
+        active_pyramid_games[game_id] = {
+            "user_id": user_id,
+            "bet": bet,
+            "level": 0,
+            "correct_cells": correct_cells,
+            "status": "playing",
+            "chat_id": message.chat.id,
+            "message_id": None,
+            "start_time": time.time()
+        }
+        
+        # Текст для 1 уровня
+        current_emoji = PYRAMID_EMOJIS[0]
+        
+        text = (
+            f"🏛️ <b>ПИРАМИДА - УРОВЕНЬ 1</b> | {mention}\n\n"
+            f"💰 Ставка: {format_number(bet)}$\n"
+            f"📊 Эмодзи уровня: {current_emoji}\n"
+            f"📈 Множитель: <b>x{PYRAMID_MULTIPLIERS[0]}</b>\n"
+            f"💎 Возможный выигрыш: <b>{format_number(int(bet * PYRAMID_MULTIPLIERS[0]))}$</b>\n\n"
+            f"<i>Все 4 клетки выглядят одинаково, но только 1 ведёт дальше!</i>"
+        )
+        
+        msg = bot.send_message(
+            message.chat.id,
+            text,
+            parse_mode="HTML",
+            reply_markup=generate_pyramid_keyboard(user_id, game_id, 0)
+        )
+        
+        active_pyramid_games[game_id]["message_id"] = msg.message_id
+        logger.info(f"Пирамида: {user_id} начал игру со ставкой {bet}")
+        
+    except Exception as e:
+        logger.error(f"Ошибка запуска пирамиды: {e}")
+        bot.reply_to(message, "❌ Ошибка при запуске игры!")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("pyramid_cell_"))
+def pyramid_cell_callback(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = parts[3]
+        owner_id = int(parts[4])
+        
+        # ЗАЩИТА: проверяем владельца игры
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя пирамида!", show_alert=True)
+            return
+        
+        # Получаем игру
+        game = active_pyramid_games.get(game_id)
+        if not game or game["status"] != "playing":
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
+            return
+        
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        level = game["level"]
+        
+        # Проверяем правильность клетки
+        correct_cell = game["correct_cells"][level]
+        
+        if cell == correct_cell:
+            # ✅ ПРОХОД НА СЛЕДУЮЩИЙ УРОВЕНЬ
+            game["level"] += 1
+            new_level = game["level"]
+            
+            # Проверяем, не прошли ли всю пирамиду
+            if new_level >= 10:
+                # 🎉 ПОБЕДА! Прошли все 10 уровней
+                win_mult = PYRAMID_MULTIPLIERS[-1]
+                win_amount = int(game["bet"] * win_mult)
+                final_emoji = PYRAMID_EMOJIS[-1]
+                
+                user_data = get_user_data(user_id)
+                user_data["balance"] += win_amount
+                game["status"] = "won"
+                save_casino_data()
+                
+                text = (
+                    f"🏛️ <b>ПИРАМИДА ПОКОРЕНА!</b> 🎉\n\n"
+                    f"{mention}, ты прошёл все 10 уровней!\n\n"
+                    f"💰 Ставка: {format_number(game['bet'])}$\n"
+                    f"📈 Итоговый множитель: <b>x{win_mult}</b>\n"
+                    f"💎 Выигрыш: <b>{format_number(win_amount)}$</b>\n"
+                    f"🏆 Финальный символ: {final_emoji}\n\n"
+                    f"🏆 Поздравляю с победой!"
+                )
+                
+                bot.edit_message_text(
+                    text,
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML",
+                    reply_markup=generate_pyramid_keyboard(user_id, game_id, new_level-1, show_all=True)
+                )
+                
+                bot.answer_callback_query(call.id, f"🎉 Ты выиграл {format_number(win_amount)}$!")
+                
+                # Удаляем игру через 5 минут
+                threading.Timer(300, lambda: active_pyramid_games.pop(game_id, None)).start()
+                return
+            
+            # Переходим на следующий уровень
+            current_emoji = PYRAMID_EMOJIS[new_level]
+            current_mult = PYRAMID_MULTIPLIERS[new_level]
+            current_win = int(game["bet"] * current_mult)
+            
+            text = (
+                f"🏛️ <b>ПИРАМИДА - УРОВЕНЬ {new_level+1}</b> | {mention}\n\n"
+                f"✅ Уровень <b>{level+1}</b> пройден!\n\n"
+                f"💰 Ставка: {format_number(game['bet'])}$\n"
+                f"📊 Эмодзи уровня: {current_emoji}\n"
+                f"📈 Множитель: <b>x{current_mult}</b>\n"
+                f"💎 Возможный выигрыш: <b>{format_number(current_win)}$</b>\n\n"
+                f"<i>Выбери клетку для следующего уровня.</i>"
+            )
+            
+            bot.edit_message_text(
+                text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=generate_pyramid_keyboard(user_id, game_id, new_level)
+            )
+            
+            bot.answer_callback_query(call.id, f"✅ Уровень {level+1} пройден! (+{current_mult}x)")
+            
+        else:
+            # 💥 ПРОИГРЫШ
+            game["status"] = "lost"
+            current_emoji = PYRAMID_EMOJIS[level]
+            
+            text = (
+                f"🏛️ <b>ПИРАМИДА РУХНУЛА</b> 💥\n\n"
+                f"{mention}, ты выбрал не ту клетку на уровне <b>{level+1}</b>.\n\n"
+                f"💰 Ставка {format_number(game['bet'])}$ сгорела.\n"
+                f"❌ Эмодзи уровня: {current_emoji}\n\n"
+                f"Правильная клетка была: <b>{correct_cell}</b>"
+            )
+            
+            bot.edit_message_text(
+                text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=generate_pyramid_keyboard(user_id, game_id, level, show_all=True)
+            )
+            
+            bot.answer_callback_query(call.id, "💥 Ты проиграл!")
+            
+            # Удаляем игру через 5 минут
+            threading.Timer(300, lambda: active_pyramid_games.pop(game_id, None)).start()
+        
+    except Exception as e:
+        logger.error(f"Ошибка обработки клетки пирамиды: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("pyramid_cashout_"))
+def pyramid_cashout_callback(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+        
+        # ЗАЩИТА: проверяем владельца игры
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя пирамида!", show_alert=True)
+            return
+        
+        game = active_pyramid_games.get(game_id)
+        if not game or game["status"] != "playing":
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
+            return
+        
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        level = game["level"]
+        
+        # Определяем выигрыш
+        if level == 0:
+            win_amount = game["bet"]
+            mult_text = "1x (возврат ставки)"
+            level_emoji = "🪨"
+        else:
+            current_mult = PYRAMID_MULTIPLIERS[level - 1]
+            win_amount = int(game["bet"] * current_mult)
+            mult_text = f"{current_mult}x"
+            level_emoji = PYRAMID_EMOJIS[level - 1]
+        
+        user_data = get_user_data(user_id)
+        user_data["balance"] += win_amount
+        game["status"] = "cashed_out"
+        save_casino_data()
+        
+        text = (
+            f"🏛️ <b>ПИРАМИДА - ВЫХОД</b> 💰\n\n"
+            f"{mention}, ты забрал выигрыш на уровне <b>{level}</b>.\n\n"
+            f"💰 Ставка: {format_number(game['bet'])}$\n"
+            f"📈 Множитель: {mult_text}\n"
+            f"💎 Выигрыш: <b>{format_number(win_amount)}$</b>\n"
+            f"🎴 Символ уровня: {level_emoji}\n\n"
+            f"Спасибо за игру!"
+        )
+        
+        bot.edit_message_text(
+            text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML",
+            reply_markup=generate_pyramid_keyboard(user_id, game_id, level, show_all=True)
+        )
+        
+        bot.answer_callback_query(call.id, f"💰 +{format_number(win_amount)}$")
+        
+        # Удаляем игру через 5 минут
+        threading.Timer(300, lambda: active_pyramid_games.pop(game_id, None)).start()
+        
+    except Exception as e:
+        logger.error(f"Ошибка вывода денег из пирамиды: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data == "pyramid_finished")
+def pyramid_finished_callback(call):
+    """Заглушка для нажатий на завершенную игру"""
+    bot.answer_callback_query(call.id, "⏳ Игра уже завершена")
+
+print("✅ Игра 'Пирамида' с эмодзи загружена! 🏛️")
+print("   Эмодзи уровней: 🪨 → 🌿 → 🔥 → 💧 → 🌪️ → ❄️ → ⚡ → 💎 → 👑 → 🌟")
+
+# ================== 🐿️ ИГРА "НАЙДИ БЕЛКУ" ==================
+
+import random
+import uuid
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Словарь для хранения активных игр
+active_squirrel_games = {}
+
+def check_squirrel_owner(call, user_id):
+    """Проверка владельца кнопки"""
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+        return False
+    return True
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("белка "))
+def squirrel_game(message):
+    """Команда для начала игры: белка [ставка]"""
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
+        # Парсим ставку
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, 
+                        f"{mention}, укажи ставку!\n\n"
+                        f"Пример: <code>белка 1000</code>",
+                        parse_mode="HTML")
+            return
+        
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка должна быть больше 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Ставка должна быть числом!")
+            return
+        
+        # Проверяем баланс
+        user_data = get_user_data(user_id)
+        if user_data["balance"] < bet:
+            bot.reply_to(message, 
+                        f"❌ {mention}, недостаточно средств!\n\n"
+                        f"💰 Нужно: <code>{format_number(bet)}$</code>\n"
+                        f"💳 У тебя: <code>{format_number(user_data['balance'])}$</code>",
+                        parse_mode="HTML")
+            return
+        
+        # Списываем ставку
+        user_data["balance"] -= bet
+        save_casino_data()
+        
+        # Генерируем ID игры
+        game_id = str(uuid.uuid4())[:8]
+        
+        # Рандомно выбираем клетку с белкой (0 или 1)
+        squirrel_cell = random.randint(0, 1)
+        
+        # Сохраняем игру
+        active_squirrel_games[game_id] = {
+            "user_id": user_id,
+            "bet": bet,
+            "squirrel_cell": squirrel_cell,
+            "active": True,
+            "message_id": None,
+            "chat_id": message.chat.id
+        }
+        
+        # Создаем клавиатуру (кнопки вертикально)
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("❓ Клетка 1", callback_data=f"squirrel_0_{game_id}_{user_id}"))
+        kb.add(InlineKeyboardButton("❓ Клетка 2", callback_data=f"squirrel_1_{game_id}_{user_id}"))
+        
+        # Отправляем сообщение
+        game_text = f"{mention}, <b>найди белку 🐿️</b>\n\nВыбери клетку:"
+        msg = bot.reply_to(message, game_text, parse_mode="HTML", reply_markup=kb)
+        
+        # Сохраняем ID сообщения
+        active_squirrel_games[game_id]["message_id"] = msg.message_id
+        
+        # Удаляем команду пользователя (для чистоты чата)
+        try:
+            bot.delete_message(message.chat.id, message.message_id)
+        except:
+            pass
+        
+    except Exception as e:
+        logger.error(f"Ошибка в игре белка: {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при создании игры!")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("squirrel_"))
+def squirrel_callback(call):
+    """Обработчик нажатия на кнопки"""
+    try:
+        # Разбираем callback_data: squirrel_клетка_gameid_userid
+        parts = call.data.split("_")
+        cell = int(parts[1])  # 0 или 1
+        game_id = parts[2]
+        owner_id = int(parts[3])
+        
+        # Проверяем владельца
+        if not check_squirrel_owner(call, owner_id):
+            return
+        
+        # Получаем игру
+        game = active_squirrel_games.get(game_id)
+        if not game:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+        
+        # Проверяем, активна ли игра
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
+            return
+        
+        # Помечаем игру как неактивную (чтобы второй раз не нажали)
+        game["active"] = False
+        
+        # Получаем данные
+        user_id = owner_id
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        bet = game["bet"]
+        squirrel_cell = game["squirrel_cell"]
+        
+        # Создаем клавиатуру с результатом (без возможности нажатия)
+        result_kb = InlineKeyboardMarkup()
+        
+        if cell == squirrel_cell:
+            # ПОБЕДА - игрок нашел белку
+            win_amount = bet * 2
+            user_data = get_user_data(user_id)
+            user_data["balance"] += win_amount
+            save_casino_data()
+            
+            # Показываем, где была белка
+            if squirrel_cell == 0:
+                result_kb.add(InlineKeyboardButton("🐿️ Белка тут!", callback_data="squirrel_done"))
+                result_kb.add(InlineKeyboardButton("❌ Пусто", callback_data="squirrel_done"))
+            else:
+                result_kb.add(InlineKeyboardButton("❌ Пусто", callback_data="squirrel_done"))
+                result_kb.add(InlineKeyboardButton("🐿️ Белка тут!", callback_data="squirrel_done"))
+            
+            # Текст победы
+            result_text = (f"{mention}, <b>ты нашёл белку! 🐿️</b>\n\n"
+                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> удвоилась!\n"
+                          f"🎉 Ты получил <code>{format_number(win_amount)}$</code>")
+            
+        else:
+            # ПРОИГРЫШ - игрок не нашел белку
+            # Показываем, где была белка
+            if squirrel_cell == 0:
+                result_kb.add(InlineKeyboardButton("🐿️ Белка была тут!", callback_data="squirrel_done"))
+                result_kb.add(InlineKeyboardButton("❌ Пусто", callback_data="squirrel_done"))
+            else:
+                result_kb.add(InlineKeyboardButton("❌ Пусто", callback_data="squirrel_done"))
+                result_kb.add(InlineKeyboardButton("🐿️ Белка была тут!", callback_data="squirrel_done"))
+            
+            # Текст проигрыша
+            result_text = (f"{mention}, <b>к сожалению, белка была не тут 😔</b>\n\n"
+                          f"💸 Ты потерял ставку <code>{format_number(bet)}$</code>")
+        
+        # Редактируем сообщение с результатом
+        bot.edit_message_text(
+            result_text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML",
+            reply_markup=result_kb
+        )
+        
+        # Удаляем игру из активных через 5 минут (чтобы не засорять память)
+        def delete_game():
+            time.sleep(300)
+            if game_id in active_squirrel_games:
+                del active_squirrel_games[game_id]
+        
+        threading.Thread(target=delete_game, daemon=True).start()
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка в обработчике белки: {e}")
+        bot.answer_callback_query(call.id, "❌ Произошла ошибка!", show_alert=True)
+
+# Заглушка для неактивных кнопок (чтобы не было ошибок)
+@bot.callback_query_handler(func=lambda c: c.data == "squirrel_done")
+def squirrel_done_callback(call):
+    bot.answer_callback_query(call.id, "🎮 Игра уже завершена")
+
 # ================== СЛОТЫ (ИСПРАВЛЕННАЯ ВЕРСИЯ) ==================
 
 SLOT_SYMBOLS = ["🍒", "⭐", "🍋", "🍊", "💎", "🍀", "❌", "❌", "❌", "❌"]  # Добавлены проигрышные символы
@@ -9042,6 +9145,8 @@ def get_user_name(user_id):
         return f"Игрок {user_id}"
 
 print("✅ Игры: футбол, баскетбол, тир и кубик загружены и готовы к работе! ⚽🏀🎯🎲")
+
+
 # ================== MINES 5x5 СТАНДАРТНАЯ ВЕРСИЯ ==================
 
 # Глобальные переменные для конфигурации мин (изменяются через админ-команды)
@@ -9081,11 +9186,11 @@ def mines_keyboard(user_id, reveal_all=False, hide_buttons=False):
             if i in u["mines_positions"]:  
                 text = "  💣  "
             else:
-                text = "  💎  "
+                text = "         "
         else:  
             # Показываем открытые клетки или неизвестные
             if i in u["mines_open"]:  
-                text = "  💎  "  # Безопасная клетка
+                text = "        "  # Безопасная клетка
             else:  
                 text = "  ❓  "  # Неоткрытая клетка
 
@@ -9106,7 +9211,7 @@ def mines_keyboard(user_id, reveal_all=False, hide_buttons=False):
         if not u["mines_started"]:  
             # Кнопка отмены в начале игры
             kb.row(  
-                InlineKeyboardButton(" ❌ Отменить игру", callback_data=f"mines_cancel_{user_id}")  
+                InlineKeyboardButton(" Отменить игру", callback_data=f"mines_cancel_{user_id}")  
             )  
         else:  
             # Кнопка забрать выигрыш во время игры
@@ -9861,6 +9966,9 @@ HELP_CONTENT = {
 
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
+[🏴‍☠️] <b>клад [ставка]</b>
+[🐿️] <b>белка [ставка]</b>
+[🇪🇬] <b>пирамида [ставка]</b>
 [🏎️] <b>разгон [ставка]</b>
 [💣] <b>мины [ставка]</b>
 [🔴] <b>[ставка] к/ч | Ставка на красное или чёрное</b>
@@ -9999,12 +10107,6 @@ HELP_CONTENT = {
     "events": """
 🏧 <b>Ивенты</b>
 ━━━━━━━━━━━━━━━━━━━
-
-<b>🗑 СБОР МУСОРА:</b>
-[🗑] <b>начать сборку мусора</b> — начать сбор мусора
-[🗑] <b>сборка мусора</b> — альтернативная команда
-[📦] <b>мой инвентарь</b> — посмотреть найденные предметы
-
 
 <b>⛏ ШАХТА:</b>
 [⛏] <b>моя шахта</b> — главное меню шахты
