@@ -1,6 +1,6 @@
 {
   "7526512670": {
-    "balance": 50109,
+    "balance": 132183,
     "last_bonus": "2026-02-17",
     "stage": "finished",
     "game": "mines",
@@ -21918,7 +21918,7 @@
     "_user_id": 8438421753
   },
   "7696828602": {
-    "balance": 8733060,
+    "balance": 8706660,
     "last_bonus": "2026-02-16",
     "stage": "finished",
     "game": "mines",
@@ -42694,7 +42694,7 @@
     "_user_id": 7196523735
   },
   "8084177547": {
-    "balance": 160148,
+    "balance": 1180805,
     "last_bonus": "2026-02-16",
     "stage": "finished",
     "game": "mines",
@@ -42703,8 +42703,8 @@
       "name": "отель",
       "profit_per_hour": 10000,
       "materials": 100,
-      "last_update": "2026-02-17T06:47:12.860215",
-      "profit_accumulated": 139534
+      "last_update": "2026-02-17T11:32:06.886114",
+      "profit_accumulated": 187017
     },
     "house": null,
     "car": null,
@@ -75329,7 +75329,7 @@
     "_user_id": 6304942855
   },
   "8335186885": {
-    "balance": 0,
+    "balance": 2202120,
     "last_bonus": "2026-02-16",
     "stage": "finished",
     "game": "mines",
@@ -75340,11 +75340,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-02-16",
+      "date": "2026-02-17",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-02-16",
+      "date": "2026-02-17",
       "amount": 0
     },
     "bank_balance": 0,
@@ -78081,7 +78081,7 @@
     "last_farm": "2026-02-14T16:06:01.071382"
   },
   "809656806": {
-    "balance": 98,
+    "balance": 4584060,
     "last_bonus": "2026-02-16",
     "stage": "finished",
     "game": "mines",
@@ -78136,7 +78136,7 @@
     "_first_name": "Эдгар"
   },
   "7733538262": {
-    "balance": 8719,
+    "balance": 9986,
     "last_bonus": "2026-02-14",
     "stage": "finished",
     "game": "mines",
@@ -78161,7 +78161,7 @@
       "expires": null
     },
     "_user_id": 7733538262,
-    "last_farm": "2026-02-16T23:15:32.612521",
+    "last_farm": "2026-02-17T11:26:46.980673",
     "mines_owner": 7733538262,
     "mines_bet": 500,
     "mines_count": 5,
@@ -78220,7 +78220,7 @@
     "last_farm": "2026-02-15T12:25:59.834514"
   },
   "7995889746": {
-    "balance": 59503,
+    "balance": 166603,
     "last_bonus": "2026-02-17",
     "stage": null,
     "game": null,
@@ -78229,8 +78229,8 @@
       "name": "ресторан",
       "profit_per_hour": 2000,
       "materials": 89,
-      "last_update": "2026-02-17T09:51:49.281550",
-      "profit_accumulated": 2618
+      "last_update": "2026-02-17T10:45:51.553441",
+      "profit_accumulated": 4419
     },
     "house": null,
     "car": {

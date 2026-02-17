@@ -7730,7 +7730,7 @@ def show_roulette_logs(message):
 
 print("✅ Новая улучшенная система рулетки загружена!")
         
-# ================== КОЛОДА СУДЬБЫ (С ЖЕСТКИМИ ОГРАНИЧЕНИЯМИ) ==================
+# ================== КОЛОДА СУДЬБЫ ==================
 import uuid
 import random
 import threading
@@ -7744,8 +7744,8 @@ CARD_GREEN = "🟢"
 CARD_RED = "🔴"
 CARD_DIAMOND = "💎"
 
-# МАКСИМАЛЬНЫЙ ВЫИГРЫШ (不能再大了!)
-MAX_WIN = 500000  # Максимум 500к с игры
+# МАКСИМАЛЬНЫЙ ВЫИГРЫШ - 10 млн
+MAX_WIN = 10000000  # 10 миллионов
 
 # Сбалансированные множители
 DECK_EFFECTS = {
@@ -7792,8 +7792,10 @@ def deck_keyboard(game_id):
     
     # Кнопка забрать (если есть выигрыш)
     if game["multiplier"] > 1.0:
-        current_win = min(int(game["bet"] * game["multiplier"]), MAX_WIN)
-        kb.add(InlineKeyboardButton(f"💰 Забрать {format_number(current_win)}$", callback_data=f"deck_cashout_{game_id}"))
+        current_win = int(game["bet"] * game["multiplier"])
+        # Ограничиваем отображение максимальным выигрышем
+        display_win = min(current_win, MAX_WIN)
+        kb.add(InlineKeyboardButton(f"💰 Забрать {format_number(display_win)}$", callback_data=f"deck_cashout_{game_id}"))
     
     return kb
 
@@ -7812,9 +7814,7 @@ def start_deck_game(message):
             if bet < 100:
                 bot.reply_to(message, "❌ Минимум 100$")
                 return
-            if bet > 50000:
-                bot.reply_to(message, "❌ Максимальная ставка 50,000$")
-                return
+            # Убрано ограничение на максимальную ставку
         except ValueError:
             bot.reply_to(message, "❌ Ставка должна быть числом")
             return
@@ -7907,18 +7907,42 @@ def deck_pick_card(call):
             elif card_type == "red":
                 # Красная карта отнимает процент от ТЕКУЩЕГО выигрыша
                 damage = int(current_win * red_percent)
-                new_win = max(int(game["bet"]), current_win - damage)  # Нельзя упасть ниже начальной ставки
+                new_win = current_win - damage
                 game["multiplier"] = new_win / game["bet"]
                 effect = f"🔴 -{int(red_percent*100)}%"
             else:  # diamond
-                # Алмаз умножает, но с ограничением
-                game["multiplier"] = min(game["multiplier"] * diamond_mult, MAX_WIN / game["bet"])
+                # Алмаз умножает
+                game["multiplier"] *= diamond_mult
                 effect = f"💎 +{int((diamond_mult-1)*100)}%"
             
             game["history"].append(card_type)
             
-            # Проверка на превышение лимита
+            # Обновляем текущий выигрыш после изменений
             current_win = int(game["bet"] * game["multiplier"])
+            
+            # Проверка на проигрыш (если множитель стал меньше 1.0)
+            if current_win < game["bet"]:
+                game["status"] = "finished"
+                # Возвращаем 15% от начальной ставки
+                refund = int(game["bet"] * 0.15)
+                user_data = get_user_data(game["user_id"])
+                user_data["balance"] += refund
+                save_casino_data()
+                
+                history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
+                bot.edit_message_text(
+                    f"💥 Ты проиграл!\n"
+                    f"💰 Возвращено 15%: {format_number(refund)}$\n"
+                    f"📊 Ходы: {history}",
+                    game["chat_id"],
+                    game["message_id"]
+                )
+                del deck_games[game_id]
+                del deck_locks[game_id]
+                bot.answer_callback_query(call.id, f"💥 Проигрыш! Возвращено {format_number(refund)}$")
+                return
+            
+            # Проверка на превышение лимита максимального выигрыша
             if current_win >= MAX_WIN:
                 game["status"] = "finished"
                 win_amount = MAX_WIN
@@ -7928,7 +7952,7 @@ def deck_pick_card(call):
                 
                 history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
                 bot.edit_message_text(
-                    f"🎉 ДЖЕКПОТ! {MAX_WIN}$\n"
+                    f"🎉 ДЖЕКПОТ! {format_number(MAX_WIN)}$\n"
                     f"📊 Ходы: {history}",
                     game["chat_id"],
                     game["message_id"]
@@ -8034,7 +8058,7 @@ def deck_cashout(call):
         logger.error(f"Ошибка в deck_cashout: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
-print("✅ Колода Судьбы загружена (СБАЛАНСИРОВАННАЯ ВЕРСИЯ)")
+print("✅ Колода Судьбы загружена (МАКСИМУМ 10МЛН, ВОЗВРАТ 15% ПРИ ПРОИГРЫШЕ)")
 
         
 # ================== ФУТБОЛ / БАСКЕТБОЛ / ТИР (50/50) БЕЗ АНИМАЦИИ ==================
