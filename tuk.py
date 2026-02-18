@@ -7730,7 +7730,7 @@ def show_roulette_logs(message):
 
 print("✅ Новая улучшенная система рулетки загружена!")
         
-# ================== КОЛОДА СУДЬБЫ ==================
+# ================== КОЛОДА СУДЬБЫ (ПОЛНОСТЬЮ ПЕРЕРАБОТАННАЯ) ==================
 import uuid
 import random
 import threading
@@ -7744,19 +7744,24 @@ CARD_GREEN = "🟢"
 CARD_RED = "🔴"
 CARD_DIAMOND = "💎"
 
-# МАКСИМАЛЬНЫЙ ВЫИГРЫШ - 10 млн
-MAX_WIN = 10000000  # 10 миллионов
-
-# Сбалансированные множители
+# Множители для 12 карт
 DECK_EFFECTS = {
-    1: (1.1, 0.15, 2.0),   # Ход 1: зеленый +10%, красный -15%, алмаз x2
-    2: (1.15, 0.2, 2.5),   # Ход 2: зеленый +15%, красный -20%, алмаз x2.5
-    3: (1.2, 0.25, 3.0),   # Ход 3: зеленый +20%, красный -25%, алмаз x3
-    4: (1.25, 0.3, 3.5),   # Ход 4: зеленый +25%, красный -30%, алмаз x3.5
+    # Ход: (зеленый множитель, красный процент потерь, алмазный множитель)
+    1:  (1.1,  0.10, 2.0),   # Ход 1
+    2:  (1.15, 0.12, 2.2),   # Ход 2
+    3:  (1.2,  0.14, 2.5),   # Ход 3
+    4:  (1.25, 0.16, 2.8),   # Ход 4
+    5:  (1.3,  0.18, 3.2),   # Ход 5
+    6:  (1.35, 0.20, 3.6),   # Ход 6
+    7:  (1.4,  0.22, 4.0),   # Ход 7
+    8:  (1.45, 0.24, 4.5),   # Ход 8
+    9:  (1.5,  0.26, 5.0),   # Ход 9
+    10: (1.55, 0.28, 5.5),   # Ход 10
+    11: (1.6,  0.30, 6.0),   # Ход 11
+    12: (2.0,  0.35, 10.0),  # Ход 12
 }
 
-# Максимальное количество ходов
-MAX_STEPS = 7
+MAX_STEPS = len(DECK_EFFECTS)
 
 def check_deck_owner(call, user_id):
     if call.from_user.id != user_id:
@@ -7765,37 +7770,25 @@ def check_deck_owner(call, user_id):
     return True
 
 def deck_keyboard(game_id):
-    kb = InlineKeyboardMarkup(row_width=2)
+    kb = InlineKeyboardMarkup(row_width=3)
     
     game = deck_games.get(game_id)
     if not game:
         return kb
     
-    # Показываем только неоткрытые карты
-    remaining = 4 - len(game["history"])
+    remaining = MAX_STEPS - len(game["history"])
     if remaining > 0:
         buttons = []
         for i in range(remaining):
             buttons.append(InlineKeyboardButton(f"{CARD_BACK}", callback_data=f"deck_pick_{game_id}_{i}"))
         
-        # Распределяем кнопки по рядам
-        if remaining == 4:
-            kb.add(buttons[0], buttons[1])
-            kb.add(buttons[2], buttons[3])
-        elif remaining == 3:
-            kb.add(buttons[0], buttons[1])
-            kb.add(buttons[2])
-        elif remaining == 2:
-            kb.add(buttons[0], buttons[1])
-        elif remaining == 1:
-            kb.add(buttons[0])
+        for i in range(0, len(buttons), 3):
+            kb.add(*buttons[i:i+3])
     
-    # Кнопка забрать (если есть выигрыш)
-    if game["multiplier"] > 1.0:
+    # Кнопка забрать (только если есть выигрыш и игра не завершена)
+    if game["status"] == "playing" and game["multiplier"] > 0:
         current_win = int(game["bet"] * game["multiplier"])
-        # Ограничиваем отображение максимальным выигрышем
-        display_win = min(current_win, MAX_WIN)
-        kb.add(InlineKeyboardButton(f"💰 Забрать {format_number(display_win)}$", callback_data=f"deck_cashout_{game_id}"))
+        kb.add(InlineKeyboardButton(f"💰 Забрать {format_number(current_win)}$", callback_data=f"deck_cashout_{game_id}"))
     
     return kb
 
@@ -7814,7 +7807,6 @@ def start_deck_game(message):
             if bet < 100:
                 bot.reply_to(message, "❌ Минимум 100$")
                 return
-            # Убрано ограничение на максимальную ставку
         except ValueError:
             bot.reply_to(message, "❌ Ставка должна быть числом")
             return
@@ -7824,6 +7816,7 @@ def start_deck_game(message):
             bot.reply_to(message, f"❌ Недостаточно средств")
             return
         
+        # Списываем ставку
         user_data["balance"] -= bet
         save_casino_data()
         
@@ -7840,16 +7833,19 @@ def start_deck_game(message):
         }
         deck_locks[game_id] = threading.Lock()
         
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
         text = (
-            f"🎰 Колода Судьбы\n"
+            f"🎰 <b>Колода Судьбы</b> | {mention}\n"
+            f"━━━━━━━━━━━━━━━━━━━\n"
             f"💰 Ставка: {format_number(bet)}$\n"
-            f"💎 Выигрыш: {format_number(bet)}$\n"
+            f"💎 Текущий выигрыш: {format_number(bet)}$\n"
             f"📊 Ход: 1/{MAX_STEPS}\n"
-            f"━━━━━━━━━\n"
-            f"Выбери карту 👇"
+            f"━━━━━━━━━━━━━━━━━━━\n"
+            f"🎴 <i>В колоде {MAX_STEPS} карт. Выбирай с умом!</i>"
         )
         
-        msg = bot.send_message(message.chat.id, text, reply_markup=deck_keyboard(game_id))
+        msg = bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=deck_keyboard(game_id))
         deck_games[game_id]["message_id"] = msg.message_id
         
         try:
@@ -7858,7 +7854,7 @@ def start_deck_game(message):
             pass
             
     except Exception as e:
-        logger.error(f"Ошибка: {e}")
+        logger.error(f"Ошибка старта Колоды: {e}")
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("deck_pick_"))
 def deck_pick_card(call):
@@ -7883,15 +7879,15 @@ def deck_pick_card(call):
                 bot.answer_callback_query(call.id, "❌ Игра завершена")
                 return
             
-            # Генерация карты (сбалансированные шансы)
+            # Шансы: 65% зеленые, 20% красные, 15% алмазы
             rand = random.random()
-            if rand < 0.55:  # 55% зеленые
+            if rand < 0.65:
                 card_type = "green"
                 card_emoji = CARD_GREEN
-            elif rand < 0.85:  # 30% красные
+            elif rand < 0.85:
                 card_type = "red"
                 card_emoji = CARD_RED
-            else:  # 15% алмазы
+            else:
                 card_type = "diamond"
                 card_emoji = CARD_DIAMOND
             
@@ -7911,97 +7907,97 @@ def deck_pick_card(call):
                 game["multiplier"] = new_win / game["bet"]
                 effect = f"🔴 -{int(red_percent*100)}%"
             else:  # diamond
-                # Алмаз умножает
                 game["multiplier"] *= diamond_mult
                 effect = f"💎 +{int((diamond_mult-1)*100)}%"
             
             game["history"].append(card_type)
             
-            # Обновляем текущий выигрыш после изменений
+            # Обновляем текущий выигрыш
             current_win = int(game["bet"] * game["multiplier"])
             
-            # Проверка на проигрыш (если множитель стал меньше 1.0)
-            if current_win < game["bet"]:
+            # Проверка на проигрыш (если множитель стал 0 или меньше)
+            if current_win <= 0:
                 game["status"] = "finished"
-                # Возвращаем 15% от начальной ставки
-                refund = int(game["bet"] * 0.15)
-                user_data = get_user_data(game["user_id"])
-                user_data["balance"] += refund
-                save_casino_data()
-                
                 history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
+                
+                mention = f'<a href="tg://user?id={game["user_id"]}">{call.from_user.first_name}</a>'
+                
                 bot.edit_message_text(
-                    f"💥 Ты проиграл!\n"
-                    f"💰 Возвращено 15%: {format_number(refund)}$\n"
-                    f"📊 Ходы: {history}",
+                    f"💥 <b>Ты всё проиграл!</b> | {mention}\n"
+                    f"━━━━━━━━━━━━━━━━━━━\n"
+                    f"💰 Потеряно: {format_number(game['bet'])}$\n"
+                    f"📊 Ходы: {history}\n"
+                    f"━━━━━━━━━━━━━━━━━━━\n"
+                    f"<i>Повезёт в следующий раз!</i>",
                     game["chat_id"],
-                    game["message_id"]
+                    game["message_id"],
+                    parse_mode="HTML"
                 )
                 del deck_games[game_id]
                 del deck_locks[game_id]
-                bot.answer_callback_query(call.id, f"💥 Проигрыш! Возвращено {format_number(refund)}$")
-                return
-            
-            # Проверка на превышение лимита максимального выигрыша
-            if current_win >= MAX_WIN:
-                game["status"] = "finished"
-                win_amount = MAX_WIN
-                user_data = get_user_data(game["user_id"])
-                user_data["balance"] += win_amount
-                save_casino_data()
-                
-                history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
-                bot.edit_message_text(
-                    f"🎉 ДЖЕКПОТ! {format_number(MAX_WIN)}$\n"
-                    f"📊 Ходы: {history}",
-                    game["chat_id"],
-                    game["message_id"]
-                )
-                del deck_games[game_id]
-                del deck_locks[game_id]
-                bot.answer_callback_query(call.id, f"🎉 +{format_number(win_amount)}$")
+                bot.answer_callback_query(call.id, f"💥 Проигрыш! -{format_number(game['bet'])}$")
                 return
             
             game["step"] += 1
             
-            # Проверка на максимальное количество ходов
-            if game["step"] > MAX_STEPS or len(game["history"]) >= 4:
-                # Автоматический выигрыш после всех ходов
+            # Проверка на последний ход
+            if game["step"] > MAX_STEPS or len(game["history"]) >= MAX_STEPS:
+                # Финальный выигрыш или проигрыш
                 game["status"] = "finished"
-                win_amount = min(current_win, MAX_WIN)
-                user_data = get_user_data(game["user_id"])
-                user_data["balance"] += win_amount
-                save_casino_data()
                 
+                if current_win > game["bet"]:
+                    # Выигрыш больше ставки
+                    win_amount = current_win
+                    user_data = get_user_data(game["user_id"])
+                    user_data["balance"] += win_amount
+                    save_casino_data()
+                    
+                    result_text = f"🎉 <b>Ты открыл все карты и победил!</b>"
+                    money_text = f"+{format_number(win_amount)}$"
+                else:
+                    # Выигрыш меньше или равен ставке - деньги сгорают
+                    win_amount = 0
+                    result_text = f"💔 <b>Ты открыл все карты, но проиграл...</b>"
+                    money_text = f"-{format_number(game['bet'])}$"
+                
+                mention = f'<a href="tg://user?id={game["user_id"]}">{call.from_user.first_name}</a>'
                 history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
+                
                 bot.edit_message_text(
-                    f"💰 Ты открыл все карты!\n"
-                    f"Выигрыш: {format_number(win_amount)}$\n"
-                    f"📊 Ходы: {history}",
+                    f"{result_text} | {mention}\n"
+                    f"━━━━━━━━━━━━━━━━━━━\n"
+                    f"💰 Итог: {money_text}\n"
+                    f"📊 Ходы: {history}\n"
+                    f"━━━━━━━━━━━━━━━━━━━",
                     game["chat_id"],
-                    game["message_id"]
+                    game["message_id"],
+                    parse_mode="HTML"
                 )
                 del deck_games[game_id]
                 del deck_locks[game_id]
-                bot.answer_callback_query(call.id, f"✅ +{format_number(win_amount)}$")
+                bot.answer_callback_query(call.id, money_text)
                 return
             
-            # Обновляем сообщение
+            # Продолжаем игру
+            mention = f'<a href="tg://user?id={game["user_id"]}">{call.from_user.first_name}</a>'
+            
             text = (
-                f"🎰 Колода Судьбы\n"
+                f"🎰 <b>Колода Судьбы</b> | {mention}\n"
+                f"━━━━━━━━━━━━━━━━━━━\n"
                 f"💰 Ставка: {format_number(game['bet'])}$\n"
-                f"💎 Выигрыш: {format_number(current_win)}$\n"
+                f"💎 Текущий выигрыш: {format_number(current_win)}$\n"
                 f"📊 Ход: {game['step']}/{MAX_STEPS}\n"
-                f"━━━━━━━━━\n"
+                f"━━━━━━━━━━━━━━━━━━━\n"
                 f"{card_emoji} {effect}\n"
-                f"━━━━━━━━━\n"
-                f"Осталось карт: {4 - len(game['history'])}"
+                f"━━━━━━━━━━━━━━━━━━━\n"
+                f"🎴 Осталось карт: {MAX_STEPS - len(game['history'])}"
             )
             
             bot.edit_message_text(
                 text,
                 game["chat_id"],
                 game["message_id"],
+                parse_mode="HTML",
                 reply_markup=deck_keyboard(game_id)
             )
             
@@ -8035,30 +8031,44 @@ def deck_cashout(call):
                 return
             
             game["status"] = "finished"
-            win_amount = min(int(game["bet"] * game["multiplier"]), MAX_WIN)
+            win_amount = int(game["bet"] * game["multiplier"])
             
-            user_data = get_user_data(game["user_id"])
-            user_data["balance"] += win_amount
-            save_casino_data()
-            
+            mention = f'<a href="tg://user?id={game["user_id"]}">{call.from_user.first_name}</a>'
             history = "".join(["🟢" if h=="green" else "🔴" if h=="red" else "💎" for h in game["history"]])
             
+            if win_amount > game["bet"]:
+                # Выигрыш больше ставки - забирает
+                user_data = get_user_data(game["user_id"])
+                user_data["balance"] += win_amount
+                save_casino_data()
+                
+                result_text = f"💰 <b>Ты вовремя остановился!</b>"
+                money_text = f"+{format_number(win_amount)}$"
+            else:
+                # Выигрыш меньше или равен ставке - деньги сгорают
+                result_text = f"💔 <b>Надо было раньше забирать...</b>"
+                money_text = f"-{format_number(game['bet'])}$"
+            
             bot.edit_message_text(
-                f"💰 Ты забрал {format_number(win_amount)}$\n"
-                f"📊 Ходы: {history}",
+                f"{result_text} | {mention}\n"
+                f"━━━━━━━━━━━━━━━━━━━\n"
+                f"💰 Итог: {money_text}\n"
+                f"📊 Ходы: {history}\n"
+                f"━━━━━━━━━━━━━━━━━━━",
                 game["chat_id"],
-                game["message_id"]
+                game["message_id"],
+                parse_mode="HTML"
             )
             
             del deck_games[game_id]
             del deck_locks[game_id]
-            bot.answer_callback_query(call.id, f"✅ +{format_number(win_amount)}$")
+            bot.answer_callback_query(call.id, money_text)
             
     except Exception as e:
         logger.error(f"Ошибка в deck_cashout: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
-print("✅ Колода Судьбы загружена (МАКСИМУМ 10МЛН, ВОЗВРАТ 15% ПРИ ПРОИГРЫШЕ)")
+print("✅ Колода Судьбы загружена (12 КАРТ, ДЕНЬГИ СГОРАЮТ ПРИ ПРОИГРЫШЕ)")
 
         
 # ================== ФУТБОЛ / БАСКЕТБОЛ / ТИР (50/50) БЕЗ АНИМАЦИИ ==================
@@ -8356,7 +8366,7 @@ def squirrel_callback(call):
         
         if cell == squirrel_cell:
             # ПОБЕДА - игрок нашел белку
-            win_amount = bet * 2
+            win_amount = bet * 3
             user_data = get_user_data(user_id)
             user_data["balance"] += win_amount
             save_casino_data()
@@ -8371,7 +8381,7 @@ def squirrel_callback(call):
             
             # Текст победы
             result_text = (f"{mention}, <b>ты нашёл белку! 🐿️</b>\n\n"
-                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> удвоилась!\n"
+                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> утроилась!\n"
                           f"🎉 Ты получил <code>{format_number(win_amount)}$</code>")
             
         else:
