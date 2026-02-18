@@ -1,6 +1,6 @@
 {
   "7526512670": {
-    "balance": 0,
+    "balance": 4506211,
     "last_bonus": "2026-02-18",
     "stage": "finished",
     "game": "mines",
@@ -42688,7 +42688,7 @@
     "_user_id": 7196523735
   },
   "8084177547": {
-    "balance": 0,
+    "balance": 1500000,
     "last_bonus": "2026-02-17",
     "stage": "finished",
     "game": "mines",
@@ -44465,7 +44465,7 @@
     "_user_id": 7967003543
   },
   "7307656251": {
-    "balance": 0,
+    "balance": 16940000000,
     "last_bonus": "2026-02-17",
     "stage": "finished",
     "game": "mines",
@@ -44476,11 +44476,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-02-17",
+      "date": "2026-02-18",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-02-17",
+      "date": "2026-02-18",
       "amount": 0
     },
     "bank_balance": 0,
@@ -44492,21 +44492,19 @@
     "_user_id": 7307656251,
     "last_farm": "2026-02-17T19:03:07.455045",
     "mines_owner": 7307656251,
-    "mines_bet": 58259,
+    "mines_bet": 80000000,
     "mines_positions": [
-      8,
+      7,
+      23,
       17,
-      22,
+      19,
       20,
-      13,
-      1
+      8
     ],
     "mines_open": [
-      0,
-      5,
       20
     ],
-    "mines_multiplier": 1.5,
+    "mines_multiplier": 1.0,
     "mines_started": true,
     "_first_name": "Say me",
     "mines_count": 6,
@@ -48782,16 +48780,16 @@
     "last_farm": "2026-02-09T17:03:30.432018"
   },
   "1248832437": {
-    "balance": 19171019345,
+    "balance": 49532164711,
     "last_bonus": "2026-02-09",
     "stage": "finished",
     "game": "mines",
     "tyanka": {
       "name": "хельга",
-      "satiety": 100,
-      "profit_accumulated": 0,
+      "satiety": 92,
+      "profit_accumulated": 349512,
       "total_earned": 0,
-      "last_update": "2026-02-18T08:56:45.471416"
+      "last_update": "2026-02-18T11:44:31.440719"
     },
     "business": {
       "name": "отель",
@@ -49274,7 +49272,7 @@
     "_user_id": 5139852592
   },
   "1183936756": {
-    "balance": 162122694,
+    "balance": 9470874144,
     "last_bonus": "2026-02-16",
     "stage": "finished",
     "game": "mines",
@@ -49284,12 +49282,12 @@
       "profit_per_hour": 125000,
       "feed_cost": 5000,
       "rarity": "✨ Вечная",
-      "satiety": 100,
+      "satiety": 72,
       "last_income": "2026-02-04T15:33:08.165582",
       "mood": 100,
       "profit_accumulated": 0,
-      "last_update": "2026-02-18T02:07:58.527912",
-      "total_earned": 13630890
+      "last_update": "2026-02-18T11:44:23.440214",
+      "total_earned": 14831755
     },
     "business": {
       "name": "отель",
@@ -49844,7 +49842,7 @@
     "last_farm": "2026-01-29T11:53:53.582718"
   },
   "5317756229": {
-    "balance": 27870,
+    "balance": 697600600,
     "last_bonus": "2026-02-18",
     "stage": "finished",
     "game": "mines",
@@ -49874,19 +49872,20 @@
     },
     "_user_id": 5317756229,
     "mines_owner": 5317756229,
-    "mines_bet": 111000,
+    "mines_bet": 100000000,
     "mines_positions": [
-      18,
+      21,
+      14,
+      9,
+      8,
       6,
-      20,
-      24,
-      17,
-      23
+      16
     ],
     "mines_open": [
-      24
+      12,
+      7
     ],
-    "mines_multiplier": 1.0,
+    "mines_multiplier": 1.5,
     "mines_started": true,
     "last_farm": "2026-02-03T19:10:07.363491",
     "_first_name": "ディック",
@@ -50188,7 +50187,7 @@
     "last_farm": "2026-01-31T10:32:51.387514"
   },
   "7158187651": {
-    "balance": 0,
+    "balance": 51295067,
     "last_bonus": "2026-02-18",
     "stage": "finished",
     "game": "mines",
@@ -50213,7 +50212,7 @@
       "expires": null
     },
     "_user_id": 7158187651,
-    "last_farm": "2026-02-18T06:42:56.268847",
+    "last_farm": "2026-02-18T11:08:44.876312",
     "mines_owner": 7158187651,
     "mines_bet": 8362,
     "mines_positions": [
@@ -78433,9 +78432,9 @@
     "business": {
       "name": "автосалон",
       "profit_per_hour": 5000,
-      "materials": 84,
-      "last_update": "2026-02-18T05:20:59.074443",
-      "profit_accumulated": 97310
+      "materials": 79,
+      "last_update": "2026-02-18T11:01:53.232723",
+      "profit_accumulated": 125718
     },
     "house": null,
     "car": null,
