@@ -8028,7 +8028,7 @@ def squirrel_callback(call):
         
         if cell == squirrel_cell:
             # ПОБЕДА - игрок нашел белку
-            win_amount = bet * 3
+            win_amount = bet * 2
             user_data = get_user_data(user_id)
             user_data["balance"] += win_amount
             save_casino_data()
@@ -8043,7 +8043,7 @@ def squirrel_callback(call):
             
             # Текст победы
             result_text = (f"{mention}, <b>ты нашёл белку! 🐿️</b>\n\n"
-                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> утроилась!\n"
+                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> удвоилась!\n"
                           f"🎉 Ты получил <code>{format_number(win_amount)}$</code>")
             
         else:
