@@ -2119,11 +2119,11 @@ def fishing_command(message):
     
     user_data = result_data
     
-    # Проверяем, не сломается ли удочка
+    # Проверяем, не сломается ли удочка (ОЧЕНЬ РЕДКИЙ ШАНС)
     rod_break = check_rod_break(user_id, user_data["rod_id"])
     
     if rod_break:
-        # Удочка сломалась - полностью удаляем её (неважно какая)
+        # Удочка сломалась от случайного шанса
         user_data["rod_id"] = 0
         user_data["rod_durability"] = 0
         update_fishing_user(user_id, user_data)
@@ -2165,10 +2165,49 @@ def fishing_command(message):
     user_data["total_fish_caught"] += 1
     user_data["last_fishing_time"] = datetime.now().isoformat()
     
-    # Уменьшаем прочность удочки
-    user_data["rod_durability"] -= random.randint(1, 3)
-    if user_data["rod_durability"] < 0:
-        user_data["rod_durability"] = 0
+    # Уменьшаем прочность удочки - ОЧЕНЬ МЕДЛЕННО
+    # Шанс уменьшения прочности зависит от цены удочки
+    durability_loss = 0
+    
+    if user_data["rod_id"] == 1:  # Деревянная (бесплатная)
+        # 10% шанс потерять 1 прочность
+        if random.random() < 0.1:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 2:  # Стальная (50к)
+        # 5% шанс потерять 1 прочность
+        if random.random() < 0.05:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 3:  # Титановая (200к)
+        # 3% шанс потерять 1 прочность
+        if random.random() < 0.03:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 4:  # Карбоновая (500к)
+        # 2% шанс потерять 1 прочность
+        if random.random() < 0.02:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 5:  # Алмазная (1.5 млн)
+        # 1% шанс потерять 1 прочность
+        if random.random() < 0.01:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 6:  # Мифическая (4 млн)
+        # 0.5% шанс потерять 1 прочность
+        if random.random() < 0.005:
+            durability_loss = 1
+    
+    elif user_data["rod_id"] == 7:  # Легендарная (9 млн)
+        # 0.1% шанс потерять 1 прочность
+        if random.random() < 0.001:
+            durability_loss = 1
+    
+    if durability_loss > 0:
+        user_data["rod_durability"] -= durability_loss
+        if user_data["rod_durability"] < 0:
+            user_data["rod_durability"] = 0
     
     update_fishing_user(user_id, user_data)
     
