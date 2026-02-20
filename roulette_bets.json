@@ -1,1 +1,18 @@
-{}
+{
+    "-1003782525593": {
+        "7707406638": [
+            {
+                "type": "color",
+                "amount": 5000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
+            },
+            {
+                "type": "color",
+                "amount": 3000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
+            }
+        ]
+    }
+}
