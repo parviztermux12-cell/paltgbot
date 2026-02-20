@@ -1735,15 +1735,15 @@ def init_fishing_db():
 
 init_fishing_db()
 
-# Конфигурация удочек (деревянная не продаётся)
+# Конфигурация удочек (ломаются ОЧЕНЬ редко)
 FISHING_RODS = {
-    1: {"id": 1, "name": "Деревянная удочка", "price": 0, "rarity_bonus": 1.0, "durability": 100, "break_chance": 15, "sellable": False},
-    2: {"id": 2, "name": "Стальная удочка", "price": 50000, "rarity_bonus": 1.5, "durability": 150, "break_chance": 10, "sellable": True},
-    3: {"id": 3, "name": "Титановая удочка", "price": 200000, "rarity_bonus": 2.0, "durability": 200, "break_chance": 7, "sellable": True},
-    4: {"id": 4, "name": "Карбоновая удочка", "price": 500000, "rarity_bonus": 2.5, "durability": 250, "break_chance": 5, "sellable": True},
-    5: {"id": 5, "name": "Алмазная удочка", "price": 1500000, "rarity_bonus": 3.0, "durability": 300, "break_chance": 3, "sellable": True},
-    6: {"id": 6, "name": "Мифическая удочка", "price": 4000000, "rarity_bonus": 4.0, "durability": 400, "break_chance": 1.5, "sellable": True},
-    7: {"id": 7, "name": "Легендарная удочка", "price": 9000000, "rarity_bonus": 5.0, "durability": 500, "break_chance": 0.8, "sellable": True}
+    1: {"id": 1, "name": "Деревянная удочка", "price": 0, "rarity_bonus": 1.0, "durability": 100, "break_chance": 0.5, "sellable": False},
+    2: {"id": 2, "name": "Стальная удочка", "price": 50000, "rarity_bonus": 1.5, "durability": 150, "break_chance": 0.3, "sellable": True},
+    3: {"id": 3, "name": "Титановая удочка", "price": 200000, "rarity_bonus": 2.0, "durability": 200, "break_chance": 0.2, "sellable": True},
+    4: {"id": 4, "name": "Карбоновая удочка", "price": 500000, "rarity_bonus": 2.5, "durability": 250, "break_chance": 0.1, "sellable": True},
+    5: {"id": 5, "name": "Алмазная удочка", "price": 1500000, "rarity_bonus": 3.0, "durability": 300, "break_chance": 0.07, "sellable": True},
+    6: {"id": 6, "name": "Мифическая удочка", "price": 4000000, "rarity_bonus": 4.0, "durability": 400, "break_chance": 0.05, "sellable": True},
+    7: {"id": 7, "name": "Легендарная удочка", "price": 9000000, "rarity_bonus": 5.0, "durability": 500, "break_chance": 0.02, "sellable": True}
 }
 
 # ================== 🐟 100+ ВИДОВ РЫБ ==================

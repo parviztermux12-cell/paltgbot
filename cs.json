@@ -1,6 +1,6 @@
 {
   "7526512670": {
-    "balance": 403693,
+    "balance": 547926,
     "last_bonus": "2026-02-18",
     "stage": "finished",
     "game": "mines",
@@ -21924,7 +21924,7 @@
     "_user_id": 8438421753
   },
   "7696828602": {
-    "balance": 14203146,
+    "balance": 14330988,
     "last_bonus": "2026-02-20",
     "stage": "finished",
     "game": "mines",
@@ -39818,8 +39818,8 @@
     "_user_id": 5208208051
   },
   "8452337057": {
-    "balance": 60348.0,
-    "last_bonus": "2026-02-17",
+    "balance": 355.0,
+    "last_bonus": "2026-02-20",
     "stage": "finished",
     "game": "mines",
     "tyanka": null,
@@ -39843,7 +39843,7 @@
       "expires": null
     },
     "_user_id": 8452337057,
-    "last_farm": "2026-02-17T14:48:04.475806",
+    "last_farm": "2026-02-20T17:36:29.171646",
     "mines_owner": 8452337057,
     "mines_bet": 200000,
     "mines_positions": [
@@ -47593,7 +47593,7 @@
     "_first_name": "Tamaev orig"
   },
   "6512241065": {
-    "balance": 0,
+    "balance": 150374,
     "last_bonus": "2026-02-09",
     "stage": "finished",
     "game": "mines",
@@ -77560,7 +77560,7 @@
     "_user_id": 8289923024
   },
   "7788486197": {
-    "balance": 16492,
+    "balance": 5920,
     "last_bonus": null,
     "stage": "finished",
     "game": "mines",
@@ -77571,11 +77571,11 @@
     "pet": null,
     "activated_promos": [],
     "daily_income": {
-      "date": "2026-02-19",
+      "date": "2026-02-20",
       "amount": 0
     },
     "daily_transfers": {
-      "date": "2026-02-19",
+      "date": "2026-02-20",
       "amount": 0
     },
     "bank_balance": 0,
