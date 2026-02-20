@@ -1964,14 +1964,22 @@ def add_fish_to_inventory(user_id, fish_name, fish_price, quantity=1):
     c = conn.cursor()
     
     # Проверяем, есть ли уже такая рыба
-    c.execute("SELECT quantity FROM fishing_inventory WHERE user_id = ? AND fish_name = ?", (user_id, fish_name))
+    c.execute("SELECT quantity, fish_price FROM fishing_inventory WHERE user_id = ? AND fish_name = ?", 
+              (user_id, fish_name))
     result = c.fetchone()
     
     if result:
-        # Обновляем количество
-        new_quantity = result[0] + quantity
-        c.execute("UPDATE fishing_inventory SET quantity = ? WHERE user_id = ? AND fish_name = ?", 
-                 (new_quantity, user_id, fish_name))
+        # Уже есть такая рыба - обновляем среднюю цену
+        old_quantity = result[0]
+        old_price = result[1]
+        
+        # Вычисляем новую среднюю цену
+        total_value = (old_price * old_quantity) + (fish_price * quantity)
+        new_quantity = old_quantity + quantity
+        new_avg_price = total_value // new_quantity  # Целочисленное деление
+        
+        c.execute("UPDATE fishing_inventory SET quantity = ?, fish_price = ? WHERE user_id = ? AND fish_name = ?", 
+                 (new_quantity, new_avg_price, user_id, fish_name))
     else:
         # Добавляем новую рыбу
         c.execute("INSERT INTO fishing_inventory (user_id, fish_name, fish_price, quantity) VALUES (?, ?, ?, ?)", 
@@ -2004,6 +2012,27 @@ def sell_all_fish(user_id):
     conn.close()
     
     return total_value
+
+def get_fish_inventory(user_id):
+    """Получает инвентарь рыб пользователя"""
+    conn = sqlite3.connect(FISHING_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT fish_name, quantity, fish_price FROM fishing_inventory WHERE user_id = ?", (user_id,))
+    rows = c.fetchall()
+    conn.close()
+    
+    inventory = {}
+    total_value = 0
+    
+    for fish_name, quantity, fish_price in rows:
+        inventory[fish_name] = {
+            "quantity": quantity,
+            "price": fish_price
+        }
+        total_value += fish_price * quantity
+    
+    return inventory, total_value
 
 def regenerate_fishing_energy(user_id):
     """Восстанавливает энергию (2 энергии каждые 2 минуты)"""
@@ -2157,8 +2186,8 @@ def fishing_command(message):
     else:
         fish_price = int(price_per_kg * weight)
     
-    # Добавляем рыбу в инвентарь
-    add_fish_to_inventory(user_id, fish_name, fish_data["price"], 1)
+    # === ИСПРАВЛЕНО: передаём fish_price (реальная цена рыбы), а не fish_data["price"] (цена за кг) ===
+    add_fish_to_inventory(user_id, fish_name, fish_price, 1)
     
     # Обновляем статистику пользователя
     user_data["energy"] -= 1
