@@ -1735,15 +1735,14 @@ def init_fishing_db():
 
 init_fishing_db()
 
-# Конфигурация удочек (ломаются ОЧЕНЬ редко)
 FISHING_RODS = {
-    1: {"id": 1, "name": "Деревянная удочка", "price": 0, "rarity_bonus": 1.0, "durability": 100, "break_chance": 0.5, "sellable": False},
-    2: {"id": 2, "name": "Стальная удочка", "price": 50000, "rarity_bonus": 1.5, "durability": 150, "break_chance": 0.3, "sellable": True},
-    3: {"id": 3, "name": "Титановая удочка", "price": 200000, "rarity_bonus": 2.0, "durability": 200, "break_chance": 0.2, "sellable": True},
-    4: {"id": 4, "name": "Карбоновая удочка", "price": 500000, "rarity_bonus": 2.5, "durability": 250, "break_chance": 0.1, "sellable": True},
-    5: {"id": 5, "name": "Алмазная удочка", "price": 1500000, "rarity_bonus": 3.0, "durability": 300, "break_chance": 0.07, "sellable": True},
-    6: {"id": 6, "name": "Мифическая удочка", "price": 4000000, "rarity_bonus": 4.0, "durability": 400, "break_chance": 0.05, "sellable": True},
-    7: {"id": 7, "name": "Легендарная удочка", "price": 9000000, "rarity_bonus": 5.0, "durability": 500, "break_chance": 0.02, "sellable": True}
+    1: {"id": 1, "name": "Деревянная удочка", "price": 0, "rarity_bonus": 1.0, "durability": 100, "sellable": False},
+    2: {"id": 2, "name": "Стальная удочка", "price": 50000, "rarity_bonus": 1.5, "durability": 150, "sellable": True},
+    3: {"id": 3, "name": "Титановая удочка", "price": 200000, "rarity_bonus": 2.0, "durability": 200, "sellable": True},
+    4: {"id": 4, "name": "Карбоновая удочка", "price": 500000, "rarity_bonus": 2.5, "durability": 250, "sellable": True},
+    5: {"id": 5, "name": "Алмазная удочка", "price": 1500000, "rarity_bonus": 3.0, "durability": 300, "sellable": True},
+    6: {"id": 6, "name": "Мифическая удочка", "price": 4000000, "rarity_bonus": 4.0, "durability": 400, "sellable": True},
+    7: {"id": 7, "name": "Легендарная удочка", "price": 9000000, "rarity_bonus": 5.0, "durability": 500, "sellable": True}
 }
 
 # ================== 🐟 100+ ВИДОВ РЫБ ==================
@@ -2054,33 +2053,33 @@ def regenerate_fishing_energy(user_id):
 
 def can_fish(user_id):
     """Проверяет, может ли пользователь рыбачить"""
+    
     user_data = get_fishing_user(user_id)
     
-    # Регенерируем энергию
+    # Регенерация энергии
     user_data = regenerate_fishing_energy(user_id)
+
+    # Проверяем наличие удочки
+    if user_data["rod_id"] == 0:
+        return False, "🎣 У тебя нет удочки! Купи её в магазине."
     
-    # Проверяем наличие удочки по прочности
+    # Если прочность уже 0 — окончательно удаляем удочку
     if user_data["rod_durability"] <= 0:
-        # Удочка сломалась - удаляем её полностью (неважно какая)
         user_data["rod_id"] = 0
         user_data["rod_durability"] = 0
         update_fishing_user(user_id, user_data)
-        return False, "🍀 Твоя удочка сломалась, купи другую."
-    
-    # Проверяем наличие удочки (rod_id > 0)
-    if user_data["rod_id"] == 0:
-        return False, "🍀 У тебя нет удочки! Купи её в магазине."
-    
-    # Проверяем кулдаун (1 секунда)
+        return False, "🎣 Твоя удочка износилась и сломалась."
+
+    # Кулдаун (1 секунда)
     if user_data["last_fishing_time"]:
         last_fish = datetime.fromisoformat(user_data["last_fishing_time"])
         if (datetime.now() - last_fish).total_seconds() < 1:
             return False, "⏳ Подожди 1 секунду перед следующей рыбалкой!"
-    
-    # Проверяем энергию
+
+    # Проверка энергии
     if user_data["energy"] <= 0:
-        return False, "🎣 Твоя энергия закончилась, подожди пока она восстановится, или можешь сразу восстановить энергию за 2⭐"
-    
+        return False, "⚡ Твоя энергия закончилась, подожди восстановления или восстанови за 2⭐"
+
     return True, user_data
 
 def get_random_fish(rod_id):
@@ -2088,169 +2087,109 @@ def get_random_fish(rod_id):
     rod = FISHING_RODS[rod_id]
     rarity_bonus = rod["rarity_bonus"]
     
-    # Создаем взвешенный список с учетом бонуса удочки
     weighted_fish = []
     for fish_name, fish_data in FISH_DATA.items():
-        # Бонус удочки повышает шанс на редкую рыбу
         weight = max(1, int(fish_data["rarity"] * rarity_bonus * 100))
         weighted_fish.extend([fish_name] * weight)
     
     return random.choice(weighted_fish)
 
-def check_rod_break(user_id, rod_id):
-    """Проверяет, сломалась ли удочка"""
-    rod = FISHING_RODS[rod_id]
-    break_chance = rod["break_chance"]
-    
-    # Генерируем случайное число от 0 до 100
-    if random.random() * 100 < break_chance:
-        return True
-    return False
-
-def format_weight(weight, unit):
-    """Форматирует вес в зависимости от единицы измерения"""
-    if unit == "тонн":
-        return f"{weight:.3f}"
-    elif weight >= 1000:
-        return f"{weight/1000:.3f}т"
-    elif weight >= 1:
-        return f"{weight:.3f}кг"
-    elif weight >= 0.001:
-        return f"{weight*1000:.1f}г"
-    else:
-        return f"{weight*1000000:.0f}мг"
-
 def check_fishing_button_owner(call, user_id):
-    """Проверяет владельца кнопки для рыбалки"""
     if call.from_user.id != user_id:
         bot.answer_callback_query(call.id, "🎣 Это не твоя кнопка!", show_alert=True)
         return False
     return True
-    
+
+def format_weight(weight, unit):
+    """Форматирует вес рыбы"""
+    if unit == "тонн":
+        return f"{weight:.3f} т"
+    elif weight >= 1000:
+        return f"{weight/1000:.3f} т"
+    elif weight >= 1:
+        return f"{weight:.3f} кг"
+    elif weight >= 0.001:
+        return f"{weight*1000:.1f} г"
+    else:
+        return f"{weight*1000000:.0f} мг"
+        
 # ================== 🎣 КОМАНДА: РЫБАЛКА ==================
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["рыбалка", "рыбачить", "ловить рыбу"])
 def fishing_command(message):
     user_id = message.from_user.id
     mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-    
-    # Проверяем, можно ли рыбачить
+
+    # Проверяем можно ли рыбачить
     can_fish_result, result_data = can_fish(user_id)
-    
+
     if not can_fish_result:
-        if "восстановить энергию за 2⭐" in result_data:
-            # Предлагаем восстановить энергию за звёзды
+        if "2⭐" in result_data:
             kb = InlineKeyboardMarkup()
-            kb.add(InlineKeyboardButton("⚡ Восстановить энергию", callback_data=f"fishing_recover_energy_{user_id}"))
+            kb.add(
+                InlineKeyboardButton(
+                    "⚡ Восстановить энергию",
+                    callback_data=f"fishing_recover_energy_{user_id}"
+                )
+            )
             bot.reply_to(message, result_data, parse_mode="HTML", reply_markup=kb)
         else:
             bot.reply_to(message, result_data, parse_mode="HTML")
         return
-    
+
     user_data = result_data
-    
-    # Проверяем, не сломается ли удочка (ОЧЕНЬ РЕДКИЙ ШАНС)
-    rod_break = check_rod_break(user_id, user_data["rod_id"])
-    
-    if rod_break:
-        # Удочка сломалась от случайного шанса
+
+    # ===== ИЗНОС БЕЗ РАНДОМА =====
+    user_data["rod_durability"] -= 1
+
+    if user_data["rod_durability"] <= 0:
         user_data["rod_id"] = 0
         user_data["rod_durability"] = 0
         update_fishing_user(user_id, user_data)
-        
-        bot.reply_to(message, "🍀 Твоя удочка сломалась, купи другую.", parse_mode="HTML")
+
+        bot.reply_to(message, "🎣 Твоя удочка износилась и сломалась.", parse_mode="HTML")
         return
-    
+
     # 20% шанс что ничего не клюнет
     if random.random() < 0.2:
-        # Ничего не поймали, но энергия всё равно тратится
         user_data["energy"] -= 1
         user_data["last_fishing_time"] = datetime.now().isoformat()
         update_fishing_user(user_id, user_data)
-        
-        bot.reply_to(message, "🎏 На удочку никакая рыба не клюнула, попробуй ещё раз.", parse_mode="HTML")
+
+        bot.reply_to(message, "🎏 На удочку ничего не клюнуло, попробуй ещё раз.", parse_mode="HTML")
         return
-    
-    # Получаем случайную рыбу
+
+    # Получаем рыбу
     fish_name = get_random_fish(user_data["rod_id"])
     fish_data = FISH_DATA[fish_name]
-    
-    # Генерируем вес
+
     weight = random.uniform(fish_data["min_weight"], fish_data["max_weight"])
     unit = fish_data["unit"]
-    
-    # Вычисляем цену (цена за кг * вес)
     price_per_kg = fish_data["price"]
+
     if unit == "тонн":
-        # Цена за тонну = цена за кг * 1000
         fish_price = int(price_per_kg * 1000 * weight)
     else:
         fish_price = int(price_per_kg * weight)
-    
-    # === ИСПРАВЛЕНО: передаём fish_price (реальная цена рыбы), а не fish_data["price"] (цена за кг) ===
+
     add_fish_to_inventory(user_id, fish_name, fish_price, 1)
-    
-    # Обновляем статистику пользователя
+
+    # Обновляем данные
     user_data["energy"] -= 1
     user_data["total_fish_caught"] += 1
     user_data["last_fishing_time"] = datetime.now().isoformat()
-    
-    # Уменьшаем прочность удочки - ОЧЕНЬ МЕДЛЕННО
-    # Шанс уменьшения прочности зависит от цены удочки
-    durability_loss = 0
-    
-    if user_data["rod_id"] == 1:  # Деревянная (бесплатная)
-        # 10% шанс потерять 1 прочность
-        if random.random() < 0.1:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 2:  # Стальная (50к)
-        # 5% шанс потерять 1 прочность
-        if random.random() < 0.05:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 3:  # Титановая (200к)
-        # 3% шанс потерять 1 прочность
-        if random.random() < 0.03:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 4:  # Карбоновая (500к)
-        # 2% шанс потерять 1 прочность
-        if random.random() < 0.02:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 5:  # Алмазная (1.5 млн)
-        # 1% шанс потерять 1 прочность
-        if random.random() < 0.01:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 6:  # Мифическая (4 млн)
-        # 0.5% шанс потерять 1 прочность
-        if random.random() < 0.005:
-            durability_loss = 1
-    
-    elif user_data["rod_id"] == 7:  # Легендарная (9 млн)
-        # 0.1% шанс потерять 1 прочность
-        if random.random() < 0.001:
-            durability_loss = 1
-    
-    if durability_loss > 0:
-        user_data["rod_durability"] -= durability_loss
-        if user_data["rod_durability"] < 0:
-            user_data["rod_durability"] = 0
-    
+
     update_fishing_user(user_id, user_data)
-    
-    # Форматируем вес для отображения
+
     weight_display = format_weight(weight, unit)
-    
-    # Отправляем результат
+
     result_text = (
-        f"🎣 Удочка клюнула - тебе попалась рыба <b>{fish_name}</b>, "
-        f"вес: <code>{weight_display}</code>, "
-        f"цена: <code>{format_number(fish_price)}$</code>. "
-        f"Энергий осталось: <code>{user_data['energy']}/{user_data['max_energy']}</code>"
+        f"{mention}, 🎣 тебе попалась рыба <b>{fish_name}</b>\n"
+        f"⚖ Вес: <code>{weight_display}</code>\n"
+        f"💰 Цена: <code>{format_number(fish_price)}$</code>\n"
+        f"⚡ Энергии осталось: <code>{user_data['energy']}/{user_data['max_energy']}</code>\n"
+        f"🔧 Прочность удочки: <code>{user_data['rod_durability']}</code>"
     )
-    
+
     bot.reply_to(message, result_text, parse_mode="HTML")
 
 # ================== 🎣 ВОССТАНОВЛЕНИЕ ЭНЕРГИИ ЗА ЗВЁЗДЫ ==================
@@ -2390,38 +2329,37 @@ def my_fishing(message):
 def fishing_shop_callback(call):
     try:
         user_id = int(call.data.split("_")[2])
-        
+
         if not check_fishing_button_owner(call, user_id):
             return
-        
+
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
+
         text = (
-            f"{mention}, <b>🎣 Покупай новую удочку - если хочешь другую</b>\n\n"
-            f"<b>⚠️ После покупки новой удочки, если осталось прошлая - она у вас пропадёт</b>\n\n"
+            f"{mention}, <b>🎣 Магазин удочек</b>\n\n"
+            f"<b>⚠️ При покупке новой удочки старая исчезает.</b>\n\n"
         )
-        
+
         for rod_id, rod_info in FISHING_RODS.items():
-            if rod_info["sellable"]:  # Только продающиеся удочки
+            if rod_info["sellable"]:
                 text += (
                     f"<b>{rod_id}. {rod_info['name']}</b>\n"
                     f"💰 Цена: <code>{format_number(rod_info['price'])}$</code>\n"
                     f"⚡ Бонус к редкой рыбе: x{rod_info['rarity_bonus']}\n"
-                    f"💥 Шанс поломки: {rod_info['break_chance']}%\n"
-                    f"🔧 Прочность: {rod_info['durability']}\n\n"
+                    f"🔧 Прочность: {rod_info['durability']} рыбалок\n\n"
                 )
-        
+
         kb = InlineKeyboardMarkup(row_width=1)
-        
+
         for rod_id, rod_info in FISHING_RODS.items():
             if rod_info["sellable"]:
                 kb.add(InlineKeyboardButton(
                     f"{rod_id}. {rod_info['name']}",
                     callback_data=f"fishing_buy_rod_{user_id}_{rod_id}"
                 ))
-        
+
         kb.add(InlineKeyboardButton("‹ Назад", callback_data=f"fishing_back_{user_id}"))
-        
+
         try:
             bot.edit_message_caption(
                 chat_id=call.message.chat.id,
@@ -2438,12 +2376,13 @@ def fishing_shop_callback(call):
                 parse_mode="HTML",
                 reply_markup=kb
             )
-        
+
         bot.answer_callback_query(call.id)
-        
+
     except Exception as e:
         logger.error(f"Ошибка магазина удочек: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
 
 # ================== 🎣 ПОКУПКА УДОЧКИ ==================
 @bot.callback_query_handler(func=lambda c: c.data.startswith("fishing_buy_rod_"))
@@ -2452,31 +2391,31 @@ def fishing_buy_rod_callback(call):
         parts = call.data.split("_")
         user_id = int(parts[3])
         rod_id = int(parts[4])
-        
+
         if not check_fishing_button_owner(call, user_id):
             return
-        
+
         if rod_id not in FISHING_RODS or not FISHING_RODS[rod_id]["sellable"]:
             bot.answer_callback_query(call.id, "❌ Неверная удочка!", show_alert=True)
             return
-        
+
         rod_info = FISHING_RODS[rod_id]
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
+
         text = (
             f"{mention}, это <b>{rod_info['name']}</b>:\n\n"
             f"💰 Стоимость: <code>{format_number(rod_info['price'])}$</code>\n"
             f"⚡ Бонус к редкой рыбе: x{rod_info['rarity_bonus']}\n"
-            f"💥 Шанс того что он сломается в любой момент: {rod_info['break_chance']}%\n\n"
+            f"🔧 Прочность: {rod_info['durability']} рыбалок\n\n"
             f"<b>⛔ Ты точно хочешь купить эту удочку?</b>"
         )
-        
+
         kb = InlineKeyboardMarkup(row_width=2)
         kb.add(
             InlineKeyboardButton("Да", callback_data=f"fishing_confirm_buy_{user_id}_{rod_id}"),
             InlineKeyboardButton("Нет", callback_data=f"fishing_shop_{user_id}")
         )
-        
+
         try:
             bot.edit_message_caption(
                 chat_id=call.message.chat.id,
@@ -2493,12 +2432,13 @@ def fishing_buy_rod_callback(call):
                 parse_mode="HTML",
                 reply_markup=kb
             )
-        
+
         bot.answer_callback_query(call.id)
-        
+
     except Exception as e:
         logger.error(f"Ошибка покупки удочки: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("fishing_confirm_buy_"))
 def fishing_confirm_buy_callback(call):
@@ -2506,51 +2446,45 @@ def fishing_confirm_buy_callback(call):
         parts = call.data.split("_")
         user_id = int(parts[3])
         rod_id = int(parts[4])
-        
+
         if not check_fishing_button_owner(call, user_id):
             return
-        
+
         if rod_id not in FISHING_RODS or not FISHING_RODS[rod_id]["sellable"]:
             bot.answer_callback_query(call.id, "❌ Неверная удочка!", show_alert=True)
             return
-        
+
         rod_info = FISHING_RODS[rod_id]
-        
-        # Проверяем баланс
+
         user_data_main = get_user_data(user_id)
-        
+
         if user_data_main["balance"] < rod_info["price"]:
             bot.answer_callback_query(call.id, "❌ Недостаточно средств!", show_alert=True)
             return
-        
-        # Списываем деньги
+
         user_data_main["balance"] -= rod_info["price"]
         save_casino_data()
-        
-        # Обновляем данные рыбалки
+
         fishing_user = get_fishing_user(user_id)
-        
-        # Записываем потраченную сумму
         fishing_user["total_spent"] += rod_info["price"]
-        
-        # Меняем удочку (старая пропадает)
+
         fishing_user["rod_id"] = rod_id
         fishing_user["rod_durability"] = rod_info["durability"]
         fishing_user["max_durability"] = rod_info["durability"]
-        
+
         update_fishing_user(user_id, fishing_user)
-        
+
         mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
-        
+
         text = (
             f"{mention}, ты купил <b>{rod_info['name']}</b> "
-            f"за <code>{format_number(rod_info['price'])}$</code>, "
-            f"с ним шанс того что выпадет дорогая рыба - больше."
+            f"за <code>{format_number(rod_info['price'])}$</code>.\n\n"
+            f"Теперь удочка выдержит <b>{rod_info['durability']}</b> рыбалок."
         )
-        
+
         kb = InlineKeyboardMarkup()
         kb.add(InlineKeyboardButton("‹ Назад", callback_data=f"fishing_back_{user_id}"))
-        
+
         try:
             bot.edit_message_caption(
                 chat_id=call.message.chat.id,
@@ -2567,9 +2501,9 @@ def fishing_confirm_buy_callback(call):
                 parse_mode="HTML",
                 reply_markup=kb
             )
-        
+
         bot.answer_callback_query(call.id, "✅ Удочка куплена!")
-        
+
     except Exception as e:
         logger.error(f"Ошибка подтверждения покупки удочки: {e}")
         bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
