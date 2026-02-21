@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("LasVenturas By parviz")
 
 # ================== КОНСТАНТЫ И ОГРАНИЧЕНИЯ ==================
-TOKEN = "8293824305:AAH-Z8pb3eDArf98C3_IUWHBzSTRUfsI338"
+TOKEN = "8259575977:AAHwfVOSF058L-bMan1l6NanOZUNsPrw7D0"
 WELCOME_IMAGE_URL = "https://i.supaimg.com/2939d8ad-5c5a-4bea-a182-6c3e8bbc833d.jpg"
 CASINO_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=c651fbed170eb7128e00ff84ca1c0bf543c74de2-10332115-images-thumbs&n=13"
 BLACKJACK_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=dc64180881834f3c5a302bda16d65de46956d887-5355514-images-thumbs&n=13&shower=-1&blur=-1"
@@ -1662,6 +1662,356 @@ def ban_user(message):
         parse_mode="HTML"
     )
 
+# ================== 💰 СИСТЕМА ДЕНЕЖНЫХ КЕЙСОВ (CASES) ==================
+CASES_DB = "cases.db"
+
+# Данные о кейсах: Номер, Название, Редкость, Цена в ⭐, Мин. выигрыш, Макс. выигрыш
+CASES_DATA = {
+    1: {"name": "Обычный", "full_name": "Обычный — Простой кейс", "price": 2, "min_win": 25000, "max_win": 100000},
+    2: {"name": "Обычный", "full_name": "Обычный — Стартовый кейс", "price": 5, "min_win": 75000, "max_win": 250000},
+    3: {"name": "Необычный", "full_name": "Необычный — Удачный кейс", "price": 8, "min_win": 150000, "max_win": 500000},
+    4: {"name": "Необычный", "full_name": "Необычный — Шанс кейс", "price": 12, "min_win": 300000, "max_win": 900000},
+    5: {"name": "Редкий", "full_name": "Редкий — Редкая удача", "price": 18, "min_win": 600000, "max_win": 1800000},
+    6: {"name": "Редкий", "full_name": "Редкий — Серебряный кейс", "price": 25, "min_win": 1200000, "max_win": 3500000},
+    7: {"name": "Эпический", "full_name": "Эпический — Золотой кейс", "price": 32, "min_win": 2000000, "max_win": 6000000},
+    8: {"name": "Эпический", "full_name": "Эпический — Героический кейс", "price": 38, "min_win": 3000000, "max_win": 9000000},
+    9: {"name": "Легендарный", "full_name": "Легендарный — Легенда кейс", "price": 45, "min_win": 5000000, "max_win": 15000000},
+    10: {"name": "Мифический", "full_name": "Мифический — Мифический клад", "price": 60, "min_win": 8000000, "max_win": 25000000},
+    11: {"name": "Божественный", "full_name": "Божественный — Кейс богов", "price": 100, "min_win": 15000000, "max_win": 50000000},
+}
+
+# Инициализация базы данных
+def init_cases_db():
+    conn = sqlite3.connect(CASES_DB)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS user_cases (
+            user_id INTEGER PRIMARY KEY,
+            case_number INTEGER,
+            purchased_at TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+    logger.info("✅ База данных кейсов инициализирована")
+
+init_cases_db()
+
+def get_user_case(user_id):
+    """Получает номер кейса пользователя или None"""
+    conn = sqlite3.connect(CASES_DB)
+    c = conn.cursor()
+    c.execute("SELECT case_number FROM user_cases WHERE user_id = ?", (user_id,))
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else None
+
+def set_user_case(user_id, case_number):
+    """Устанавливает кейс пользователю"""
+    conn = sqlite3.connect(CASES_DB)
+    c = conn.cursor()
+    c.execute("""
+        INSERT OR REPLACE INTO user_cases (user_id, case_number, purchased_at) 
+        VALUES (?, ?, ?)
+    """, (user_id, case_number, datetime.now().isoformat()))
+    conn.commit()
+    conn.close()
+
+def clear_user_case(user_id):
+    """Удаляет кейс пользователя (после открытия)"""
+    conn = sqlite3.connect(CASES_DB)
+    c = conn.cursor()
+    c.execute("DELETE FROM user_cases WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+# ================== КОМАНДА: КУПИТЬ КЕЙС ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("купить кейс"))
+def buy_case_command(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        parts = message.text.split()
+
+        if len(parts) < 3:
+            text = (
+                "❌ Использование: <code>купить кейс [номер]</code>\n\n"
+                "━━━━━━━━━━━━━━━━━━━\n"
+                "📋 <b>АССОРТИМЕНТ КЕЙСОВ</b>\n"
+                "━━━━━━━━━━━━━━━━━━━\n\n"
+                
+                "<b>🥉 ОБЫЧНЫЕ</b>\n"
+                "1️⃣ Простой кейс — 2⭐ (25к-100к💸)\n"
+                "2️⃣ Стартовый кейс — 5⭐ (75к-250к💸)\n\n"
+                
+                "<b>🥈 НЕОБЫЧНЫЕ</b>\n"
+                "3️⃣ Удачный кейс — 8⭐ (150к-500к💸)\n"
+                "4️⃣ Шанс кейс — 12⭐ (300к-900к💸)\n\n"
+                
+                "<b>🥇 РЕДКИЕ</b>\n"
+                "5️⃣ Редкая удача — 18⭐ (600к-1.8M💸)\n"
+                "6️⃣ Серебряный кейс — 25⭐ (1.2M-3.5M💸)\n\n"
+                
+                "<b>💎 ЭПИЧЕСКИЕ</b>\n"
+                "7️⃣ Золотой кейс — 32⭐ (2M-6M💸)\n"
+                "8️⃣ Героический кейс — 38⭐ (3M-9M💸)\n\n"
+                
+                "<b>👑 ЛЕГЕНДАРНЫЕ</b>\n"
+                "9️⃣ Легенда кейс — 45⭐ (5M-15M💸)\n"
+                "🔟 Мифический клад — 60⭐ (8M-25M💸)\n\n"
+                
+                "<b>✨ БОЖЕСТВЕННЫЕ</b>\n"
+                "1️⃣1️⃣ Кейс богов — 100⭐ (15M-50M💸)\n"
+                "━━━━━━━━━━━━━━━━━━━"
+            )
+            bot.reply_to(message, text, parse_mode="HTML")
+            return
+
+        try:
+            case_num = int(parts[2])
+        except ValueError:
+            bot.reply_to(message, "❌ Номер кейса должен быть числом!")
+            return
+
+        if case_num not in CASES_DATA:
+            bot.reply_to(message, f"❌ Кейса с номером {case_num} не существует!")
+            return
+
+        # Проверяем, есть ли уже неоткрытый кейс
+        existing_case = get_user_case(user_id)
+        if existing_case is not None:
+            case_info = CASES_DATA[existing_case]
+            bot.reply_to(
+                message,
+                f"❌ {mention}, у тебя уже есть неоткрытый кейс!\n\n"
+                f"📦 Твой кейс: <b>{case_info['full_name']}</b>\n"
+                f"🔓 Открыть: <code>открыть кейс</code>",
+                parse_mode="HTML"
+            )
+            return
+
+        # Создаем платеж
+        case_info = CASES_DATA[case_num]
+        stars_amount = case_info["price"]
+        payment_id = create_star_payment(user_id, stars_amount, 0)
+
+        title = f"💰 Покупка кейса #{case_num}"
+        description = f"{case_info['full_name']} — выигрыш от {format_number(case_info['min_win'])}$ до {format_number(case_info['max_win'])}$"
+        currency = "XTR"
+
+        price = types.LabeledPrice(label=case_info['full_name'], amount=stars_amount)
+
+        bot.send_invoice(
+            chat_id=message.chat.id,
+            title=title,
+            description=description,
+            invoice_payload=f"case_payment_{payment_id}_{user_id}_{case_num}",
+            provider_token="",
+            currency=currency,
+            prices=[price],
+            start_parameter="buy-case"
+        )
+
+    except Exception as e:
+        logger.error(f"Ошибка покупки кейса: {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при покупке кейса!")
+
+# ================== ОБРАБОТКА ОПЛАТЫ КЕЙСА ==================
+@bot.pre_checkout_query_handler(func=lambda q: q.invoice_payload.startswith("case_payment_"))
+def case_pre_checkout(pre_q):
+    bot.answer_pre_checkout_query(pre_q.id, ok=True)
+
+@bot.message_handler(content_types=['successful_payment'], func=lambda m: m.successful_payment.invoice_payload.startswith("case_payment_"))
+def case_payment_success(message):
+    try:
+        payload = message.successful_payment.invoice_payload
+        parts = payload.split("_")
+        payment_id = parts[2]
+        user_id = int(parts[3])
+        case_num = int(parts[4])
+
+        # Проверяем, что платёж принадлежит этому пользователю
+        if message.from_user.id != user_id:
+            bot.send_message(message.chat.id, "❌ Ошибка: платёж принадлежит другому пользователю!")
+            return
+
+        # Получаем информацию о платеже из базы
+        payment_info = get_star_payment(payment_id)
+        if not payment_info:
+            bot.send_message(message.chat.id, "⚠️ Платёж не найден в базе.")
+            return
+
+        # Помечаем платёж как завершённый
+        complete_star_payment(payment_id)
+
+        # Проверяем, не появился ли кейс за это время
+        if get_user_case(user_id) is not None:
+            bot.send_message(
+                message.chat.id,
+                "❌ У тебя уже есть неоткрытый кейс! Открой его командой <code>открыть кейс</code>.",
+                parse_mode="HTML"
+            )
+            return
+
+        # Начисляем кейс пользователю
+        set_user_case(user_id, case_num)
+        case_info = CASES_DATA[case_num]
+
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        bot.send_message(
+            message.chat.id,
+            f"{mention}, поздравляю с покупкой кейса <b>{case_info['full_name']}</b> за <code>{case_info['price']}⭐</code>!\n\n"
+            f"🔓 Открыть можно командой: <code>открыть кейс</code>",
+            parse_mode="HTML"
+        )
+
+    except Exception as e:
+        logger.error(f"Ошибка обработки успешной оплаты кейса: {e}")
+        bot.send_message(message.chat.id, "❌ Ошибка при обработке покупки!")
+
+# ================== КОМАНДА: МОИ КЕЙСЫ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мои кейсы", "мой кейс", "кейсы"])
+def my_cases_command(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    case_num = get_user_case(user_id)
+
+    if case_num is None:
+        text = (
+            f"📦 {mention}, у тебя нет неоткрытых кейсов.\n\n"
+            f"Купить кейс: <code>купить кейс [номер]</code>\n\n"
+            f"<b>Список кейсов:</b>\n"
+            f"1️⃣ (2⭐) 25к-100к💸\n"
+            f"2️⃣ (5⭐) 75к-250к💸\n"
+            f"3️⃣ (8⭐) 150к-500к💸\n"
+            f"4️⃣ (12⭐) 300к-900к💸\n"
+            f"5️⃣ (18⭐) 600к-1.8M💸\n"
+            f"6️⃣ (25⭐) 1.2M-3.5M💸\n"
+            f"7️⃣ (32⭐) 2M-6M💸\n"
+            f"8️⃣ (38⭐) 3M-9M💸\n"
+            f"9️⃣ (45⭐) 5M-15M💸\n"
+            f"🔟 (60⭐) 8M-25M💸\n"
+            f"1️⃣1️⃣ (100⭐) 15M-50M💸"
+        )
+    else:
+        case_info = CASES_DATA[case_num]
+        text = (
+            f"📦 {mention}, у тебя есть неоткрытый кейс:\n\n"
+            f"🎁 <b>{case_info['full_name']}</b>\n"
+            f"💎 Редкость: {case_info['name']}\n"
+            f"💰 Возможный выигрыш: {format_number(case_info['min_win'])}$ - {format_number(case_info['max_win'])}$\n\n"
+            f"🔓 Открыть командой: <code>открыть кейс</code>"
+        )
+
+    bot.send_message(message.chat.id, text, parse_mode="HTML")
+
+# ================== КОМАНДА: ОТКРЫТЬ КЕЙС ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "открыть кейс")
+def open_case_command(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        case_num = get_user_case(user_id)
+
+        if case_num is None:
+            bot.reply_to(
+                message,
+                f"📦 {mention}, у тебя нет неоткрытых кейсов!\n"
+                f"Купить кейс: <code>купить кейс [номер]</code>",
+                parse_mode="HTML"
+            )
+            return
+
+        case_info = CASES_DATA[case_num]
+
+        # Генерируем случайный выигрыш
+        win_amount = random.randint(case_info["min_win"], case_info["max_win"])
+
+        # Получаем данные пользователя и начисляем деньги
+        user_data = get_user_data(user_id)
+        user_data["balance"] += win_amount
+        save_casino_data()
+
+        # Удаляем кейс
+        clear_user_case(user_id)
+
+        # Специальные эмодзи для разных редкостей
+        rarity_emojis = {
+            "Обычный": "📦",
+            "Необычный": "📦✨",
+            "Редкий": "🌟",
+            "Эпический": "💫",
+            "Легендарный": "👑",
+            "Мифический": "🔮",
+            "Божественный": "⚡"
+        }
+        emoji = rarity_emojis.get(case_info["name"], "🎁")
+
+        # Отправляем сообщение
+        result_text = (
+            f"{emoji} {mention}, ты открыл <b>{case_info['full_name']}</b>!\n\n"
+            f"💰 Ты получил: <code>{format_number(win_amount)}$</code>\n"
+            f"💳 Твой баланс: <code>{format_number(user_data['balance'])}$</code>"
+        )
+
+        bot.send_message(message.chat.id, result_text, parse_mode="HTML")
+
+        # Логирование
+        logger.info(f"Пользователь {user_id} открыл кейс #{case_num} и получил {win_amount}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка открытия кейса: {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при открытии кейса!")
+
+# ================== КОМАНДА: СПИСОК КЕЙСОВ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["кейсы", "список кейсов", "магазин кейсов"])
+def cases_list_command(message):
+    text = (
+        "━━━━━━━━━━━━━━━━━━━\n"
+        "МАГАЗИН КЕЙСОВ\n"
+        "━━━━━━━━━━━━━━━━━━━\n\n"
+        
+        "ОБЫЧНЫЕ\n"
+        "1. Простой кейс — 2⭐\n"
+        "   Выигрыш: 25,000 - 100,000$\n"
+        "2. Стартовый кейс — 5⭐\n"
+        "   Выигрыш: 75,000 - 250,000$\n\n"
+        
+        "НЕОБЫЧНЫЕ\n"
+        "3. Удачный кейс — 8⭐\n"
+        "   Выигрыш: 150,000 - 500,000$\n"
+        "4. Шанс кейс — 12⭐\n"
+        "   Выигрыш: 300,000 - 900,000$\n\n"
+        
+        "РЕДКИЕ\n"
+        "5. Редкая удача — 18⭐\n"
+        "   Выигрыш: 600,000 - 1,800,000$\n"
+        "6. Серебряный кейс — 25⭐\n"
+        "   Выигрыш: 1,200,000 - 3,500,000$\n\n"
+        
+        "ЭПИЧЕСКИЕ\n"
+        "7. Золотой кейс — 32⭐\n"
+        "   Выигрыш: 2,000,000 - 6,000,000$\n"
+        "8. Героический кейс — 38⭐\n"
+        "   Выигрыш: 3,000,000 - 9,000,000$\n\n"
+        
+        "ЛЕГЕНДАРНЫЕ\n"
+        "9. Легенда кейс — 45⭐\n"
+        "   Выигрыш: 5,000,000 - 15,000,000$\n"
+        "10. Мифический клад — 60⭐\n"
+        "   Выигрыш: 8,000,000 - 25,000,000$\n\n"
+        
+        "БОЖЕСТВЕННЫЕ\n"
+        "11. Кейс богов — 100⭐\n"
+        "   Выигрыш: 15,000,000 - 50,000,000$\n"
+        "━━━━━━━━━━━━━━━━━━━\n\n"
+        "Купить: купить кейс [номер]\n"
+        "Мои кейсы: мои кейсы"
+    )
+    
+    bot.send_message(message.chat.id, text, parse_mode="HTML")
+
+print("✅ Система кейсов загружена (11 видов)")
 
 # ================== РАЗБАН ==================
 
@@ -10438,8 +10788,11 @@ HELP_CONTENT = {
 [📤] <b>удалить счёт</b> — закрыть банковский счет
 
 <b>⚙️ ПРОЧЕЕ:</b>
-[📖] <b>правила бота</b> — правила бота для ознакомления
 [🎭] <b>рп</b> — список RP-команд
+[👝] <b>магазин кейсов</b> — узнать список кейсов и их цены
+[👝] <b>купить кейс [номер]</b> — купить кейс за звёзды
+[👝] <b>мои кейсы</b> — ваш купленный кейс
+[👝] <b>открыть кейс</b> — открыть свой кейс если он есть
 """,
 
     # ----- ИГРЫ (СТРАНИЦА 1) - ТОЛЬКО КОМАНДЫ, БЕЗ ОПИСАНИЙ -----
