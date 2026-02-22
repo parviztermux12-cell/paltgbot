@@ -14,5 +14,23 @@
                 "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
             }
         ]
+    },
+    "-1003760741357": {
+        "8358458560": [
+            {
+                "type": "color",
+                "amount": 2000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=8358458560\">`</a>"
+            }
+        ],
+        "8264765149": [
+            {
+                "type": "color",
+                "amount": 3200,
+                "value": "к",
+                "mention": "<a href=\"tg://user?id=8264765149\">флешка</a>"
+            }
+        ]
     }
 }

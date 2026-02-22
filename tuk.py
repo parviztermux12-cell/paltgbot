@@ -1308,155 +1308,521 @@ def admin_referrals_top(message):
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
     
-import requests
-import logging
-from telebot import TeleBot
-from telebot.types import Message
+# ================== 🎁 НОВАЯ СИСТЕМА ПОКУПКИ ПОДАРКОВ (ТОЛЬКО СЕБЕ) ==================
+# ID подарков (Telegram Premium Gifts) и их настройки
+GIFTS_DATA = {
+    "heart": {
+        "id": "5801108895304779062",
+        "name": "Сердечко",
+        "emoji": "❤️",
+        "base_price": 50  # Базовая цена в звездах
+    },
+    "tree": {
+        "id": "5922558454332916696",
+        "name": "Ёлочка",
+        "emoji": "🎄",
+        "base_price": 50
+    }
+}
 
-# Настройка логирования
-logging.basicConfig(
-    filename='bot_logs.log', 
-    level=logging.INFO, 
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+# Текстовые оформления и их стоимость (добавляется к цене подарка)
+GIFT_TEXTS = {
+    "simple": {
+        "text": "🎁 Подарок от Meow Game",
+        "price": 0  # Бесплатный
+    },
+    "love": {
+        "text": "💖 С любовью, от Meow Game! 💖",
+        "price": 5  # +5⭐
+    },
+    "congrats": {
+        "text": "🎉 Поздравляю! Этот подарок от Meow Game 🎉",
+        "price": 5
+    },
+    "super": {
+        "text": "✨ Ты самый лучший! Этот подарок для тебя от Meow Game! ✨",
+        "price": 10
+    },
+    "friend": {
+        "text": "🤝 Спасибо, что ты есть! От Meow Game с благодарностью 🤝",
+        "price": 10
+    },
+    "birthday": {
+        "text": "🎂 С Днём Рождения! Пусть сбываются мечты! От Meow Game 🎂",
+        "price": 15
+    },
+    "valentine": {
+        "text": "💘 С Днём Святого Валентина! Ты особенный! От Meow Game 💘",
+        "price": 15
+    },
+    "newyear": {
+        "text": "🎄 С Новым Годом! Счастья, здоровья и удачи! От Meow Game 🎄",
+        "price": 15
+    },
+    "best": {
+        "text": "👑 Ты лучший! Этот подарок только для тебя! От Meow Game 👑",
+        "price": 20
+    },
+    "legend": {
+        "text": "🌟 Легендарный подарок для легендарного человека! От Meow Game 🌟",
+        "price": 25
+    },
+    "god": {
+        "text": "⚡ Божественный подарок от богов Meow Game! Ты этого достоин! ⚡",
+        "price": 30
+    }
+}
 
-# ID подарков (Telegram Premium Gifts)
-ALLOWED_GIFTS = [
-    "5170145012310081615",  # 🎁 Gift 1
-    "5170250947678437525",  # 🎁 Gift 2
-    "5170564780938756245",  # 🎁 Gift 3
-    "5170521118301225164"   # 🎁 Gift 4
-]
+# Хранилище временных данных для покупок (ID пользователя -> данные)
+_temp_gift_data = {}
 
-@bot.message_handler(commands=['wp'])
-def send_custom_gift(message: Message):
+def is_admin(user_id):
+    """Проверка на администратора"""
+    return user_id in ADMIN_IDS
+
+def get_user_mention(user):
+    """Создает кликабельное упоминание пользователя"""
+    if user.username:
+        return f"@{user.username}"
+    else:
+        return f'<a href="tg://user?id={user.id}">{user.first_name}</a>'
+
+# ================== 🛒 КОМАНДА: КУПИТЬ ПОДАРОК ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("купить подарок"))
+def gift_shop_command(message):
+    """Показывает список доступных подарков для покупки"""
+    user_id = message.from_user.id
+    mention = get_user_mention(message.from_user)
+
+    # Очищаем старые временные данные для этого пользователя, если они есть
+    if user_id in _temp_gift_data:
+        del _temp_gift_data[user_id]
+
+    text = f"🎁 <b>Магазин подарков</b> | {mention}\n\n"
+    text += "Цена указана <b>без учёта текста</b>\n"
+    text += "Текст увеличивает стоимость подарка\n"
+    text += "Подарок будет отправлен <b>тебе</b>!\n\n"
+    text += "Выбери, что хочешь получить:\n\n"
+
+    kb = InlineKeyboardMarkup(row_width=1)
+    for gift_key, gift_data in GIFTS_DATA.items():
+        text += f"{gift_data['emoji']} <b>{gift_data['name']}</b> — <code>{gift_data['base_price']}⭐</code>\n"
+        # Кнопка для выбора подарка
+        kb.add(InlineKeyboardButton(
+            f"{gift_data['emoji']} {gift_data['name']} ({gift_data['base_price']}⭐)",
+            callback_data=f"gift_select_{gift_key}_{user_id}"
+        ))
+
+    bot.send_message(message.chat.id, text, parse_mode="HTML", reply_markup=kb)
+
+
+# ================== 🎨 ВЫБОР ТЕКСТА ДЛЯ ПОДАРКА ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gift_select_"))
+def gift_select_text_callback(call):
+    try:
+        parts = call.data.split("_")
+        gift_key = parts[2]
+        owner_id = int(parts[3])
+
+        # Проверка владельца кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+
+        # Проверяем, существует ли такой подарок
+        if gift_key not in GIFTS_DATA:
+            bot.answer_callback_query(call.id, "❌ Подарок не найден!", show_alert=True)
+            return
+
+        gift_data = GIFTS_DATA[gift_key]
+        mention = get_user_mention(call.from_user)
+
+        # Сохраняем выбранный подарок во временные данные
+        _temp_gift_data[owner_id] = {
+            "gift_key": gift_key,
+            "gift_name": gift_data["name"],
+            "gift_id": gift_data["id"],
+            "base_price": gift_data["base_price"],
+            "step": "waiting_for_text"
+        }
+
+        # Формируем список текстов с ценами
+        texts_list = ""
+        for text_key, text_data in GIFT_TEXTS.items():
+            price_info = f"+{text_data['price']}⭐" if text_data['price'] > 0 else "бесплатно"
+            texts_list += f"• «{text_data['text']}» — {price_info}\n"
+
+        text = (
+            f"{mention}, ты выбрал: {gift_data['emoji']} <b>{gift_data['name']}</b>\n"
+            f"💰 <b>Базовая цена:</b> {gift_data['base_price']}⭐\n\n"
+            f"📝 <b>Выбери текст для подарка (цена добавится к базовой):</b>\n\n"
+            f"{texts_list}"
+        )
+
+        kb = InlineKeyboardMarkup(row_width=1)
+        for text_key, text_data in GIFT_TEXTS.items():
+            price_info = f"+{text_data['price']}⭐" if text_data['price'] > 0 else "0⭐"
+            kb.add(InlineKeyboardButton(
+                f"{text_data['text']} ({price_info})",
+                callback_data=f"gift_text_{text_key}_{owner_id}"
+            ))
+
+        # Кнопка отмены
+        kb.add(InlineKeyboardButton("Отменить", callback_data=f"gift_cancel_{owner_id}"))
+
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+
+    except Exception as e:
+        logger.error(f"Ошибка gift_select_text_callback: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+# ================== 📝 ВЫБОР ТЕКСТА ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gift_text_"))
+def gift_text_callback(call):
+    try:
+        parts = call.data.split("_")
+        text_key = parts[2]
+        owner_id = int(parts[3])
+
+        # Проверка владельца кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+
+        # Проверяем временные данные
+        if owner_id not in _temp_gift_data or _temp_gift_data[owner_id].get("step") != "waiting_for_text":
+            bot.answer_callback_query(call.id, "❌ Сессия покупки истекла! Начни заново.", show_alert=True)
+            return
+
+        # Проверяем, существует ли такой текст
+        if text_key not in GIFT_TEXTS:
+            bot.answer_callback_query(call.id, "❌ Текст не найден!", show_alert=True)
+            return
+
+        text_data = GIFT_TEXTS[text_key]
+        gift_data = _temp_gift_data[owner_id]
+
+        # Рассчитываем итоговую цену
+        total_price = gift_data["base_price"] + text_data["price"]
+
+        # Сохраняем выбранный текст и итоговую цену
+        _temp_gift_data[owner_id]["text"] = text_data["text"]
+        _temp_gift_data[owner_id]["text_price"] = text_data["price"]
+        _temp_gift_data[owner_id]["total_price"] = total_price
+        _temp_gift_data[owner_id]["step"] = "ready_for_payment"
+
+        mention = get_user_mention(call.from_user)
+        gift_emoji = GIFTS_DATA[gift_data["gift_key"]]["emoji"]
+
+        text = (
+            f"{mention}, ты выбрал:\n"
+            f"🎁 Подарок: {gift_emoji} <b>{gift_data['gift_name']}</b> — {gift_data['base_price']}⭐\n"
+            f"📝 Текст: «{text_data['text']}» — +{text_data['price']}⭐\n"
+            f"💰 Итого к оплате: <b>{total_price}⭐</b>\n\n"
+            f"Подарок будет отправлен <b>тебе</b>!\n\n"
+            f"👇 Нажми кнопку ниже для оплаты"
+        )
+
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton(f" Оплатить {total_price}⭐", callback_data=f"gift_pay_{owner_id}"))
+        kb.add(InlineKeyboardButton(" Отменить", callback_data=f"gift_cancel_{owner_id}"))
+
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        bot.answer_callback_query(call.id)
+
+    except Exception as e:
+        logger.error(f"Ошибка gift_text_callback: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+# ================== 💳 ОПЛАТА ПОДАРКА ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gift_pay_"))
+def gift_pay_callback(call):
+    try:
+        owner_id = int(call.data.split("_")[2])
+
+        # Проверка владельца кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+
+        # Проверяем временные данные
+        if owner_id not in _temp_gift_data or _temp_gift_data[owner_id].get("step") != "ready_for_payment":
+            bot.answer_callback_query(call.id, "❌ Сессия покупки истекла! Начни заново.", show_alert=True)
+            return
+
+        gift_data = _temp_gift_data[owner_id]
+
+        # Проверяем, админ ли отправитель
+        if is_admin(owner_id):
+            # Админ может получать бесплатно
+            process_free_gift_for_admin(call, owner_id)
+        else:
+            # Обычный пользователь - выставляем счет
+            create_gift_invoice(call, owner_id)
+
+    except Exception as e:
+        logger.error(f"Ошибка gift_pay_callback: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+# ================== 💳 СОЗДАНИЕ ИНВОЙСА ДЛЯ ОПЛАТЫ ==================
+def create_gift_invoice(call, owner_id):
+    """Создает инвойс для оплаты подарка звездами"""
+    try:
+        gift_data = _temp_gift_data[owner_id]
+
+        # Создаем платеж в базе
+        payment_id = create_star_payment(owner_id, gift_data["total_price"], 0)
+
+        title = f"Покупка подарка: {GIFTS_DATA[gift_data['gift_key']]['emoji']} {gift_data['gift_name']}"
+        description = f"{gift_data['text']}"
+        currency = "XTR"  # Telegram Stars
+
+        price = types.LabeledPrice(label=gift_data['gift_name'], amount=gift_data["total_price"])
+
+        # Удаляем сообщение с кнопками
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+
+        # Отправляем инвойс
+        bot.send_invoice(
+            chat_id=call.message.chat.id,
+            title=title,
+            description=description,
+            invoice_payload=f"gift_payment_{payment_id}_{owner_id}",
+            provider_token="",
+            currency=currency,
+            prices=[price],
+            start_parameter="buy-gift"
+        )
+
+        logger.info(f"Создан инвойс для покупки подарка пользователем {owner_id} на {gift_data['total_price']}⭐")
+        bot.answer_callback_query(call.id)
+
+    except Exception as e:
+        logger.error(f"Ошибка create_gift_invoice: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при создании платежа!", show_alert=True)
+
+
+# ================== 👑 БЕСПЛАТНАЯ ОТПРАВКА ДЛЯ АДМИНА ==================
+def process_free_gift_for_admin(call, owner_id):
+    """Отправляет подарок бесплатно для администратора"""
+    try:
+        gift_data = _temp_gift_data[owner_id]
+        admin_mention = get_user_mention(call.from_user)
+
+        # Отправляем подарок
+        success, result_text = send_telegram_gift(
+            chat_id=call.message.chat.id,
+            user_id=owner_id,  # Отправляем самому себе
+            gift_id=gift_data["gift_id"],
+            text=gift_data["text"]
+        )
+
+        if success:
+            bot.edit_message_text(
+                f"✅ {admin_mention}, подарок <b>{gift_data['gift_name']}</b> успешно отправлен тебе! (бесплатно, как админу)\n"
+                f"📝 Текст: «{gift_data['text']}»\n"
+                f"💰 Экономия: {gift_data['total_price']}⭐",
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML"
+            )
+            logger.info(f"Админ {owner_id} получил бесплатный подарок {gift_data['gift_name']}")
+        else:
+            bot.edit_message_text(
+                f"❌ {admin_mention}, ошибка при отправке подарка: {result_text}",
+                call.message.chat.id,
+                call.message.message_id,
+                parse_mode="HTML"
+            )
+            logger.error(f"Ошибка отправки подарка админу {owner_id}: {result_text}")
+
+        # Очищаем временные данные
+        if owner_id in _temp_gift_data:
+            del _temp_gift_data[owner_id]
+
+        bot.answer_callback_query(call.id)
+
+    except Exception as e:
+        logger.error(f"Ошибка process_free_gift_for_admin: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка при отправке подарка!", show_alert=True)
+
+
+# ================== ✅ ОБРАБОТКА УСПЕШНОЙ ОПЛАТЫ ==================
+@bot.pre_checkout_query_handler(func=lambda q: q.invoice_payload.startswith("gift_payment_"))
+def gift_pre_checkout(pre_q):
+    """Подтверждение предоплаты"""
+    bot.answer_pre_checkout_query(pre_q.id, ok=True)
+
+
+@bot.message_handler(content_types=['successful_payment'], func=lambda m: m.successful_payment.invoice_payload.startswith("gift_payment_"))
+def gift_payment_success(message):
+    """Обработка успешной оплаты подарка"""
+    try:
+        payload = message.successful_payment.invoice_payload
+        parts = payload.split("_")
+        payment_id = parts[2]
+        owner_id = int(parts[3])
+
+        # Проверяем, что платёж принадлежит этому пользователю
+        if message.from_user.id != owner_id:
+            bot.send_message(message.chat.id, "❌ Ошибка: платёж принадлежит другому пользователю!")
+            return
+
+        # Получаем информацию о платеже из базы
+        payment_info = get_star_payment(payment_id)
+        if not payment_info:
+            bot.send_message(message.chat.id, "⚠️ Платёж не найден в базе, но звёзды списаны. Обратитесь к администратору!")
+            return
+
+        # Помечаем платёж как завершённый
+        complete_star_payment(payment_id)
+
+        # Проверяем временные данные
+        if owner_id not in _temp_gift_data:
+            bot.send_message(message.chat.id, "⚠️ Данные покупки не найдены, но звёзды списаны. Обратитесь к администратору!")
+            return
+
+        gift_data = _temp_gift_data[owner_id]
+        mention = get_user_mention(message.from_user)
+
+        # Отправляем подарок
+        success, result_text = send_telegram_gift(
+            chat_id=message.chat.id,
+            user_id=owner_id,  # Отправляем самому себе
+            gift_id=gift_data["gift_id"],
+            text=gift_data["text"]
+        )
+
+        if success:
+            bot.send_message(
+                message.chat.id,
+                f"✅ {mention}, спасибо за покупку!\n"
+                f"Подарок <b>{gift_data['gift_name']}</b> успешно отправлен тебе!\n"
+                f"📝 Текст: «{gift_data['text']}»\n"
+                f"💰 Списано: {gift_data['total_price']}⭐",
+                parse_mode="HTML"
+            )
+            logger.info(f"Пользователь {owner_id} купил подарок {gift_data['gift_name']} за {gift_data['total_price']}⭐")
+        else:
+            bot.send_message(
+                message.chat.id,
+                f"❌ {mention}, произошла ошибка при отправке подарка: {result_text}\n"
+                f"Звёзды списаны, но подарок не доставлен. Обратитесь к администратору!",
+                parse_mode="HTML"
+            )
+            logger.error(f"Ошибка отправки подарка пользователю {owner_id} после оплаты: {result_text}")
+
+        # Очищаем временные данные
+        if owner_id in _temp_gift_data:
+            del _temp_gift_data[owner_id]
+
+    except Exception as e:
+        logger.error(f"Ошибка gift_payment_success: {e}")
+        bot.send_message(message.chat.id, "❌ Произошла ошибка при обработке платежа! Обратитесь к администратору.")
+
+
+# ================== ❌ ОТМЕНА ПОКУПКИ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gift_cancel_"))
+def gift_cancel_callback(call):
+    try:
+        owner_id = int(call.data.split("_")[2])
+
+        # Проверка владельца кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+
+        # Очищаем временные данные
+        if owner_id in _temp_gift_data:
+            del _temp_gift_data[owner_id]
+
+        mention = get_user_mention(call.from_user)
+
+        bot.edit_message_text(
+            f"❌ {mention}, покупка подарка отменена.",
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML"
+        )
+        bot.answer_callback_query(call.id, "✅ Отменено")
+
+    except Exception as e:
+        logger.error(f"Ошибка gift_cancel_callback: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+# ================== 📦 ФУНКЦИЯ ОТПРАВКИ ПОДАРКА ==================
+def send_telegram_gift(chat_id, user_id, gift_id, text):
     """
-    Отправляет подарок указанному пользователю.
-    Форматы использования:
-    1. /wp - отправить подарок себе
-    2. /wp @username - отправить подарок пользователю по username
-    3. /wp 123456789 - отправить подарок пользователю по ID
-    4. Ответить на сообщение с командой /wp - отправить подарок тому, кому ответили
+    Отправляет подарок через Telegram API
+    Возвращает (True, "OK") при успехе или (False, "описание ошибки") при неудаче
     """
     try:
-        # Разбираем команду
-        args = message.text.split()
-        target_user_id = message.from_user.id
-        target_name = "тебе"
-        
-        # Определяем цель отправки
-        if message.reply_to_message:
-            # Если ответ на сообщение - отправляем тому, кому ответили
-            target_user_id = message.reply_to_message.from_user.id
-            target_name = f"пользователю {message.reply_to_message.from_user.first_name}"
-        elif len(args) > 1:
-            arg = args[1]
-            
-            if arg.startswith('@'):
-                # Поиск по username
-                try:
-                    user = bot.get_chat(arg)
-                    target_user_id = user.id
-                    target_name = f"пользователю @{arg[1:]}"
-                except:
-                    bot.reply_to(message, "❌ Пользователь не найден!")
-                    return
-            else:
-                # По ID
-                try:
-                    target_user_id = int(arg)
-                    # Получаем информацию о пользователе
-                    try:
-                        target_user = bot.get_chat(target_user_id)
-                        target_name = f"пользователю {target_user.first_name}"
-                    except:
-                        target_name = f"пользователю с ID {target_user_id}"
-                except ValueError:
-                    bot.reply_to(message, "❌ Неверный формат! Используйте ID или @username")
-                    return
-        
-        # Проверяем, не пытаются ли отправить подарок боту
-        try:
-            target_user = bot.get_chat(target_user_id)
-            if target_user.is_bot:
-                bot.reply_to(message, "❌ Нельзя отправить подарок боту!")
-                return
-        except:
-            pass
-        
-        # Выбираем первый доступный подарок из списка
-        gift_id = ALLOWED_GIFTS[0]
-        
         params = {
-            "chat_id": message.chat.id,
-            "user_id": target_user_id,
+            "chat_id": chat_id,
+            "user_id": user_id,
             "gift_id": gift_id,
-            "text": "🎁 Подарок от Meow Game | by Parviz"
+            "text": text
         }
-        
-        # Отправляем запрос к Telegram API
+
         response = requests.post(
             f"https://api.telegram.org/bot{bot.token}/sendGift",
             json=params,
-            timeout=10
+            timeout=15
         )
-        
-        # Проверяем ответ
+
         response_data = response.json()
-        
+
         if response.status_code == 200 and response_data.get('ok'):
-            if target_user_id == message.from_user.id:
-                reply_text = "🎉 Подарок успешно отправлен тебе!"
-            else:
-                reply_text = f"🎉 Подарок успешно отправлен {target_name}!"
-            
-            bot.reply_to(message, reply_text)
-            logging.info(f"Успешная отправка подарка {gift_id} пользователю {target_user_id}")
-            return
-        
-        # Обработка ошибок от Telegram API
+            return True, "OK"
+
+        # Обработка ошибок
         error_code = response_data.get('error_code')
         error_message = response_data.get('description', 'Неизвестная ошибка')
-        
-        # Кастомные сообщения для разных ошибок
+
         if error_code == 400:
             if "gift not available" in error_message.lower():
-                bot.reply_to(message, "❌ Этот подарок недоступен в данном регионе")
+                return False, "Этот подарок недоступен в данном регионе"
             elif "user not found" in error_message.lower():
-                bot.reply_to(message, "❌ Пользователь не найден")
+                return False, "Пользователь не найден"
             else:
-                bot.reply_to(message, f"❌ Ошибка запроса: {error_message}")
-        
+                return False, f"Ошибка запроса: {error_message}"
+
         elif error_code == 403:
-            bot.reply_to(message, "❌ У бота недостаточно прав для отправки подарков")
-        
+            return False, "У бота недостаточно прав для отправки подарков"
+
         elif error_code == 429:
-            bot.reply_to(message, "⏳ Слишком много запросов. Попробуйте позже")
-        
+            return False, "Слишком много запросов. Попробуйте позже"
+
         else:
-            bot.reply_to(message, f"❌ Ошибка при отправке подарка: {error_message}")
-        
-        logging.error(f"Ошибка отправки подарка {gift_id}: {response_data}")
-        
+            return False, f"Ошибка при отправке подарка: {error_message}"
+
     except requests.exceptions.Timeout:
-        logging.error(f"Таймаут при отправке подарка")
-        bot.reply_to(message, "⏳ Время ожидания истекло. Попробуйте позже.")
-        
+        return False, "Время ожидания истекло. Попробуйте позже."
+
     except requests.exceptions.RequestException as req_err:
-        logging.error(f"Сетевая ошибка: {req_err}")
-        bot.reply_to(message, "❌ Произошла сетевая ошибка. Проверьте подключение к интернету.")
-        
+        return False, f"Сетевая ошибка: {req_err}"
+
     except Exception as e:
-        logging.exception(f"Критическая ошибка в send_custom_gift: {str(e)}")
-        bot.reply_to(message, "❌ Произошла внутренняя ошибка бота.")
+        return False, f"Внутренняя ошибка: {str(e)}"
 
-def handle_exception(bot, error):
-    """Глобальный обработчик исключений бота"""
-    logging.critical(f"Критическая ошибка в боте: {str(error)}")
-    # Можно добавить уведомление администраторам о критической ошибке
-
-# Подключаем обработчик ошибок
-bot.error_handler = handle_exception
+print("✅ Система покупки подарков загружена (тексты платные, только себе)")
 
     
     
@@ -10793,6 +11159,7 @@ HELP_CONTENT = {
 [👝] <b>купить кейс [номер]</b> — купить кейс за звёзды
 [👝] <b>мои кейсы</b> — ваш купленный кейс
 [👝] <b>открыть кейс</b> — открыть свой кейс если он есть
+[🍀] <b>купить подарок</b> — купить подарок себе от имени бота
 """,
 
     # ----- ИГРЫ (СТРАНИЦА 1) - ТОЛЬКО КОМАНДЫ, БЕЗ ОПИСАНИЙ -----
