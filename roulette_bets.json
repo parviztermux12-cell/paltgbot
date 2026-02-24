@@ -32,5 +32,31 @@
                 "mention": "<a href=\"tg://user?id=8264765149\">флешка</a>"
             }
         ]
+    },
+    "-1003085466324": {
+        "809656806": [
+            {
+                "type": "range",
+                "amount": 2000000,
+                "start": 1,
+                "end": 12,
+                "mention": "<a href=\"tg://user?id=809656806\">Эдгар</a>"
+            },
+            {
+                "type": "range",
+                "amount": 100000,
+                "start": 1,
+                "end": 12,
+                "mention": "<a href=\"tg://user?id=809656806\">Эдгар</a>"
+            },
+            {
+                "type": "single",
+                "amount": 100000,
+                "value": [
+                    1
+                ],
+                "mention": "<a href=\"tg://user?id=809656806\">Эдгар</a>"
+            }
+        ]
     }
 }

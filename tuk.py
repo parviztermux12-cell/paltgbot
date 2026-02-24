@@ -10788,7 +10788,7 @@ def drag_race_game(message):
 
         # 7. Генерируем результат (60% победа, 40% проигрыш)
         speed = random.randint(90, 320)  # Рандомная скорость
-        is_win = random.random() < 0.6  # 60% шанс на победу
+        is_win = random.random() < 0.5  # 60% шанс на победу
 
         # 8. Формируем текст результата
         if is_win:
