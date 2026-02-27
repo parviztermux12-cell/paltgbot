@@ -72,7 +72,7 @@
     "total_received": 720481761
   },
   "7526512670": {
-    "total_sent": 3950300,
+    "total_sent": 4250300,
     "total_received": 15764546
   },
   "7224384020": {
@@ -81,14 +81,14 @@
   },
   "6514588039": {
     "total_sent": 5000,
-    "total_received": 8100000
+    "total_received": 17415000
   },
   "5264373801": {
     "total_sent": 100000,
     "total_received": 5000
   },
   "5694141752": {
-    "total_sent": 9000000,
+    "total_sent": 19000000,
     "total_received": 90000000
   },
   "5126302547": {
@@ -113,11 +113,11 @@
   },
   "1183936756": {
     "total_sent": 385623616010,
-    "total_received": 289688605633
+    "total_received": 31500289688605633
   },
   "6512241065": {
-    "total_sent": 234209309431998047,
-    "total_received": 45001254577832063
+    "total_sent": 273211309431998047,
+    "total_received": 47251254577831784
   },
   "7777812758": {
     "total_sent": 36001000,
@@ -157,14 +157,14 @@
   },
   "1248832437": {
     "total_sent": 1725000000401,
-    "total_received": 1081672200101
+    "total_received": 1801081672200101
   },
   "6769029176": {
-    "total_sent": 40000021,
-    "total_received": 11521653263281822
+    "total_sent": 2500000039999711,
+    "total_received": 11522553263281822
   },
   "7457101105": {
-    "total_sent": 0,
+    "total_sent": 350000,
     "total_received": 201375000
   },
   "8377902920": {
@@ -209,7 +209,7 @@
   },
   "8340514324": {
     "total_sent": 40,
-    "total_received": 247151700
+    "total_received": 247431700
   },
   "885327459": {
     "total_sent": 0,
@@ -225,6 +225,10 @@
   },
   "7882268176": {
     "total_sent": 0,
-    "total_received": 544930900000001
+    "total_received": 545830900000001
+  },
+  "8344138429": {
+    "total_sent": 0,
+    "total_received": 1800000000000000
   }
 }

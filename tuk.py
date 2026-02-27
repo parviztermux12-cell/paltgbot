@@ -9457,12 +9457,14 @@ def generate_roulette_session_id():
     """Генерирует уникальный ID для сессии рулетки."""
     return str(uuid.uuid4())[:8]
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == 'го')
+@bot.message_handler(func=lambda m: m.text and m.mtext.lower() == 'го')
 def start_roulette(message):
     try:
         chat_id = str(message.chat.id)
         user_id = message.from_user.id
         mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
+        # ✅ Создаем session_id в самом начале, чтобы он был доступен везде
         session_id = generate_roulette_session_id()
         
         with roulette_lock:
@@ -9585,19 +9587,25 @@ def start_roulette(message):
         
         bot.send_message(chat_id, result_text, parse_mode="HTML")
         
-        # 11. Логируем результат
+        # 11. Логируем результат ✅
         try:
             with open(ROULETTE_RESULTS_FILE, "a", encoding="utf-8") as f:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 f.write(f"{timestamp}|{result_number}|{result_color}|{session_id}|{total_bets}|{winners}\n")
+                logger.info(f"✅ Результат рулетки записан в лог: {result_number} {result_color}, сессия {session_id}")
         except Exception as e:
-            logger.error(f"Не удалось записать результат рулетки в лог: {e}")
+            logger.error(f"❌ Не удалось записать результат рулетки в лог: {e}")
             
     except Exception as e:
-        logger.error(f"Критическая ошибка рулетки: {e}", exc_info=True)
+        logger.error(f"❌ Критическая ошибка рулетки: {e}", exc_info=True)
+        
+        # ✅ Проверяем, существует ли session_id (на случай ошибки ДО его создания)
+        error_session_id = session_id if 'session_id' in locals() else "unknown"
+        
         bot.send_message(message.chat.id, 
                         f"❌ Критическая ошибка при запуске рулетки!\n"
-                        f"Сообщите администратору код: <code>{session_id}</code>",
+                        f"Сообщите администратору код: <code>{error_session_id}</code>\n"
+                        f"Ошибка: {str(e)}",
                         parse_mode="HTML")
 
 # ================== КОМАНДА ЛОГИ РУЛЕТКИ ==================
