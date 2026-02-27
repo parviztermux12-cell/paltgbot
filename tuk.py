@@ -9322,7 +9322,11 @@ def place_bet(message):
         bot.send_message(message.chat.id, "❌ Ошибка при размещении ставки!")
 
 
-# ================== ГО ==================
+# ================== ГО (ИСПРАВЛЕННАЯ ВЕРСИЯ С БЛОКИРОВКОЙ) ==================
+import threading
+
+# Глобальная блокировка для рулетки
+roulette_lock = threading.Lock()
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == 'го')
 def start_roulette(message):
@@ -9331,12 +9335,27 @@ def start_roulette(message):
         user_id = message.from_user.id
         mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
 
-        roulette_data = load_roulette_bets()
+        # Используем блокировку, чтобы гарантировать, что только один поток
+        # может обрабатывать рулетку для этого чата в данный момент
+        with roulette_lock:
+            roulette_data = load_roulette_bets()
 
-        if chat_id not in roulette_data or not roulette_data[chat_id]:
-            bot.send_message(chat_id, "❌ В чате нет активных ставок!", parse_mode="HTML")
+            # Проверяем, есть ли ставки в этом чате
+            if chat_id not in roulette_data or not roulette_data[chat_id]:
+                bot.send_message(chat_id, "❌ В чате нет активных ставок!", parse_mode="HTML")
+                return
+
+            # Сохраняем ставки во временную переменную и сразу очищаем файл,
+            # чтобы другие потоки не могли их обработать
+            chat_bets = roulette_data.pop(chat_id, None)
+            save_roulette_bets(roulette_data)
+
+        # Если ставок не было (защита на всякий случай)
+        if not chat_bets:
+            bot.send_message(chat_id, "❌ Ставки уже были обработаны!", parse_mode="HTML")
             return
 
+        # Отправляем анимацию (уже вне блокировки)
         spin_msg = bot.send_animation(
             chat_id,
             ROULETTE_SPIN_GIF,
@@ -9358,7 +9377,8 @@ def start_roulette(message):
 
         result_text = f"🎰 <b>РУЛЕТКА</b>\n🎲 Выпало: <b>{result_number}</b> {color_emoji}\n\n"
 
-        for player_id, bets in roulette_data[chat_id].items():
+        # Обрабатываем сохраненные ставки
+        for player_id, bets in chat_bets.items():
             player_data = get_user_data(int(player_id))
 
             for bet in bets:
@@ -9389,21 +9409,23 @@ def start_roulette(message):
                 else:
                     result_text += f"❌ {bet['mention']} проиграл\n"
 
+        # Сохраняем изменения балансов
         save_casino_data()
 
-        del roulette_data[chat_id]
-        save_roulette_bets(roulette_data)
-
+        # Удаляем анимацию
         try:
             bot.delete_message(chat_id, spin_msg.message_id)
         except:
             pass
 
+        # Обрезаем текст, если он слишком длинный
         if len(result_text) > 4000:
             result_text = result_text[:4000]
 
+        # Отправляем результат
         bot.send_message(chat_id, result_text, parse_mode="HTML")
 
+        # Сохраняем результат в лог
         with open(ROULETTE_RESULTS_FILE, "a", encoding="utf-8") as f:
             f.write(f"{result_number}|{result_color}\n")
 
