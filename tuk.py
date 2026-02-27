@@ -1308,6 +1308,127 @@ def admin_referrals_top(message):
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
     
+    # ================== 💣 ИГРА "ОБЕЗВРЕДЬ БОМБУ" ==================
+
+BOMB_COOLDOWN = 120  # 2 минуты
+bomb_sessions = {}  # user_id -> данные игры
+bomb_last_play = {}  # user_id -> timestamp
+
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("бомба"))
+def bomb_game(message):
+    user_id = message.from_user.id
+    args = message.text.split()
+
+    if len(args) < 2:
+        bot.send_message(message.chat.id, "Использование: бомба <ставка>")
+        return
+
+    try:
+        bet = int(args[1])
+    except:
+        bot.send_message(message.chat.id, "❌ Ставка должна быть числом.")
+        return
+
+    if bet <= 0:
+        bot.send_message(message.chat.id, "❌ Ставка должна быть больше 0.")
+        return
+
+    user_data = get_user_data(user_id)
+
+    if user_data["balance"] < bet:
+        bot.send_message(message.chat.id, "❌ Недостаточно средств.")
+        return
+
+    # Кулдаун
+    now = time.time()
+    last_play = bomb_last_play.get(user_id, 0)
+    if now - last_play < BOMB_COOLDOWN:
+        remaining = int(BOMB_COOLDOWN - (now - last_play))
+        bot.send_message(message.chat.id, f"⏳ Подожди {remaining} сек перед новой бомбой.")
+        return
+
+    # Списание ставки
+    user_data["balance"] -= bet
+    save_casino_data()
+
+    # Определяем случайный правильный провод
+    wires = ["red", "blue", "green"]
+    good_wire = random.choice(wires)
+
+    bomb_sessions[user_id] = {
+        "bet": bet,
+        "good_wire": good_wire,
+        "chat_id": message.chat.id,
+        "message_id": None
+    }
+
+    bomb_last_play[user_id] = now
+
+    kb = InlineKeyboardMarkup()
+    kb.row(
+        InlineKeyboardButton("🔴 Красный", callback_data=f"bomb_red_{user_id}"),
+        InlineKeyboardButton("🔵 Синий", callback_data=f"bomb_blue_{user_id}"),
+        InlineKeyboardButton("🟢 Зелёный", callback_data=f"bomb_green_{user_id}")
+    )
+
+    sent = bot.send_message(
+        message.chat.id,
+        f"💣 БОМБА АКТИВИРОВАНА!\n\n"
+        f"💰 Ставка: {bet}$\n"
+        f"Выбери провод для обезвреживания 👇",
+        reply_markup=kb
+    )
+
+    bomb_sessions[user_id]["message_id"] = sent.message_id
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("bomb_"))
+def bomb_callback(call):
+    parts = call.data.split("_")
+    chosen_wire = parts[1]
+    owner_id = int(parts[2])
+
+    if call.from_user.id != owner_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя бомба!", show_alert=True)
+        return
+
+    if owner_id not in bomb_sessions:
+        bot.answer_callback_query(call.id, "❌ Игра не найдена.")
+        return
+
+    session = bomb_sessions.pop(owner_id)
+    bet = session["bet"]
+    good_wire = session["good_wire"]
+    chat_id = session["chat_id"]
+    message_id = session["message_id"]
+
+    user_data = get_user_data(owner_id)
+
+    # Победа
+    if chosen_wire == good_wire:
+        win_amount = int(bet * 1.8)
+        user_data["balance"] += win_amount
+        result_text = f"🎉 УСПЕХ!\n\nТы правильно обезвредил бомбу!\n\n💰 Выигрыш: {win_amount}$"
+
+    else:
+        if chosen_wire == "red":
+            lose_amount = int(bet * 0.5)
+            user_data["balance"] += lose_amount
+            result_text = f"💥 ЧАСТИЧНЫЙ ВЗРЫВ!\n\nТы потерял половину.\n\n💸 Вернулось: {lose_amount}$"
+        else:
+            result_text = f"💀 БОМБА ВЗОРВАЛАСЬ!\n\nТы потерял всю ставку.\n\n💸 Потеря: {bet}$"
+
+    save_casino_data()
+
+    bot.edit_message_text(
+        result_text,
+        chat_id,
+        message_id
+    )
+
+    bot.answer_callback_query(call.id)
+    
 # ================== 🎁 НОВАЯ СИСТЕМА ПОКУПКИ ПОДАРКОВ (ТОЛЬКО СЕБЕ) ==================
 # ID подарков (Telegram Premium Gifts) и их настройки
 GIFTS_DATA = {
@@ -6426,9 +6547,9 @@ def full_backup_zip(message):
 
     backed_up_files = []
 
-    # Ищем ВСЕ .db и .json
+    # Ищем ВСЕ .db, .json и .txt файлы
     for file in os.listdir(workdir):
-        if file.endswith(".db") or file.endswith(".json"):
+        if file.endswith((".db", ".json", ".txt")):
             try:
                 shutil.copy(file, os.path.join(temp_dir, file))
                 backed_up_files.append(file)
@@ -6460,7 +6581,11 @@ def full_backup_zip(message):
                 "🗂 <b>Полный бэкап бота</b>\n\n"
                 f"📦 Файлов: <code>{len(backed_up_files)}</code>\n"
                 "📁 Формат: <code>.zip</code>\n"
-                "🛡 База безопасна"
+                "🛡 База безопасна\n\n"
+                f"<b>Типы файлов:</b>\n"
+                f"• Базы данных: <code>.db</code>\n"
+                f"• Конфиги: <code>.json</code>\n"
+                f"• Логи: <code>.txt</code>"
             ),
             parse_mode="HTML"
         )
@@ -7835,7 +7960,7 @@ def cmd_start(message):
     welcome_text = (
         f"Привет {mention}, я игровой чат бот, для того чтобы узнать обо мне по больше, "
         f"напиши команду /help или <code>помощь</code>. "
-        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>сюда</a> "
+        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>нажми сюда</a> "
     )
 
     # Создаем инлайн клавиатуру с кнопкой для показа списка групп
@@ -7904,7 +8029,7 @@ def back_to_start(call):
     welcome_text = (
         f"Привет {mention}, я игровой чат бот, для того чтобы узнать обо мне по больше, "
         f"напиши команду /help или <code>помощь</code>. "
-        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>сюда</a> "
+        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>нажми сюда</a> "
     )
 
     kb = InlineKeyboardMarkup()
@@ -9322,11 +9447,15 @@ def place_bet(message):
         bot.send_message(message.chat.id, "❌ Ошибка при размещении ставки!")
 
 
-# ================== ГО (ИСПРАВЛЕННАЯ ВЕРСИЯ С БЛОКИРОВКОЙ) ==================
 import threading
+import uuid
+from datetime import datetime
 
-# Глобальная блокировка для рулетки
 roulette_lock = threading.Lock()
+
+def generate_roulette_session_id():
+    """Генерирует уникальный ID для сессии рулетки."""
+    return str(uuid.uuid4())[:8]
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == 'го')
 def start_roulette(message):
@@ -9334,39 +9463,59 @@ def start_roulette(message):
         chat_id = str(message.chat.id)
         user_id = message.from_user.id
         mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-
-        # Используем блокировку, чтобы гарантировать, что только один поток
-        # может обрабатывать рулетку для этого чата в данный момент
+        session_id = generate_roulette_session_id()
+        
         with roulette_lock:
-            roulette_data = load_roulette_bets()
-
-            # Проверяем, есть ли ставки в этом чате
+            # 1. Загружаем ставки
+            try:
+                with open(ROULETTE_BETS_FILE, "r", encoding="utf-8") as f:
+                    content = f.read().strip()
+                    if not content:  # Пустой файл
+                        roulette_data = {}
+                    else:
+                        roulette_data = json.loads(content)
+            except (FileNotFoundError, json.JSONDecodeError):
+                roulette_data = {}
+            
+            # 2. Проверяем наличие ставок в чате
             if chat_id not in roulette_data or not roulette_data[chat_id]:
-                bot.send_message(chat_id, "❌ В чате нет активных ставок!", parse_mode="HTML")
+                bot.send_message(chat_id, 
+                                 f"{mention}, в чате нет активных ставок!",
+                                 parse_mode="HTML")
                 return
-
-            # Сохраняем ставки во временную переменную и сразу очищаем файл,
-            # чтобы другие потоки не могли их обработать
+            
+            # 3. Сохраняем ставки в локальную переменную
             chat_bets = roulette_data.pop(chat_id, None)
-            save_roulette_bets(roulette_data)
-
-        # Если ставок не было (защита на всякий случай)
-        if not chat_bets:
-            bot.send_message(chat_id, "❌ Ставки уже были обработаны!", parse_mode="HTML")
-            return
-
-        # Отправляем анимацию (уже вне блокировки)
+            
+            # 4. Перезаписываем файл, удаляя обработанные ставки
+            try:
+                with open(ROULETTE_BETS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(roulette_data, f, ensure_ascii=False, indent=4)
+            except Exception as e:
+                logger.error(f"Не удалось сохранить файл ставок: {e}")
+                # Если не удалось сохранить, возвращаем ставки обратно, чтобы не потерять
+                if chat_bets:
+                    if chat_id not in roulette_data:
+                        roulette_data[chat_id] = {}
+                    roulette_data[chat_id].update(chat_bets)
+                    with open(ROULETTE_BETS_FILE, "w", encoding="utf-8") as f:
+                        json.dump(roulette_data, f, ensure_ascii=False, indent=4)
+                bot.send_message(chat_id, "❌ Ошибка при обработке ставок. Попробуйте позже.")
+                return
+        
+        # ===== ВНЕ БЛОКИРОВКИ =====
+        # 5. Отправляем анимацию
         spin_msg = bot.send_animation(
             chat_id,
             ROULETTE_SPIN_GIF,
-            caption=f"🎲 {mention} запускает рулетку...",
+            caption=f"🎲 {mention} запускает рулетку...\nСессия: <code>{session_id}</code>",
             parse_mode="HTML"
         )
-
+        
         time.sleep(2)
-
-        # Генерация результата
-        if random.random() < 0.027:
+        
+        # 6. Генерируем результат
+        if random.random() < 0.027:  # 2.7% шанс на зеро
             result_number = 0
             result_color = 'з'
             color_emoji = "🟢"
@@ -9374,64 +9523,82 @@ def start_roulette(message):
             result_number = random.randint(1, 36)
             result_color = 'ч' if result_number % 2 == 0 else 'к'
             color_emoji = "⚫" if result_color == 'ч' else "🔴"
-
-        result_text = f"🎰 <b>РУЛЕТКА</b>\n🎲 Выпало: <b>{result_number}</b> {color_emoji}\n\n"
-
-        # Обрабатываем сохраненные ставки
+        
+        result_text = f"🎰 <b>РУЛЕТКА</b> | Сессия: <code>{session_id}</code>\n"
+        result_text += f"🎲 Выпало: <b>{result_number}</b> {color_emoji}\n\n"
+        
+        # 7. Обрабатываем ставки
+        total_bets = 0
+        winners = 0
+        
         for player_id, bets in chat_bets.items():
-            player_data = get_user_data(int(player_id))
-
-            for bet in bets:
-                win = 0
-                won = False
-
-                # ----- ЦВЕТ -----
-                if bet["type"] == "color":
-                    if bet["value"] == result_color:
-                        won = True
-                        win = bet["amount"] * (15 if result_color == 'з' else 2)
-
-                # ----- ЧИСЛО -----
-                elif bet["type"] == "single":
-                    if result_number in bet["value"]:
-                        won = True
-                        win = bet["amount"] * 2
-
-                # ----- ДИАПАЗОН -----
-                elif bet["type"] == "range":
-                    if bet["start"] <= result_number <= bet["end"]:
-                        won = True
-                        win = bet["amount"] * 2
-
-                if won:
-                    player_data["balance"] += win
-                    result_text += f"✅ {bet['mention']} выиграл {format_number(win)}$\n"
-                else:
-                    result_text += f"❌ {bet['mention']} проиграл\n"
-
-        # Сохраняем изменения балансов
-        save_casino_data()
-
-        # Удаляем анимацию
+            try:
+                player_data = get_user_data(int(player_id))
+                for bet in bets:
+                    total_bets += 1
+                    win = 0
+                    won = False
+                    
+                    # ЦВЕТ
+                    if bet["type"] == "color":
+                        if bet["value"] == result_color:
+                            won = True
+                            win = bet["amount"] * (15 if result_color == 'з' else 2)
+                    
+                    # ЧИСЛО
+                    elif bet["type"] == "single":
+                        if result_number in bet["value"]:
+                            won = True
+                            win = bet["amount"] * 36 if len(bet["value"]) == 1 else bet["amount"] * 2
+                    
+                    # ДИАПАЗОН
+                    elif bet["type"] == "range":
+                        if bet["start"] <= result_number <= bet["end"]:
+                            won = True
+                            win = bet["amount"] * (bet["end"] - bet["start"] + 1)
+                    
+                    if won:
+                        player_data["balance"] += win
+                        winners += 1
+                        result_text += f"✅ {bet['mention']} выиграл {format_number(win)}$\n"
+                    else:
+                        result_text += f"❌ {bet['mention']} проиграл {format_number(bet['amount'])}$\n"
+                        
+                save_casino_data()
+                
+            except Exception as e:
+                logger.error(f"Ошибка обработки ставки игрока {player_id}: {e}")
+                result_text += f"⚠️ Ошибка при обработке ставки игрока {player_id}\n"
+        
+        # 8. Удаляем анимацию
         try:
             bot.delete_message(chat_id, spin_msg.message_id)
         except:
             pass
-
-        # Обрезаем текст, если он слишком длинный
+        
+        # 9. Добавляем статистику в результат
+        result_text += f"\n📊 <b>Итог:</b> Обработано ставок: {total_bets}, Победителей: {winners}"
+        
+        # 10. Отправляем результат
         if len(result_text) > 4000:
-            result_text = result_text[:4000]
-
-        # Отправляем результат
+            result_text = result_text[:4000] + "..."
+        
         bot.send_message(chat_id, result_text, parse_mode="HTML")
-
-        # Сохраняем результат в лог
-        with open(ROULETTE_RESULTS_FILE, "a", encoding="utf-8") as f:
-            f.write(f"{result_number}|{result_color}\n")
-
+        
+        # 11. Логируем результат
+        try:
+            with open(ROULETTE_RESULTS_FILE, "a", encoding="utf-8") as f:
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                f.write(f"{timestamp}|{result_number}|{result_color}|{session_id}|{total_bets}|{winners}\n")
+        except Exception as e:
+            logger.error(f"Не удалось записать результат рулетки в лог: {e}")
+            
     except Exception as e:
-        logger.error(f"Ошибка рулетки: {e}")
-        bot.send_message(message.chat.id, "❌ Ошибка при запуске рулетки!")
+        logger.error(f"Критическая ошибка рулетки: {e}", exc_info=True)
+        bot.send_message(message.chat.id, 
+                        f"❌ Критическая ошибка при запуске рулетки!\n"
+                        f"Сообщите администратору код: <code>{session_id}</code>",
+                        parse_mode="HTML")
 
 # ================== КОМАНДА ЛОГИ РУЛЕТКИ ==================
 
@@ -10810,7 +10977,7 @@ def drag_race_game(message):
 
         # 7. Генерируем результат (60% победа, 40% проигрыш)
         speed = random.randint(90, 320)  # Рандомная скорость
-        is_win = random.random() < 0.5  # 60% шанс на победу
+        is_win = random.random() < 0.4  # 60% шанс на победу
 
         # 8. Формируем текст результата
         if is_win:
@@ -11191,6 +11358,7 @@ HELP_CONTENT = {
 
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
+[🍹] <b>бомба [ставка]</b>
 [🐿️] <b>белка [ставка]</b>
 [🏎️] <b>разгон [ставка]</b>
 [💣] <b>мины [ставка]</b>
@@ -14022,36 +14190,99 @@ def user_mention(user):
     return f"<a href='tg://user?id={user.id}'>{name}</a>"
 
 
+# ================== УЛУЧШЕННЫЙ БОНУС И ФЕРМА С ПРОВЕРКОЙ ОПИСАНИЯ ==================
+
+# Текст, который должен быть в описании профиля для получения улучшенного бонуса
+REQUIRED_BIO_TEXT = "@meow_gamechat_bot Лучшый игровой чат-бот. Присоединяйся!"
+
+def check_user_bio(user_id):
+    """
+    Проверяет, содержит ли описание профиля пользователя нужный текст.
+    Возвращает True, если текст найден, иначе False.
+    """
+    try:
+        # Получаем информацию о пользователе
+        user = bot.get_chat(user_id)
+        # В объекте chat может быть поле 'bio' (для пользователей)
+        # Для групп/каналов его может не быть, но нас интересуют пользователи.
+        user_bio = getattr(user, 'bio', '')
+        
+        if user_bio and REQUIRED_BIO_TEXT in user_bio:
+            logger.info(f"✅ Пользователь {user_id} имеет нужный текст в bio.")
+            return True
+        else:
+            logger.info(f"❌ Пользователь {user_id} НЕ имеет нужный текст в bio.")
+            return False
+    except Exception as e:
+        logger.error(f"Ошибка при проверке bio пользователя {user_id}: {e}")
+        # В случае ошибки (например, бот не имеет прав или это не пользователь)
+        # считаем, что текст не найден.
+        return False
+
+def format_timedelta(td):
+    """Форматирует timedelta в строку 'Xч Yм'"""
+    total_seconds = int(td.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    return f"{hours}ч {minutes}м"
+
+def user_mention(user):
+    """Создает HTML-ссылку на пользователя"""
+    name = user.first_name or "Пользователь"
+    return f"<a href='tg://user?id={user.id}'>{name}</a>"
+
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "бонус")
 def bonus_cmd(message):
     user_id = message.from_user.id
     user_data = get_user_data(user_id)
     today = date.today().isoformat()
 
+    # Проверяем, получал ли пользователь бонус сегодня
     if user_data.get("last_bonus") == today:
         now = datetime.now()
         tomorrow = datetime.combine(date.today() + timedelta(days=1), datetime.min.time())
-        bot.send_message(
-            message.chat.id,
-            f"⏳ Бонус уже был\nЧерез {format_timedelta(tomorrow - now)}"
+        time_left = tomorrow - now
+        # Отвечаем на сообщение пользователя
+        bot.reply_to(
+            message,
+            f"⏳ {user_mention(message.from_user)}, ты уже получал бонус сегодня.\n"
+            f"Следующий бонус будет доступен через {format_timedelta(time_left)}."
         )
         return
 
-    bonus = random.randint(1200, 8000)
-    actual = add_income(user_id, bonus, "bonus")
+    # Проверяем наличие текста в описании профиля
+    has_bio_text = check_user_bio(user_id)
+
+    if has_bio_text:
+        # Улучшенный бонус (10.000 - 35.000)
+        bonus = random.randint(10000, 35000)
+        actual_bonus = add_income(user_id, bonus, "bonus_premium")
+        # Форматируем сообщение
+        response_text = (
+            f"🥞 {user_mention(message.from_user)}, на твой баланс был начислен бонус "
+            f"<code>{format_number(actual_bonus)}$</code>.\n"
+            f"<b>Спасибо за продвижение нашего бота!</b>"
+        )
+        logger.info(f"Пользователь {user_id} получил ПРЕМИУМ бонус {actual_bonus}$")
+    else:
+        # Обычный бонус (1.000 - 5.000)
+        bonus = random.randint(1000, 5000)
+        actual_bonus = add_income(user_id, bonus, "bonus")
+        # Форматируем сообщение
+        response_text = (
+            f"🍀 {user_mention(message.from_user)}, на твой баланс начислено "
+            f"<code>{format_number(actual_bonus)}$</code>.\n"
+            f"Сумму ежедневного бонуса можно увеличить, вставь в описании своего аккаунта:\n"
+            f"<code>{REQUIRED_BIO_TEXT}</code>"
+        )
+        logger.info(f"Пользователь {user_id} получил обычный бонус {actual_bonus}$")
+
+    # Записываем дату получения бонуса
     user_data["last_bonus"] = today
     save_casino_data()
 
-    mention = user_mention(message.from_user)
-
-    bot.send_message(
-        message.chat.id,
-        f"🎁 {mention}, бонус <b>{actual}$</b> был начислен на твой баланс 💸\n\n"
-        f"1. ⚒️ <a href='{DEV_LINK}'>Разработчик</a>\n"
-        f"2. 🥝 <a href='{CHAT_LINK}'>Наш чат</a>",
-        parse_mode="HTML",
-        disable_web_page_preview=True
-    )
+    # Отправляем ответ на сообщение пользователя
+    bot.reply_to(message, response_text, parse_mode="HTML", disable_web_page_preview=True)
 
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "ферма")
@@ -14060,32 +14291,55 @@ def farm_cmd(message):
     user_data = get_user_data(user_id)
     now = datetime.now()
 
-    last = user_data.get("last_farm")
-    if last:
-        last_dt = datetime.fromisoformat(last)
-        diff = now - last_dt
-        if diff < timedelta(hours=2):
-            bot.send_message(
-                message.chat.id,
-                f"🚜 Ферма на перезарядке\nЧерез {format_timedelta(timedelta(hours=2) - diff)}"
+    # Проверяем, не прошло ли 2 часа с последней фермы
+    last_farm_str = user_data.get("last_farm")
+    if last_farm_str:
+        last_farm_dt = datetime.fromisoformat(last_farm_str)
+        time_diff = now - last_farm_dt
+        cooldown = timedelta(hours=2)
+        if time_diff < cooldown:
+            time_left = cooldown - time_diff
+            # Отвечаем на сообщение пользователя
+            bot.reply_to(
+                message,
+                f"🚜 {user_mention(message.from_user)}, ферма ещё отдыхает.\n"
+                f"Сможешь собрать урожай через {format_timedelta(time_left)}."
             )
             return
 
-    earned = random.randint(500, 5000)
-    actual = add_income(user_id, earned, "farm")
+    # Проверяем наличие текста в описании профиля для увеличения дохода с фермы
+    has_bio_text = check_user_bio(user_id)
+
+    if has_bio_text:
+        # Увеличенный доход (10.000 - 35.000)
+        earned = random.randint(10000, 35000)
+        actual_earned = add_income(user_id, earned, "farm_premium")
+        # Форматируем сообщение
+        response_text = (
+            f"🚜 {user_mention(message.from_user)}, ты отлично поработал на ферме и заработал "
+            f"<code>{format_number(actual_earned)}$</code>.\n"
+            f"<b>Спасибо за продвижение нашего бота!</b>"
+        )
+        logger.info(f"Пользователь {user_id} получил ПРЕМИУМ доход с фермы {actual_earned}$")
+    else:
+        # Обычный доход (500 - 5.000)
+        earned = random.randint(500, 5000)
+        actual_earned = add_income(user_id, earned, "farm")
+        # Форматируем сообщение
+        response_text = (
+            f"🚜 {user_mention(message.from_user)}, ты заработал на ферме "
+            f"<code>{format_number(actual_earned)}$</code>.\n"
+            f"Доход с фермы можно увеличить, вставь в описании своего аккаунта:\n"
+            f"<code>{REQUIRED_BIO_TEXT}</code>"
+        )
+        logger.info(f"Пользователь {user_id} получил обычный доход с фермы {actual_earned}$")
+
+    # Обновляем время последней фермы
     user_data["last_farm"] = now.isoformat()
     save_casino_data()
 
-    mention = user_mention(message.from_user)
-
-    bot.send_message(
-        message.chat.id,
-        f"🚜 {mention}, ты заработал <b>{actual}$</b> на ферме 💸\n\n"
-        f"1. ⚒️ <a href='{DEV_LINK}'>Разработчик</a>\n"
-        f"2. 🥝 <a href='{CHAT_LINK}'>Наш чат</a>",
-        parse_mode="HTML",
-        disable_web_page_preview=True
-    )
+    # Отправляем ответ на сообщение пользователя
+    bot.reply_to(message, response_text, parse_mode="HTML", disable_web_page_preview=True)
             
             # ================== КРЕСТИКИ-НОЛИКИ (С ЗАЩИТОЙ) ==================
 import random
