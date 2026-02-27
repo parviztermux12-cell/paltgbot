@@ -9457,7 +9457,7 @@ def generate_roulette_session_id():
     """Генерирует уникальный ID для сессии рулетки."""
     return str(uuid.uuid4())[:8]
 
-@bot.message_handler(func=lambda m: m.text and m.mtext.lower() == 'го')
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == 'го')
 def start_roulette(message):
     try:
         chat_id = str(message.chat.id)
