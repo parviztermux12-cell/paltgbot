@@ -9634,10 +9634,32 @@ def show_roulette_logs(message):
             log = log.strip()
             if "|" in log:
                 parts = log.split("|")
-                number = parts[0]
-                color = parts[1]
-                emoji = '🟢' if color == 'з' else ('🔴' if color == 'к' else '⚫')
-                text += f"{emoji} ({number})\n"
+                # ✅ Правильные индексы
+                if len(parts) >= 6:
+                    timestamp = parts[0]
+                    number = parts[1]
+                    color = parts[2]
+                    
+                    # Парсим дату для красивого отображения
+                    try:
+                        date_obj = datetime.strptime(timestamp.split()[0], "%Y-%m-%d")
+                        date_str = date_obj.strftime("%d.%m")
+                        time_str = timestamp.split()[1][:5] if ' ' in timestamp else ""
+                    except:
+                        date_str = timestamp[:10] if len(timestamp) >= 10 else timestamp
+                        time_str = ""
+                    
+                    if color == 'з':
+                        emoji = "🟢"
+                        color_text = "ЗЕЛЕНОЕ"
+                    elif color == 'к':
+                        emoji = "🔴"
+                        color_text = "КРАСНОЕ"
+                    else:  # 'ч'
+                        emoji = "⚫"
+                        color_text = "ЧЕРНОЕ"
+                    
+                    text += f"• {date_str} {time_str} | {emoji} <b>{number}</b> ({color_text})\n"
 
         bot.reply_to(message, text, parse_mode="HTML")
 
