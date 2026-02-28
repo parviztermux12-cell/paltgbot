@@ -1563,129 +1563,109 @@ def calculate_total_value(quantity):
 def send_pumpkin_to_chat(chat_id):
     """Отправляет сообщение о тыкве в конкретный чат"""
     try:
-        # Проверяем, нет ли уже активного события в этом чате
+        # Если уже есть активная тыква — удаляем старую
         if chat_id in active_pumpkin_events:
-            # Если есть, удаляем старое (чтобы не было дублей)
             try:
                 old_msg_id = active_pumpkin_events[chat_id].get("message_id")
                 if old_msg_id:
                     bot.delete_message(chat_id, old_msg_id)
             except:
                 pass
-            del active_pumpkin_events[chat_id]
-        
-        # Генерируем награду
+            active_pumpkin_events.pop(chat_id, None)
+
         reward = calculate_pumpkin_value()
-        
-        # Создаем клавиатуру с кнопкой (без event_id в callback)
+
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}"))
-        
-        # Отправляем сообщение
+        kb.add(InlineKeyboardButton("🎃 Сорвать тыкву", callback_data="harvest_pumpkin"))
+
         msg = bot.send_photo(
             chat_id,
             PUMPKIN_IMAGE_URL,
-            caption="🎃 Успейте сорвать тыкву пока не сорвал кто-то другой",
+            caption="🎃 Успей сорвать тыкву, пока её не забрал кто-то другой!",
             reply_markup=kb
         )
-        
-        # Сохраняем информацию о событии
+
         active_pumpkin_events[chat_id] = {
             "reward": reward,
             "active": True,
             "message_id": msg.message_id
         }
-        
+
         logger.info(f"🎃 Тыква отправлена в чат {chat_id} (награда: {reward}$)")
         return True
-        
+
     except Exception as e:
         logger.error(f"Ошибка отправки тыквы в чат {chat_id}: {e}")
-        if chat_id in active_pumpkin_events:
-            del active_pumpkin_events[chat_id]
+        active_pumpkin_events.pop(chat_id, None)
         return False
+
 
 # ---------- АВТОМАТИЧЕСКАЯ РАССЫЛКА ТЫКВ ----------
 def pumpkin_scheduler():
     """Автоматически отправляет тыквы в чаты с random интервалом"""
     while True:
         try:
-            # Ждем от 30 минут до 2 часов
-            delay = random.randint(1800, 7200)  # 30-120 минут в секундах
+            delay = random.randint(1800, 7200)
             time.sleep(delay)
-            
-            # Загружаем список чатов
+
             chats = load_pumpkin_chats()
             if not chats:
                 logger.info("🎃 Нет чатов для рассылки тыкв")
                 continue
-            
-            # Выбираем случайный чат
+
             chat_id = random.choice(chats)
-            
-            # Отправляем тыкву
             send_pumpkin_to_chat(chat_id)
-            
+
         except Exception as e:
             logger.error(f"Ошибка в планировщике тыкв: {e}")
             time.sleep(60)
 
+
 # ---------- ОБРАБОТЧИК КНОПКИ "СОРВАТЬ ТЫКВУ" ----------
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("harvest_pumpkin_"))
+@bot.callback_query_handler(func=lambda c: c.data == "harvest_pumpkin")
 def harvest_pumpkin_callback(call):
     try:
-        # Разбираем callback_data
-        parts = call.data.split("_")
-        if len(parts) < 4:
-            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-            return
-            
-        chat_id = int(parts[2])
-        
-        # Проверяем, активно ли событие
-        if chat_id not in active_pumpkin_events:
-            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
-            return
-        
-        event = active_pumpkin_events[chat_id]
-        
-        # Проверяем, не сорвана ли уже тыква
-        if not event["active"]:
-            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
-            return
-        
-        # Получаем информацию о пользователе
+        chat_id = call.message.chat.id
         user_id = call.from_user.id
         user_name = call.from_user.first_name
         mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
+
+        if chat_id not in active_pumpkin_events:
+            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
+            return
+
+        event = active_pumpkin_events[chat_id]
+
+        if not event["active"]:
+            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
+            return
+
         reward = event["reward"]
-        
-        # Помечаем событие как неактивное
-        active_pumpkin_events[chat_id]["active"] = False
-        
-        # Обновляем статистику пользователя
+
+        # Блокируем повторное нажатие
+        event["active"] = False
+
+        # Обновляем статистику
         update_pumpkin_stats(user_id, 1, reward)
-        
+
         # Удаляем сообщение с кнопкой
         try:
-            bot.delete_message(chat_id, call.message.message_id)
-        except Exception as e:
-            logger.error(f"Не удалось удалить сообщение с тыквой: {e}")
-        
-        # Отправляем новое сообщение с результатом
+            bot.delete_message(chat_id, event["message_id"])
+        except:
+            pass
+
+        # Полностью удаляем событие
+        active_pumpkin_events.pop(chat_id, None)
+
         result_text = (
-            f"{mention}, поздравляю ты первее всех в этом чате сорвал тыкву себе 🎃\n\n"
+            f"{mention}, поздравляю! Ты первым сорвал тыкву 🎃\n\n"
             f"💰 Награда: <code>{reward:,}$</code>\n\n"
-            f"📊 Узнать свою статистику можно введя команду <code>мои тыквы</code>"
+            f"📊 Посмотреть статистику: <code>мои тыквы</code>"
         )
-        
+
         bot.send_message(chat_id, result_text, parse_mode="HTML")
-        
-        # Удаляем событие из активных (опционально, можно оставить для истории)
-        # del active_pumpkin_events[chat_id]
-        
         bot.answer_callback_query(call.id, f"✅ +{reward:,}$")
-        
+
     except Exception as e:
         logger.error(f"Ошибка при срыве тыквы: {e}")
         try:
