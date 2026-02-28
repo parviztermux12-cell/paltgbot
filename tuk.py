@@ -1565,23 +1565,21 @@ def send_pumpkin_to_chat(chat_id):
     try:
         # Проверяем, нет ли уже активного события в этом чате
         if chat_id in active_pumpkin_events:
-            return False
+            # Если есть, удаляем старое (чтобы не было дублей)
+            try:
+                old_msg_id = active_pumpkin_events[chat_id].get("message_id")
+                if old_msg_id:
+                    bot.delete_message(chat_id, old_msg_id)
+            except:
+                pass
+            del active_pumpkin_events[chat_id]
         
-        # Генерируем уникальный ID для события
-        event_id = f"pumpkin_{chat_id}_{int(time.time())}"
+        # Генерируем награду
         reward = calculate_pumpkin_value()
         
-        # Сохраняем информацию о событии
-        active_pumpkin_events[chat_id] = {
-            "event_id": event_id,
-            "reward": reward,
-            "active": True,
-            "message_id": None
-        }
-        
-        # Создаем клавиатуру с кнопкой
+        # Создаем клавиатуру с кнопкой (без event_id в callback)
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}_{event_id}"))
+        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}"))
         
         # Отправляем сообщение
         msg = bot.send_photo(
@@ -1591,8 +1589,12 @@ def send_pumpkin_to_chat(chat_id):
             reply_markup=kb
         )
         
-        # Сохраняем ID сообщения
-        active_pumpkin_events[chat_id]["message_id"] = msg.message_id
+        # Сохраняем информацию о событии
+        active_pumpkin_events[chat_id] = {
+            "reward": reward,
+            "active": True,
+            "message_id": msg.message_id
+        }
         
         logger.info(f"🎃 Тыква отправлена в чат {chat_id} (награда: {reward}$)")
         return True
@@ -1639,7 +1641,6 @@ def harvest_pumpkin_callback(call):
             return
             
         chat_id = int(parts[2])
-        event_id = parts[3]
         
         # Проверяем, активно ли событие
         if chat_id not in active_pumpkin_events:
@@ -1647,18 +1648,20 @@ def harvest_pumpkin_callback(call):
             return
         
         event = active_pumpkin_events[chat_id]
-        if not event["active"] or event["event_id"] != event_id:
+        
+        # Проверяем, не сорвана ли уже тыква
+        if not event["active"]:
             bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
             return
-        
-        # Помечаем событие как неактивное
-        event["active"] = False
         
         # Получаем информацию о пользователе
         user_id = call.from_user.id
         user_name = call.from_user.first_name
         mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
         reward = event["reward"]
+        
+        # Помечаем событие как неактивное
+        active_pumpkin_events[chat_id]["active"] = False
         
         # Обновляем статистику пользователя
         update_pumpkin_stats(user_id, 1, reward)
@@ -1678,14 +1681,17 @@ def harvest_pumpkin_callback(call):
         
         bot.send_message(chat_id, result_text, parse_mode="HTML")
         
-        # Удаляем событие из активных
-        del active_pumpkin_events[chat_id]
+        # Удаляем событие из активных (опционально, можно оставить для истории)
+        # del active_pumpkin_events[chat_id]
         
         bot.answer_callback_query(call.id, f"✅ +{reward:,}$")
         
     except Exception as e:
         logger.error(f"Ошибка при срыве тыквы: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+        try:
+            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+        except:
+            pass
 
 # ---------- КОМАНДА "МОИ ТЫКВЫ" ----------
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
