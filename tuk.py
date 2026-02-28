@@ -1429,6 +1429,484 @@ def bomb_callback(call):
 
     bot.answer_callback_query(call.id)
     
+    # ================== 🎃 ИВЕНТ "ОХОТА НА ТЫКВУ" ==================
+import random
+import threading
+import time
+import sqlite3
+from datetime import datetime, timedelta
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Константы
+PUMPKIN_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=7e3e581c9abba980c9b1be8b413bc275_l-10022398-images-thumbs&n=33&w=720&h=720"
+PUMPKIN_DB = "tikvi.db"
+PUMPKIN_MIN_REWARD = 30000
+PUMPKIN_MAX_REWARD = 2000000
+
+# Глобальная переменная для активных событий в чатах
+active_pumpkin_events = {}
+
+# ---------- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ ----------
+def init_pumpkin_db():
+    """Создает таблицы для тыкв в tikvi.db"""
+    conn = sqlite3.connect(PUMPKIN_DB)
+    c = conn.cursor()
+    
+    # Таблица статистики пользователей (сколько тыкв собрал и заработал)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS pumpkin_stats (
+            user_id INTEGER PRIMARY KEY,
+            total_harvested INTEGER DEFAULT 0,
+            total_earned INTEGER DEFAULT 0
+        )
+    """)
+    
+    # Таблица чатов, где был бот (для автоматической рассылки)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS pumpkin_chats (
+            chat_id INTEGER PRIMARY KEY,
+            added_at TEXT
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+    logger.info("✅ База данных tikvi.db для ивента 'Охота на тыкву' инициализирована")
+
+init_pumpkin_db()
+
+# ---------- РАБОТА С ЧАТАМИ ДЛЯ РАССЫЛКИ ----------
+def load_pumpkin_chats():
+    """Загружает список чатов для рассылки тыкв"""
+    try:
+        conn = sqlite3.connect(PUMPKIN_DB)
+        c = conn.cursor()
+        c.execute("SELECT chat_id FROM pumpkin_chats")
+        rows = c.fetchall()
+        conn.close()
+        return [row[0] for row in rows]
+    except Exception as e:
+        logger.error(f"Ошибка загрузки чатов для тыкв: {e}")
+        return []
+
+def add_pumpkin_chat(chat_id):
+    """Добавляет чат в список для рассылки"""
+    try:
+        conn = sqlite3.connect(PUMPKIN_DB)
+        c = conn.cursor()
+        c.execute(
+            "INSERT OR IGNORE INTO pumpkin_chats (chat_id, added_at) VALUES (?, ?)",
+            (chat_id, datetime.now().isoformat())
+        )
+        conn.commit()
+        conn.close()
+        logger.info(f"✅ Чат {chat_id} добавлен в рассылку тыкв")
+        return True
+    except Exception as e:
+        logger.error(f"Ошибка добавления чата {chat_id} в рассылку тыкв: {e}")
+        return False
+
+# ---------- РАБОТА СО СТАТИСТИКОЙ ПОЛЬЗОВАТЕЛЯ ----------
+def get_pumpkin_stats(user_id):
+    """Получает статистику тыкв пользователя"""
+    conn = sqlite3.connect(PUMPKIN_DB)
+    c = conn.cursor()
+    c.execute("SELECT total_harvested, total_earned FROM pumpkin_stats WHERE user_id = ?", (user_id,))
+    row = c.fetchone()
+    conn.close()
+    
+    if row:
+        return {
+            "total_harvested": row[0],
+            "total_earned": row[1]
+        }
+    else:
+        return {
+            "total_harvested": 0,
+            "total_earned": 0
+        }
+
+def update_pumpkin_stats(user_id, harvested_count=0, earned_amount=0):
+    """Обновляет статистику тыкв пользователя"""
+    conn = sqlite3.connect(PUMPKIN_DB)
+    c = conn.cursor()
+    
+    # Проверяем, есть ли уже запись
+    c.execute("SELECT 1 FROM pumpkin_stats WHERE user_id = ?", (user_id,))
+    exists = c.fetchone()
+    
+    if exists:
+        c.execute("""
+            UPDATE pumpkin_stats 
+            SET total_harvested = total_harvested + ?, 
+                total_earned = total_earned + ? 
+            WHERE user_id = ?
+        """, (harvested_count, earned_amount, user_id))
+    else:
+        c.execute("""
+            INSERT INTO pumpkin_stats (user_id, total_harvested, total_earned) 
+            VALUES (?, ?, ?)
+        """, (user_id, harvested_count, earned_amount))
+    
+    conn.commit()
+    conn.close()
+
+def calculate_pumpkin_value():
+    """Генерирует случайную стоимость тыквы"""
+    return random.randint(PUMPKIN_MIN_REWARD, PUMPKIN_MAX_REWARD)
+
+def calculate_total_value(quantity):
+    """Рассчитывает общую стоимость тыкв"""
+    return quantity * calculate_pumpkin_value() // 2  # Примерная средняя стоимость
+
+# ---------- ФУНКЦИЯ ДЛЯ ОТПРАВКИ ТЫКВЫ В ЧАТ ----------
+def send_pumpkin_to_chat(chat_id):
+    """Отправляет сообщение о тыкве в конкретный чат"""
+    try:
+        # Проверяем, нет ли уже активного события в этом чате
+        if chat_id in active_pumpkin_events:
+            return False
+        
+        # Генерируем уникальный ID для события
+        event_id = f"pumpkin_{chat_id}_{int(time.time())}"
+        reward = calculate_pumpkin_value()
+        
+        # Сохраняем информацию о событии
+        active_pumpkin_events[chat_id] = {
+            "event_id": event_id,
+            "reward": reward,
+            "active": True,
+            "message_id": None
+        }
+        
+        # Создаем клавиатуру с кнопкой
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}_{event_id}"))
+        
+        # Отправляем сообщение
+        msg = bot.send_photo(
+            chat_id,
+            PUMPKIN_IMAGE_URL,
+            caption="🎃 Успейте сорвать тыкву пока не сорвал кто-то другой",
+            reply_markup=kb
+        )
+        
+        # Сохраняем ID сообщения
+        active_pumpkin_events[chat_id]["message_id"] = msg.message_id
+        
+        logger.info(f"🎃 Тыква отправлена в чат {chat_id} (награда: {reward}$)")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Ошибка отправки тыквы в чат {chat_id}: {e}")
+        if chat_id in active_pumpkin_events:
+            del active_pumpkin_events[chat_id]
+        return False
+
+# ---------- АВТОМАТИЧЕСКАЯ РАССЫЛКА ТЫКВ ----------
+def pumpkin_scheduler():
+    """Автоматически отправляет тыквы в чаты с random интервалом"""
+    while True:
+        try:
+            # Ждем от 30 минут до 2 часов
+            delay = random.randint(1800, 7200)  # 30-120 минут в секундах
+            time.sleep(delay)
+            
+            # Загружаем список чатов
+            chats = load_pumpkin_chats()
+            if not chats:
+                logger.info("🎃 Нет чатов для рассылки тыкв")
+                continue
+            
+            # Выбираем случайный чат
+            chat_id = random.choice(chats)
+            
+            # Отправляем тыкву
+            send_pumpkin_to_chat(chat_id)
+            
+        except Exception as e:
+            logger.error(f"Ошибка в планировщике тыкв: {e}")
+            time.sleep(60)
+
+# ---------- ОБРАБОТЧИК КНОПКИ "СОРВАТЬ ТЫКВУ" ----------
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("harvest_pumpkin_"))
+def harvest_pumpkin_callback(call):
+    try:
+        # Разбираем callback_data
+        parts = call.data.split("_")
+        if len(parts) < 4:
+            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+            return
+            
+        chat_id = int(parts[2])
+        event_id = parts[3]
+        
+        # Проверяем, активно ли событие
+        if chat_id not in active_pumpkin_events:
+            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
+            return
+        
+        event = active_pumpkin_events[chat_id]
+        if not event["active"] or event["event_id"] != event_id:
+            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
+            return
+        
+        # Помечаем событие как неактивное
+        event["active"] = False
+        
+        # Получаем информацию о пользователе
+        user_id = call.from_user.id
+        user_name = call.from_user.first_name
+        mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
+        reward = event["reward"]
+        
+        # Обновляем статистику пользователя
+        update_pumpkin_stats(user_id, 1, reward)
+        
+        # Удаляем сообщение с кнопкой
+        try:
+            bot.delete_message(chat_id, call.message.message_id)
+        except Exception as e:
+            logger.error(f"Не удалось удалить сообщение с тыквой: {e}")
+        
+        # Отправляем новое сообщение с результатом
+        result_text = (
+            f"{mention}, поздравляю ты первее всех в этом чате сорвал тыкву себе 🎃\n\n"
+            f"💰 Награда: <code>{reward:,}$</code>\n\n"
+            f"📊 Узнать свою статистику можно введя команду <code>мои тыквы</code>"
+        )
+        
+        bot.send_message(chat_id, result_text, parse_mode="HTML")
+        
+        # Удаляем событие из активных
+        del active_pumpkin_events[chat_id]
+        
+        bot.answer_callback_query(call.id, f"✅ +{reward:,}$")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при срыве тыквы: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ---------- КОМАНДА "МОИ ТЫКВЫ" ----------
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
+def my_pumpkins_command(message):
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+    mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
+    
+    # Получаем статистику
+    stats = get_pumpkin_stats(user_id)
+    
+    # Рассчитываем примерную стоимость при продаже
+    avg_value = (PUMPKIN_MIN_REWARD + PUMPKIN_MAX_REWARD) // 2
+    sell_value = stats["total_harvested"] * avg_value
+    
+    text = (
+        f"🎃 Твоя статистика в сборе тыкв:\n\n"
+        f"🍹 Сорвано всего: <code>{stats['total_harvested']}</code>\n"
+        f"🍀 После продажи можно получить: <code>{sell_value:,}$</code>"
+    )
+    
+    # Создаем клавиатуру с кнопкой продажи
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton("Продать тыквы", callback_data=f"sell_pumpkins_{user_id}"))
+    
+    bot.reply_to(message, text, parse_mode="HTML", reply_markup=kb)
+
+# ---------- ПРОДАЖА ТЫКВ (ПОДТВЕРЖДЕНИЕ) ----------
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("sell_pumpkins_"))
+def sell_pumpkins_confirm(call):
+    try:
+        owner_id = int(call.data.split("_")[2])
+        
+        # Проверка владельца
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Получаем статистику
+        stats = get_pumpkin_stats(owner_id)
+        
+        if stats["total_harvested"] == 0:
+            bot.answer_callback_query(call.id, "❌ У тебя нет тыкв для продажи!", show_alert=True)
+            return
+        
+        # Рассчитываем стоимость (случайная цена за каждую тыкву)
+        total_value = 0
+        for _ in range(stats["total_harvested"]):
+            total_value += calculate_pumpkin_value()
+        
+        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
+        
+        text = (
+            f"{mention}, вы точно хотите продать все свои тыквы за <code>{total_value:,}$</code>?"
+        )
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("Да", callback_data=f"confirm_sell_pumpkins_{owner_id}_{total_value}"),
+            InlineKeyboardButton("Нет", callback_data=f"cancel_sell_pumpkins_{owner_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка при подтверждении продажи тыкв: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ---------- ПОДТВЕРЖДЕНИЕ ПРОДАЖИ ----------
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("confirm_sell_pumpkins_"))
+def confirm_sell_pumpkins(call):
+    try:
+        parts = call.data.split("_")
+        owner_id = int(parts[3])
+        total_value = int(parts[4])
+        
+        # Проверка владельца
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Получаем статистику
+        stats = get_pumpkin_stats(owner_id)
+        
+        if stats["total_harvested"] == 0:
+            bot.answer_callback_query(call.id, "❌ У тебя нет тыкв для продажи!", show_alert=True)
+            return
+        
+        # Начисляем деньги на баланс
+        user_data = get_user_data(owner_id)
+        user_data["balance"] += total_value
+        save_casino_data()
+        
+        # Обновляем статистику (обнуляем тыквы, но сохраняем заработанное)
+        conn = sqlite3.connect(PUMPKIN_DB)
+        c = conn.cursor()
+        c.execute("UPDATE pumpkin_stats SET total_harvested = 0 WHERE user_id = ?", (owner_id,))
+        conn.commit()
+        conn.close()
+        
+        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
+        
+        text = (
+            f"{mention}, вы успешно продали все тыквы за <code>{total_value:,}$</code>.\n"
+            f"Деньги зачислены на баланс 💰"
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML"
+        )
+        
+        bot.answer_callback_query(call.id, f"✅ +{total_value:,}$")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при продаже тыкв: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ---------- ОТМЕНА ПРОДАЖИ ----------
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("cancel_sell_pumpkins_"))
+def cancel_sell_pumpkins(call):
+    try:
+        owner_id = int(call.data.split("_")[3])
+        
+        # Проверка владельца
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Возвращаемся к статистике
+        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
+        stats = get_pumpkin_stats(owner_id)
+        
+        avg_value = (PUMPKIN_MIN_REWARD + PUMPKIN_MAX_REWARD) // 2
+        sell_value = stats["total_harvested"] * avg_value
+        
+        text = (
+            f"🎃 Твоя статистика в сборе тыкв:\n\n"
+            f"🍹 Сорвано всего: <code>{stats['total_harvested']}</code>\n"
+            f"🍀 После продажи можно получить: <code>{sell_value:,}$</code>"
+        )
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("Продать тыквы", callback_data=f"sell_pumpkins_{owner_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id, "❌ Продажа отменена")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при отмене продажи тыкв: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ---------- АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ ЧАТОВ ----------
+# Перехватываем команду "мои тыквы" для автоматического добавления чата
+original_my_pumpkins = my_pumpkins_command
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
+def enhanced_my_pumpkins(message):
+    # Добавляем чат в рассылку
+    add_pumpkin_chat(message.chat.id)
+    # Вызываем оригинальную функцию
+    original_my_pumpkins(message)
+
+# ---------- АДМИН КОМАНДА "КИНУТЬ ТЫКВУ" ----------
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "кинуть тыкву")
+def admin_throw_pumpkin(message):
+    user_id = message.from_user.id
+    
+    # Проверка на админа
+    if user_id not in ADMIN_IDS:
+        # Игнорируем, ничего не отвечаем
+        return
+    
+    # ID чата, куда нужно кинуть тыкву
+    target_chat_id = -1003279681531
+    
+    # Отправляем тыкву в указанный чат
+    if send_pumpkin_to_chat(target_chat_id):
+        bot.reply_to(
+            message,
+            f"✅ Тыква отправлена в чат <code>{target_chat_id}</code>",
+            parse_mode="HTML"
+        )
+        logger.info(f"Админ {user_id} отправил тыкву в чат {target_chat_id}")
+    else:
+        bot.reply_to(
+            message,
+            f"❌ Не удалось отправить тыкву в чат <code>{target_chat_id}</code>\n"
+            f"Возможно, бот не состоит в этом чате или нет прав.",
+            parse_mode="HTML"
+        )
+
+# ---------- ЗАПУСК ПЛАНИРОВЩИКА ----------
+def start_pumpkin_scheduler():
+    """Запускает планировщик рассылки тыкв"""
+    scheduler_thread = threading.Thread(target=pumpkin_scheduler, daemon=True)
+    scheduler_thread.start()
+    logger.info("🎃 Планировщик рассылки тыкв запущен")
+
+# Запускаем планировщик
+start_pumpkin_scheduler()
+
+print("✅ Ивент 'Охота на тыкву' успешно добавлен! (База данных: tikvi.db)")
+print(f"   • Награда: от {PUMPKIN_MIN_REWARD:,}$ до {PUMPKIN_MAX_REWARD:,}$")
+print("   • Команды: 'мои тыквы', 'кинуть тыкву' (админ)")
+    
 # ================== 🎁 НОВАЯ СИСТЕМА ПОКУПКИ ПОДАРКОВ (ТОЛЬКО СЕБЕ) ==================
 # ID подарков (Telegram Premium Gifts) и их настройки
 GIFTS_DATA = {
@@ -11496,6 +11974,9 @@ HELP_CONTENT = {
 [🎣] <b>рыбачить</b> — Начать рыбалку
 [🐟] <b>моя рыбалка</b> — Статистика рыбалок
 
+<b>🍹 ОХОТА НА ТЫКВ:</b>
+[🎃] <b>мои тыквы</b> — меню продажи и информации
+
 """,
 
     # ----- ДОНАТ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
@@ -16699,9 +17180,9 @@ def my_house(message):
         if not user_data.get("house"):
             bot.send_message(
                 message.chat.id,
-                f"{user_mention}, у вас нет дома!\n\n"
-                f"<b>Магазин домов:</b> <code>магазин домов</code>\n"
-                f"<b>Купить дом:</b> <code>купить дом [название]</code>",
+                f"🏠 {user_mention}, у вас нет дома!\n\n"
+                f"🛒 <b>Магазин домов:</b> <code>магазин домов</code>\n"
+                f"💳 <b>Купить дом:</b> <code>купить дом [название]</code>",
                 parse_mode="HTML"
             )
             return
@@ -16719,24 +17200,24 @@ def my_house(message):
         house["profit_accumulated"] = accumulated
 
         house_text = (
-            f"<b>Ваш дом</b> | {user_mention}\n\n"
-            f"<b>«{house['name'].capitalize()}»</b>\n\n"
-            f"<b>Финансы:</b>\n"
-            f"Прибыль/час: {format_number(house_info['profit_per_hour'])}$\n"
-            f"Накоплено: {format_number(accumulated)}$\n"
-            f"Прошло часов: {hours_passed:.1f}\n"
-            f"Содержание: {format_number(house_info['upkeep_cost'])}$/день\n\n"
-            f"<i>Доход накапливается автоматически</i>"
+            f"🏡 <b>Твой дом</b> | {user_mention}\n\n"
+            f"✨ <b>«{house['name'].capitalize()}»</b>\n\n"
+            f"💰 <b>Финансы:</b>\n"
+            f"├ 💵 Прибыль/час: <code>{format_number(house_info['profit_per_hour'])}$</code>\n"
+            f"├ 💎 Накоплено: <code>{format_number(accumulated)}$</code>\n"
+            f"├ ⏱ Прошло часов: <code>{hours_passed:.1f}</code>\n"
+            f"└ 🛠 Содержание: <code>{format_number(house_info['upkeep_cost'])}$</code>/день\n\n"
+            f"💫 <i>Доход накапливается автоматически</i>"
         )
 
-        # Клавиатура
+        # Клавиатура с эмодзи
         markup = InlineKeyboardMarkup()
         markup.row(
-            InlineKeyboardButton("Собрать аренду", callback_data=f"house_collect_{user_id}"),
-            InlineKeyboardButton("Оплатить", callback_data=f"house_upkeep_{user_id}")
+            InlineKeyboardButton("💰 Собрать аренду", callback_data=f"house_collect_{user_id}"),
+            InlineKeyboardButton("🔧 Оплатить", callback_data=f"house_upkeep_{user_id}")
         )
         markup.row(
-            InlineKeyboardButton("В магазин", callback_data=f"house_shop_{user_id}")
+            InlineKeyboardButton("🛒 В магазин", callback_data=f"house_shop_{user_id}")
         )
 
         # Отправляем сообщение
@@ -16773,7 +17254,7 @@ def my_house(message):
         logger.error(f"Ошибка отображения дома: {e}")
         bot.send_message(
             message.chat.id,
-            "Произошла ошибка при загрузке информации о доме!"
+            "❌ Произошла ошибка при загрузке информации о доме!"
         )
 
 @bot.callback_query_handler(func=lambda c: c.data.startswith("house_collect_"))
@@ -16790,7 +17271,7 @@ def house_collect_callback(call):
         user_mention = get_user_mention(call.from_user)
 
         if not user_data.get("house"):
-            bot.answer_callback_query(call.id, "У вас нет дома!", show_alert=True)
+            bot.answer_callback_query(call.id, "❌ У вас нет дома!", show_alert=True)
             return
 
         update_house_stats(user_data)
@@ -16800,7 +17281,7 @@ def house_collect_callback(call):
         house["profit_accumulated"] = accumulated
 
         if accumulated <= 0:
-            bot.answer_callback_query(call.id, "Нет накопленной аренды!", show_alert=True)
+            bot.answer_callback_query(call.id, "❌ Нет накопленной аренды!", show_alert=True)
             return
 
         # Начисляем аренду
@@ -16812,21 +17293,21 @@ def house_collect_callback(call):
         # Обновляем сообщение
         house_info = HOUSE_DATA[house["name"]]
         new_text = (
-            f"<b>Ваш дом</b> | {user_mention}\n\n"
-            f"<b>«{house['name'].capitalize()}»</b>\n\n"
-            f"<b>Аренда собрана!</b>\n"
-            f"Получено: {format_number(accumulated)}$\n"
-            f"Баланс: {format_number(user_data['balance'])}$\n\n"
-            f"Прибыль/час: {format_number(house_info['profit_per_hour'])}$"
+            f"🏡 <b>Твой дом</b> | {user_mention}\n\n"
+            f"✨ <b>«{house['name'].capitalize()}»</b>\n\n"
+            f"✅ <b>Аренда собрана!</b>\n"
+            f"├ 💰 Получено: <code>{format_number(accumulated)}$</code>\n"
+            f"└ 💳 Баланс: <code>{format_number(user_data['balance'])}$</code>\n\n"
+            f"📈 Прибыль/час: <code>{format_number(house_info['profit_per_hour'])}$</code>"
         )
 
         markup = InlineKeyboardMarkup()
         markup.row(
-            InlineKeyboardButton("Собрать аренду", callback_data=f"house_collect_{user_id}"),
-            InlineKeyboardButton("Оплатить содержание", callback_data=f"house_upkeep_{user_id}")
+            InlineKeyboardButton("💰 Собрать аренду", callback_data=f"house_collect_{user_id}"),
+            InlineKeyboardButton("🔧 Оплатить", callback_data=f"house_upkeep_{user_id}")
         )
         markup.row(
-            InlineKeyboardButton("В магазин", callback_data=f"house_shop_{user_id}")
+            InlineKeyboardButton("🛒 В магазин", callback_data=f"house_shop_{user_id}")
         )
 
         try:
@@ -16848,7 +17329,7 @@ def house_collect_callback(call):
 
         bot.answer_callback_query(
             call.id,
-            f"Получено {format_number(accumulated)}$"
+            f"✅ Получено {format_number(accumulated)}$"
         )
         logger.info(
             f"Пользователь {call.from_user.username} собрал аренду: {accumulated}$"
@@ -16858,7 +17339,7 @@ def house_collect_callback(call):
         logger.error(f"Ошибка сбора аренды: {e}")
         bot.answer_callback_query(
             call.id,
-            "Ошибка при сборе аренды!",
+            "❌ Ошибка при сборе аренды!",
             show_alert=True
         )
 
