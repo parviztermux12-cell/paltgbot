@@ -1563,115 +1563,129 @@ def calculate_total_value(quantity):
 def send_pumpkin_to_chat(chat_id):
     """Отправляет сообщение о тыкве в конкретный чат"""
     try:
-        # Если уже есть активная тыква — удаляем старую
+        # Проверяем, нет ли уже активного события в этом чате
         if chat_id in active_pumpkin_events:
-            try:
-                old_msg_id = active_pumpkin_events[chat_id].get("message_id")
-                if old_msg_id:
-                    bot.delete_message(chat_id, old_msg_id)
-            except:
-                pass
-            active_pumpkin_events.pop(chat_id, None)
-
+            return False
+        
+        # Генерируем уникальный ID для события
+        event_id = f"pumpkin_{chat_id}_{int(time.time())}"
         reward = calculate_pumpkin_value()
-
+        
+        # Сохраняем информацию о событии
+        active_pumpkin_events[chat_id] = {
+            "event_id": event_id,
+            "reward": reward,
+            "active": True,
+            "message_id": None
+        }
+        
+        # Создаем клавиатуру с кнопкой
         kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("🎃 Сорвать тыкву", callback_data="harvest_pumpkin"))
-
+        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}_{event_id}"))
+        
+        # Отправляем сообщение
         msg = bot.send_photo(
             chat_id,
             PUMPKIN_IMAGE_URL,
-            caption="🎃 Успей сорвать тыкву, пока её не забрал кто-то другой!",
+            caption="🎃 Успейте сорвать тыкву пока не сорвал кто-то другой",
             reply_markup=kb
         )
-
-        active_pumpkin_events[chat_id] = {
-            "reward": reward,
-            "active": True,
-            "message_id": msg.message_id
-        }
-
+        
+        # Сохраняем ID сообщения
+        active_pumpkin_events[chat_id]["message_id"] = msg.message_id
+        
         logger.info(f"🎃 Тыква отправлена в чат {chat_id} (награда: {reward}$)")
         return True
-
+        
     except Exception as e:
         logger.error(f"Ошибка отправки тыквы в чат {chat_id}: {e}")
-        active_pumpkin_events.pop(chat_id, None)
+        if chat_id in active_pumpkin_events:
+            del active_pumpkin_events[chat_id]
         return False
-
 
 # ---------- АВТОМАТИЧЕСКАЯ РАССЫЛКА ТЫКВ ----------
 def pumpkin_scheduler():
     """Автоматически отправляет тыквы в чаты с random интервалом"""
     while True:
         try:
-            delay = random.randint(1800, 7200)
+            # Ждем от 30 минут до 2 часов
+            delay = random.randint(1800, 7200)  # 30-120 минут в секундах
             time.sleep(delay)
-
+            
+            # Загружаем список чатов
             chats = load_pumpkin_chats()
             if not chats:
                 logger.info("🎃 Нет чатов для рассылки тыкв")
                 continue
-
+            
+            # Выбираем случайный чат
             chat_id = random.choice(chats)
+            
+            # Отправляем тыкву
             send_pumpkin_to_chat(chat_id)
-
+            
         except Exception as e:
             logger.error(f"Ошибка в планировщике тыкв: {e}")
             time.sleep(60)
 
-
 # ---------- ОБРАБОТЧИК КНОПКИ "СОРВАТЬ ТЫКВУ" ----------
-@bot.callback_query_handler(func=lambda c: c.data == "harvest_pumpkin")
+@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("harvest_pumpkin_"))
 def harvest_pumpkin_callback(call):
     try:
-        chat_id = call.message.chat.id
-        user_id = call.from_user.id
-        user_name = call.from_user.first_name
-        mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
-
+        # Разбираем callback_data
+        parts = call.data.split("_")
+        if len(parts) < 4:
+            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+            return
+            
+        chat_id = int(parts[2])
+        event_id = parts[3]
+        
+        # Проверяем, активно ли событие
         if chat_id not in active_pumpkin_events:
             bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
             return
-
+        
         event = active_pumpkin_events[chat_id]
-
-        if not event["active"]:
+        if not event["active"] or event["event_id"] != event_id:
             bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
             return
-
-        reward = event["reward"]
-
-        # Блокируем повторное нажатие
+        
+        # Помечаем событие как неактивное
         event["active"] = False
-
-        # Обновляем статистику
+        
+        # Получаем информацию о пользователе
+        user_id = call.from_user.id
+        user_name = call.from_user.first_name
+        mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
+        reward = event["reward"]
+        
+        # Обновляем статистику пользователя
         update_pumpkin_stats(user_id, 1, reward)
-
+        
         # Удаляем сообщение с кнопкой
         try:
-            bot.delete_message(chat_id, event["message_id"])
-        except:
-            pass
-
-        # Полностью удаляем событие
-        active_pumpkin_events.pop(chat_id, None)
-
+            bot.delete_message(chat_id, call.message.message_id)
+        except Exception as e:
+            logger.error(f"Не удалось удалить сообщение с тыквой: {e}")
+        
+        # Отправляем новое сообщение с результатом
         result_text = (
-            f"{mention}, поздравляю! Ты первым сорвал тыкву 🎃\n\n"
+            f"{mention}, поздравляю ты первее всех в этом чате сорвал тыкву себе 🎃\n\n"
             f"💰 Награда: <code>{reward:,}$</code>\n\n"
-            f"📊 Посмотреть статистику: <code>мои тыквы</code>"
+            f"📊 Узнать свою статистику можно введя команду <code>мои тыквы</code>"
         )
-
+        
         bot.send_message(chat_id, result_text, parse_mode="HTML")
+        
+        # Удаляем событие из активных
+        del active_pumpkin_events[chat_id]
+        
         bot.answer_callback_query(call.id, f"✅ +{reward:,}$")
-
+        
     except Exception as e:
         logger.error(f"Ошибка при срыве тыквы: {e}")
-        try:
-            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-        except:
-            pass
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
 
 # ---------- КОМАНДА "МОИ ТЫКВЫ" ----------
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
@@ -6309,8 +6323,13 @@ def broadcast_remove_chat(call):
     chats = load_broadcast_chats()
     if not chats:
         bot.send_message(call.message.chat.id, "❌ Список чатов пуст!")
-        fake = _make_fake_message_from_call(call)
-        broadcast_panel(fake)
+        # Создаем фейковое сообщение для возврата в панель
+        class FakeMessage:
+            def __init__(self, chat, from_user):
+                self.chat = chat
+                self.from_user = from_user
+        fake_msg = FakeMessage(call.message.chat, call.from_user)
+        broadcast_panel(fake_msg)
         return
 
     text = "🗑 <b>Удаление чата из рассылки</b>\n\nВыбери ID чата для удаления:\n\n"
@@ -6326,30 +6345,52 @@ def broadcast_remove_chat(call):
     msg = bot.send_message(call.message.chat.id, text, parse_mode="HTML")
     bot.register_next_step_handler(msg, process_broadcast_remove_chat)
 
+
 def process_broadcast_remove_chat(message):
     if message.from_user.id not in ADMIN_IDS:
         return
     if not message.text:
         bot.send_message(message.chat.id, "❌ Нужно отправить ID чата!")
-        broadcast_panel(message)
+        # Создаем фейковое сообщение для возврата в панель
+        class FakeMessage:
+            def __init__(self, chat, from_user):
+                self.chat = chat
+                self.from_user = from_user
+        fake_msg = FakeMessage(message.chat, message.from_user)
+        broadcast_panel(fake_msg)
         return
+    
     try:
         chat_id = int(message.text.strip())
         chats = load_broadcast_chats()
         if chat_id not in chats:
             bot.send_message(message.chat.id, f"❌ Чат <code>{chat_id}</code> не найден!", parse_mode="HTML")
-            broadcast_panel(message)
+            class FakeMessage:
+                def __init__(self, chat, from_user):
+                    self.chat = chat
+                    self.from_user = from_user
+            fake_msg = FakeMessage(message.chat, message.from_user)
+            broadcast_panel(fake_msg)
             return
+        
         chats.remove(chat_id)
         if save_broadcast_chats(chats):
             bot.send_message(message.chat.id, f"✅ Чат <code>{chat_id}</code> удалён из рассылки!", parse_mode="HTML")
         else:
             bot.send_message(message.chat.id, "❌ Ошибка сохранения в файл!")
+            
     except ValueError:
         bot.send_message(message.chat.id, "❌ Неверный формат ID! Отправь только цифры.")
     except Exception as e:
         bot.send_message(message.chat.id, f"❌ Ошибка: {e}")
-    broadcast_panel(message)
+    
+    # Возвращаемся в панель рассылки
+    class FakeMessage:
+        def __init__(self, chat, from_user):
+            self.chat = chat
+            self.from_user = from_user
+    fake_msg = FakeMessage(message.chat, message.from_user)
+    broadcast_panel(fake_msg)
 
 @bot.callback_query_handler(func=lambda c: c.data == "broadcast_list_chats")
 def broadcast_list_chats(call):
@@ -6385,25 +6426,53 @@ def broadcast_list_chats(call):
         bot.send_message(call.message.chat.id, text, reply_markup=kb, parse_mode="HTML")
 
 def _store_broadcast_content_from_message(msg):
+    """Сохраняет контент с правильным разделением entities"""
+    
     if msg.text:
-        return {"type":"text","text":msg.text}
+        return {
+            "type": "text",
+            "text": msg.text,
+            "entities": msg.entities  # Только для текста
+        }
+    
     if getattr(msg, "photo", None):
-        return {"type":"photo","file_id":msg.photo[-1].file_id,"caption":(msg.caption or "")}
+        return {
+            "type": "photo",
+            "file_id": msg.photo[-1].file_id,
+            "caption": msg.caption or "",
+            "caption_entities": msg.caption_entities  # Только для подписи
+        }
+    
     if getattr(msg, "video", None):
-        return {"type":"video","file_id":msg.video.file_id,"caption":(msg.caption or "")}
+        return {
+            "type": "video",
+            "file_id": msg.video.file_id,
+            "caption": msg.caption or "",
+            "caption_entities": msg.caption_entities  # Только для подписи
+        }
+    
     if getattr(msg, "animation", None):
-        return {"type":"animation","file_id":msg.animation.file_id,"caption":(msg.caption or "")}
-    return {"type":"unknown"}
+        return {
+            "type": "animation",
+            "file_id": msg.animation.file_id,
+            "caption": msg.caption or "",
+            "caption_entities": msg.caption_entities  # Только для подписи
+        }
+    
+    return {"type": "unknown"}
+
 
 @bot.callback_query_handler(func=lambda c: c.data == "broadcast_send")
 def broadcast_send(call):
     if call.from_user.id not in ADMIN_IDS:
         bot.answer_callback_query(call.id, "❌ Нет доступа.")
         return
+    
     chats = load_broadcast_chats()
     if not chats:
         bot.answer_callback_query(call.id, "❌ Список чатов пуст!")
         return
+    
     active_chats = 0
     for chat_id in chats:
         try:
@@ -6411,38 +6480,42 @@ def broadcast_send(call):
             active_chats += 1
         except:
             pass
+    
     if active_chats == 0:
         bot.answer_callback_query(call.id, "❌ Нет доступных чатов!")
         return
+    
     try:
         bot.delete_message(call.message.chat.id, call.message.message_id)
     except:
         pass
-    msg = bot.send_message(call.message.chat.id,
-                           f"📢 <b>Создание рассылки</b>\n\nБудет отправлено в: <b>{active_chats}</b> чатов\n\n"
-                           f"Отправь сообщение для рассылки (текст / фото / видео / гиф / с подписью):",
-                           parse_mode="HTML")
+    
+    msg = bot.send_message(
+        call.message.chat.id,
+        f"📢 <b>Создание рассылки</b>\n\nБудет отправлено в: <b>{active_chats}</b> чатов\n\n"
+        f"Отправь сообщение для рассылки (текст / фото / видео / гиф / с подписью):",
+        parse_mode="HTML"
+    )
     bot.register_next_step_handler(msg, process_broadcast_send)
+
 
 def process_broadcast_send(message):
     if message.from_user.id not in ADMIN_IDS:
         return
+    
     admin_id = message.from_user.id
-    
-    # Сохраняем форматирование (entities)
-    entities = message.entities or message.caption_entities
-    
+
+    # Сохраняем контент с правильными полями
     content = _store_broadcast_content_from_message(message)
-    # Сохраняем entities для сохранения форматирования
-    content["entities"] = entities
-    
-    # Инициализируем с пустым списком кнопок
+
+    # Инициализируем состояние рассылки
     _broadcast_states[admin_id] = {
         "content": content,
         "pin": False,
-        "inline_buttons": []  # Множественные кнопки
+        "inline_buttons": []
     }
-    
+
+    # Клавиатура управления
     kb = types.InlineKeyboardMarkup(row_width=2)
     kb.add(types.InlineKeyboardButton("➕ Добавить инлайн кнопку", callback_data="broadcast_add_inline"))
     kb.add(types.InlineKeyboardButton("📌 Закрепить: ❌", callback_data="broadcast_toggle_pin"))
@@ -6451,6 +6524,7 @@ def process_broadcast_send(message):
     kb.add(types.InlineKeyboardButton("📊 Статистика", callback_data="broadcast_stats"))
     kb.add(types.InlineKeyboardButton("❌ Отменить", callback_data="broadcast_back"))
 
+    # Подсчет активных чатов
     chats = load_broadcast_chats()
     active_chats = []
     for chat_id in chats:
@@ -6460,6 +6534,7 @@ def process_broadcast_send(message):
         except:
             pass
 
+    # Информация о кнопках
     buttons_text = ""
     state = _broadcast_states[admin_id]
     if state["inline_buttons"]:
@@ -6467,6 +6542,7 @@ def process_broadcast_send(message):
         for i, btn in enumerate(state["inline_buttons"], 1):
             buttons_text += f"\n{i}. {btn['text']} -> {btn['url']}"
 
+    # Превью информация
     preview_info = (
         f"📋 <b>Превью рассылки</b>\n\n"
         f"📤 Будет отправлено в: <b>{len(active_chats)}</b> чатов\n"
@@ -6475,7 +6551,12 @@ def process_broadcast_send(message):
         f"Нажми «Просмотр» чтобы увидеть сообщение или «Начать рассылку» для отправки."
     )
 
-    bot.send_message(message.chat.id, preview_info, parse_mode="HTML", reply_markup=kb)
+    bot.send_message(
+        message.chat.id,
+        preview_info,
+        parse_mode="HTML",  # Это служебное сообщение — здесь HTML нужен
+        reply_markup=kb
+    )
 
 @bot.callback_query_handler(func=lambda c: c.data == "broadcast_add_inline")
 def broadcast_add_inline(call):
@@ -6694,6 +6775,7 @@ def broadcast_preview(call):
     if call.from_user.id not in ADMIN_IDS:
         bot.answer_callback_query(call.id, "❌ Нет доступа.")
         return
+
     admin_id = call.from_user.id
     state = _broadcast_states.get(admin_id)
     if not state:
@@ -6702,8 +6784,8 @@ def broadcast_preview(call):
 
     content = state["content"]
     entities = content.get("entities", [])
-    
-    # Создаем клавиатуру с кнопками если они есть
+
+    # Клавиатура
     rm = None
     if state["inline_buttons"]:
         kb = types.InlineKeyboardMarkup()
@@ -6711,72 +6793,62 @@ def broadcast_preview(call):
             kb.add(types.InlineKeyboardButton(btn["text"], url=btn["url"]))
         rm = kb
 
-    # Отправляем превью С СОХРАНЕНИЕМ ФОРМАТИРОВАНИЯ
+    # 🔹 ТЕКСТ
     if content["type"] == "text":
-        text = content["text"]
-        if state["inline_buttons"]:
-            text += "\n\n📎 <i>К сообщению прикреплены кнопки</i>"
-        
+        bot.send_message(call.message.chat.id, "📥 Превью текста:")
+
         if entities:
-            # Сохраняем форматирование через entities
             bot.send_message(
-                call.message.chat.id, 
-                f"📥 <b>Превью текста:</b>\n\n{text}",
+                call.message.chat.id,
+                content["text"],
                 entities=entities,
                 reply_markup=rm
             )
         else:
-            bot.send_message(call.message.chat.id, f"📥 <b>Превью текста:</b>\n\n{text}", parse_mode="HTML", reply_markup=rm)
-    
+            bot.send_message(
+                call.message.chat.id,
+                content["text"],
+                reply_markup=rm
+            )
+
+    # 🔹 ФОТО
     elif content["type"] == "photo":
-        caption = content.get("caption","") or ""
-        if state["inline_buttons"]:
-            caption += "\n\n📎 <i>К сообщению прикреплены кнопки</i>"
-        
-        if entities:
-            bot.send_photo(
-                call.message.chat.id, 
-                content["file_id"], 
-                caption=f"📷 <b>Превью фото:</b>\n\n{caption}",
-                caption_entities=entities,
-                reply_markup=rm
-            )
-        else:
-            bot.send_photo(call.message.chat.id, content["file_id"], caption=f"📷 <b>Превью фото:</b>\n\n{caption}", parse_mode="HTML", reply_markup=rm)
-    
+        bot.send_message(call.message.chat.id, "📷 Превью фото:")
+
+        bot.send_photo(
+            call.message.chat.id,
+            content["file_id"],
+            caption=content.get("caption", "") or "",
+            caption_entities=entities if entities else None,
+            reply_markup=rm
+        )
+
+    # 🔹 ВИДЕО
     elif content["type"] == "video":
-        caption = content.get("caption","") or ""
-        if state["inline_buttons"]:
-            caption += "\n\n📎 <i>К сообщению прикреплены кнопки</i>"
-        
-        if entities:
-            bot.send_video(
-                call.message.chat.id, 
-                content["file_id"], 
-                caption=f"📹 <b>Превью видео:</b>\n\n{caption}",
-                caption_entities=entities,
-                reply_markup=rm
-            )
-        else:
-            bot.send_video(call.message.chat.id, content["file_id"], caption=f"📹 <b>Превью видео:</b>\n\n{caption}", parse_mode="HTML", reply_markup=rm)
-    
+        bot.send_message(call.message.chat.id, "📹 Превью видео:")
+
+        bot.send_video(
+            call.message.chat.id,
+            content["file_id"],
+            caption=content.get("caption", "") or "",
+            caption_entities=entities if entities else None,
+            reply_markup=rm
+        )
+
+    # 🔹 ГИФ
     elif content["type"] == "animation":
-        caption = content.get("caption","") or ""
-        if state["inline_buttons"]:
-            caption += "\n\n📎 <i>К сообщению прикреплены кнопки</i>"
-        
-        if entities:
-            bot.send_animation(
-                call.message.chat.id, 
-                content["file_id"], 
-                caption=f"🔁 <b>Превью гифки:</b>\n\n{caption}",
-                caption_entities=entities,
-                reply_markup=rm
-            )
-        else:
-            bot.send_animation(call.message.chat.id, content["file_id"], caption=f"🔁 <b>Превью гифки:</b>\n\n{caption}", parse_mode="HTML", reply_markup=rm)
+        bot.send_message(call.message.chat.id, "🔁 Превью гифки:")
+
+        bot.send_animation(
+            call.message.chat.id,
+            content["file_id"],
+            caption=content.get("caption", "") or "",
+            caption_entities=entities if entities else None,
+            reply_markup=rm
+        )
+
     else:
-        bot.send_message(call.message.chat.id, "❌ Невозможно показать предварительный просмотр этого типа сообщения.")
+        bot.send_message(call.message.chat.id, "❌ Невозможно показать этот тип сообщения.")
 
     bot.answer_callback_query(call.id)
 
@@ -6802,6 +6874,7 @@ def broadcast_confirm(call):
     if call.from_user.id not in ADMIN_IDS:
         bot.answer_callback_query(call.id, "❌ Нет доступа.")
         return
+
     admin_id = call.from_user.id
     state = _broadcast_states.get(admin_id)
     if not state:
@@ -6810,24 +6883,32 @@ def broadcast_confirm(call):
 
     chats = load_broadcast_chats()
     active_chats = []
+
     for chat_id in chats:
         try:
             bot.get_chat(chat_id)
             active_chats.append(chat_id)
         except:
             pass
+
     if not active_chats:
         bot.send_message(call.message.chat.id, "❌ Нет доступных чатов для рассылки!")
-        fake = _make_fake_message_from_call(call)
-        broadcast_panel(fake)
+        # Создаем фейковое сообщение для возврата в панель
+        class FakeMessage:
+            def __init__(self, chat, from_user):
+                self.chat = chat
+                self.from_user = from_user
+        fake_msg = FakeMessage(call.message.chat, call.from_user)
+        broadcast_panel(fake_msg)
         return
 
     content = state["content"]
     pin = state["pin"]
     inline_buttons = state.get("inline_buttons", [])
-    entities = content.get("entities", [])
 
-    # Создаем клавиатуру с кнопками если они есть
+    text_entities = content.get("entities")
+    caption_entities = content.get("caption_entities")
+
     rm = None
     if inline_buttons:
         kb = types.InlineKeyboardMarkup()
@@ -6835,113 +6916,101 @@ def broadcast_confirm(call):
             kb.add(types.InlineKeyboardButton(btn["text"], url=btn["url"]))
         rm = kb
 
-    # Прогресс рассылки
     total = len(active_chats)
     sent = 0
     failed = 0
-    progress_msg = bot.send_message(call.message.chat.id, f"📤 <b>Начинаю рассылку...</b>\n\n⏳ Прогресс: 0/{total}\n✅ Успешно: 0\n❌ Ошибок: 0", parse_mode="HTML")
 
-    # Цикл рассылки
+    progress_msg = bot.send_message(
+        call.message.chat.id,
+        f"📤 Начинаю рассылку...\n\n⏳ Прогресс: 0/{total}\n✅ Успешно: 0\n❌ Ошибок: 0"
+    )
+
     for i, chat_id in enumerate(active_chats, 1):
         try:
             if content["type"] == "text":
-                # Используем entities для сохранения форматирования
-                if entities:
-                    sent_msg = bot.send_message(
-                        chat_id, 
-                        content["text"], 
-                        entities=entities,
-                        reply_markup=rm
-                    )
-                else:
-                    sent_msg = bot.send_message(
-                        chat_id, 
-                        content["text"], 
-                        reply_markup=rm
-                    )
-            
+                sent_msg = bot.send_message(
+                    chat_id,
+                    content["text"],
+                    entities=text_entities,
+                    reply_markup=rm
+                )
+
             elif content["type"] == "photo":
-                caption = content.get("caption","") or None
-                if entities and caption:
-                    sent_msg = bot.send_photo(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        caption_entities=entities,
-                        reply_markup=rm
-                    )
-                else:
-                    sent_msg = bot.send_photo(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        reply_markup=rm
-                    )
-            
+                sent_msg = bot.send_photo(
+                    chat_id,
+                    content["file_id"],
+                    caption=content.get("caption"),
+                    caption_entities=caption_entities,
+                    reply_markup=rm
+                )
+
             elif content["type"] == "video":
-                caption = content.get("caption","") or None
-                if entities and caption:
-                    sent_msg = bot.send_video(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        caption_entities=entities,
-                        reply_markup=rm
-                    )
-                else:
-                    sent_msg = bot.send_video(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        reply_markup=rm
-                    )
-            
+                sent_msg = bot.send_video(
+                    chat_id,
+                    content["file_id"],
+                    caption=content.get("caption"),
+                    caption_entities=caption_entities,
+                    reply_markup=rm
+                )
+
             elif content["type"] == "animation":
-                caption = content.get("caption","") or None
-                if entities and caption:
-                    sent_msg = bot.send_animation(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        caption_entities=entities,
-                        reply_markup=rm
-                    )
-                else:
-                    sent_msg = bot.send_animation(
-                        chat_id, 
-                        content["file_id"], 
-                        caption=caption,
-                        reply_markup=rm
-                    )
+                sent_msg = bot.send_animation(
+                    chat_id,
+                    content["file_id"],
+                    caption=content.get("caption"),
+                    caption_entities=caption_entities,
+                    reply_markup=rm
+                )
+
             else:
-                # Просто текст без форматирования
-                sent_msg = bot.send_message(chat_id, "📢 Сообщение от администрации.", reply_markup=rm)
-            
+                sent_msg = bot.send_message(
+                    chat_id,
+                    "📢 Сообщение от администрации.",
+                    reply_markup=rm
+                )
+
             sent += 1
-            
+
             if pin and sent_msg and getattr(sent_msg, "message_id", None):
                 try:
                     bot.pin_chat_message(chat_id, sent_msg.message_id, disable_notification=True)
                 except:
                     pass
+
         except Exception as e:
             failed += 1
             logger.error(f"Ошибка рассылки в {chat_id}: {e}")
 
         if i % 5 == 0 or i == total:
             try:
-                bot.edit_message_text(f"📤 <b>Рассылка в процессе...</b>\n\n⏳ Прогресс: {i}/{total}\n✅ Успешно: {sent}\n❌ Ошибок: {failed}", call.message.chat.id, progress_msg.message_id, parse_mode="HTML")
+                bot.edit_message_text(
+                    f"📤 Рассылка в процессе...\n\n⏳ Прогресс: {i}/{total}\n✅ Успешно: {sent}\n❌ Ошибок: {failed}",
+                    call.message.chat.id,
+                    progress_msg.message_id
+                )
             except:
                 pass
+
         time.sleep(0.3)
 
-    # Финальный результат
     eff = round((sent/total)*100, 1) if total else 0
-    bot.edit_message_text(f"🎉 <b>Рассылка завершена!</b>\n\n📊 Результаты:\n• Всего чатов: {total}\n• ✅ Успешно: {sent}\n• ❌ Ошибок: {failed}\n• 📈 Эффективность: {eff}%", call.message.chat.id, progress_msg.message_id, parse_mode="HTML")
+
+    bot.edit_message_text(
+        f"🎉 Рассылка завершена!\n\n📊 Результаты:\n• Всего чатов: {total}\n• ✅ Успешно: {sent}\n• ❌ Ошибок: {failed}\n• 📈 Эффективность: {eff}%",
+        call.message.chat.id,
+        progress_msg.message_id
+    )
 
     _broadcast_states.pop(admin_id, None)
-    fake = _make_fake_message_from_call(call)
-    broadcast_panel(fake)
+    
+    # Создаем фейковое сообщение для возврата в панель
+    class FakeMessage:
+        def __init__(self, chat, from_user):
+            self.chat = chat
+            self.from_user = from_user
+
+    fake_msg = FakeMessage(call.message.chat, call.from_user)
+    broadcast_panel(fake_msg)
 
 @bot.callback_query_handler(func=lambda c: c.data == "broadcast_back")
 def broadcast_back(call):
@@ -6961,39 +7030,44 @@ def broadcast_refresh(call):
 
 # ------------------ КОНЕЦ: Обновлённая панель рассылки ------------------
 
-# Также обнови функцию _store_broadcast_content_from_message:
 def _store_broadcast_content_from_message(msg):
-    # Сохраняем entities для форматирования
-    entities = msg.entities or msg.caption_entities
+    # Текстовое форматирование (для обычных сообщений)
+    text_entities = msg.entities
+    # Форматирование подписи (для фото/видео/гифок)
+    caption_entities = msg.caption_entities
     
     if msg.text:
         return {
             "type": "text",
             "text": msg.text,
-            "entities": entities
+            "entities": text_entities  # ← для текста
         }
+    
     if getattr(msg, "photo", None):
         return {
             "type": "photo",
             "file_id": msg.photo[-1].file_id,
             "caption": msg.caption or "",
-            "entities": entities
+            "caption_entities": caption_entities  # ← для подписи к фото
         }
+    
     if getattr(msg, "video", None):
         return {
             "type": "video",
             "file_id": msg.video.file_id,
             "caption": msg.caption or "",
-            "entities": entities
+            "caption_entities": caption_entities  # ← для подписи к видео
         }
+    
     if getattr(msg, "animation", None):
         return {
             "type": "animation",
             "file_id": msg.animation.file_id,
             "caption": msg.caption or "",
-            "entities": entities
+            "caption_entities": caption_entities  # ← для подписи к гифке
         }
-    return {"type": "unknown", "entities": entities}
+    
+    return {"type": "unknown"}
 
 @bot.message_handler(commands=["parviz"])
 def full_backup_zip(message):
@@ -11822,6 +11896,7 @@ HELP_CONTENT = {
 ━━━━━━━━━━━━━━━━━━━
 
 [💰] <b>баланс</b> / <b>б</b> — твой текущий баланс
+[👥] <b>мой кабинет</b> — реферальная информация
 [🏆] <b>топ</b> — топ-50 игроков по балансу
 [🍉] <b>мой профиль</b> — профиль с краткой информацией
 [🎁] <b>бонус</b> — ежедневный бонус (1000-15000$)

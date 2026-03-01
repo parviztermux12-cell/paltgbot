@@ -1360,3 +1360,871 @@ telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsucc
 2026-02-28 18:53:57,726 - LasVenturas By parviz - INFO - Начислен доход 2525$ пользователю 7060923750 из источника bonus
 2026-02-28 18:53:57,726 - LasVenturas By parviz - INFO - Пользователь 7060923750 получил обычный бонус 2525$
 2026-02-28 18:58:38,727 - LasVenturas By parviz - INFO - Пользователь DAGDARION7766 запросил информацию о бизнесе
+2026-02-28 19:30:43,761 - LasVenturas By parviz - INFO - ✅ Система пассивного VIP дохода запущена (интервал: 3 часа)
+2026-02-28 19:30:43,796 - LasVenturas By parviz - INFO - ✅ База данных tikvi.db для ивента 'Охота на тыкву' инициализирована
+2026-02-28 19:30:43,797 - LasVenturas By parviz - INFO - 🎃 Планировщик рассылки тыкв запущен
+2026-02-28 19:30:43,802 - LasVenturas By parviz - INFO - ✅ База данных кейсов инициализирована
+2026-02-28 19:30:43,817 - LasVenturas By parviz - INFO - ✅ Система начисления банковских процентов запущена (ежедневно в 03:00)
+2026-02-28 19:30:43,827 - LasVenturas By parviz - INFO - ✅ В базе уже есть 5 префиксов
+2026-02-28 19:30:44,097 - LasVenturas By parviz - INFO - Бот Iris запущен!
+2026-02-28 19:30:57,941 - LasVenturas By parviz - INFO - 🎃 Тыква отправлена в чат -1003279681531 (награда: 121078$)
+2026-02-28 19:30:57,989 - LasVenturas By parviz - INFO - Админ 7526512670 отправил тыкву в чат -1003279681531
+2026-02-28 19:32:01,168 - LasVenturas By parviz - INFO - Перевод: . → Эдгар | Отправил: 3000000$, Получил: 2700000$
+2026-02-28 19:35:38,624 - LasVenturas By parviz - INFO - 🎃 Тыква отправлена в чат -1003279681531 (награда: 1912788$)
+2026-02-28 19:35:38,697 - LasVenturas By parviz - INFO - Админ 7526512670 отправил тыкву в чат -1003279681531
+2026-02-28 20:03:06,704 - LasVenturas By parviz - INFO - Игра 'Разгон': 8358458560 | Ставка: 1000000 | Результат: lose | Скорость: 90
+2026-02-28 20:03:23,308 - LasVenturas By parviz - INFO - Игра 'Разгон': 8358458560 | Ставка: 40 | Результат: lose | Скорость: 99
+2026-02-28 20:03:33,337 - LasVenturas By parviz - INFO - Игра 'Разгон': 8358458560 | Ставка: 20 | Результат: win | Скорость: 166
+2026-02-28 20:03:48,135 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → 𝖕𝖆𝖗𝖛𝖎𝖟 | Отправил: 1488$, Получил: 1488$
+2026-02-28 20:03:51,692 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → 𝖕𝖆𝖗𝖛𝖎𝖟 | Отправил: 228$, Получил: 228$
+2026-02-28 20:21:04,713 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод тыквы
+2026-02-28 20:21:12,081 - LasVenturas By parviz - INFO - 🎃 Тыква отправлена в чат -1003279681531 (награда: 1960254$)
+2026-02-28 20:21:12,160 - LasVenturas By parviz - INFO - Админ 7526512670 отправил тыкву в чат -1003279681531
+2026-02-28 20:21:25,410 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 777000 из источника promo
+2026-02-28 20:21:25,629 - LasVenturas By parviz - INFO - Пользователь None активировал промокод тыквы
+2026-02-28 20:21:33,572 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7174147624 из источника promo
+2026-02-28 20:21:33,711 - LasVenturas By parviz - INFO - Пользователь ASTROVVG активировал промокод тыквы
+2026-02-28 20:21:34,922 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7309661931 из источника promo
+2026-02-28 20:21:35,147 - LasVenturas By parviz - INFO - Пользователь kar_inka3 активировал промокод тыквы
+2026-02-28 20:21:38,443 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 8168027201 из источника promo
+2026-02-28 20:21:38,625 - LasVenturas By parviz - INFO - Пользователь Me_Vangog активировал промокод тыквы
+2026-02-28 20:21:40,656 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7526512670 из источника promo
+2026-02-28 20:21:40,830 - LasVenturas By parviz - INFO - Пользователь parvizwp активировал промокод тыквы
+2026-02-28 20:21:49,817 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7060923750 из источника promo
+2026-02-28 20:21:49,962 - LasVenturas By parviz - INFO - Пользователь DrReddock активировал промокод тыквы
+2026-02-28 20:22:01,174 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 8483733925 из источника promo
+2026-02-28 20:22:01,316 - LasVenturas By parviz - INFO - Пользователь None активировал промокод тыквы
+2026-02-28 20:22:17,926 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7906982110 из источника promo
+2026-02-28 20:22:18,114 - LasVenturas By parviz - INFO - Пользователь Ma1usha152 активировал промокод тыквы
+2026-02-28 20:22:24,494 - LasVenturas By parviz - INFO - 🎃 Тыква отправлена в чат -1003279681531 (награда: 1936679$)
+2026-02-28 20:22:24,538 - LasVenturas By parviz - INFO - Админ 7526512670 отправил тыкву в чат -1003279681531
+2026-02-28 20:22:35,809 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 8358458560 из источника promo
+2026-02-28 20:22:35,970 - LasVenturas By parviz - INFO - Пользователь l1ricaaa активировал промокод тыквы
+2026-02-28 20:23:23,440 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 5424666061 из источника promo
+2026-02-28 20:23:23,668 - LasVenturas By parviz - INFO - Пользователь downp3pe активировал промокод тыквы
+2026-02-28 20:23:25,423 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 8589562480 из источника promo
+2026-02-28 20:23:25,716 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop активировал промокод тыквы
+2026-02-28 20:23:43,543 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 8264765149 из источника promo
+2026-02-28 20:23:43,792 - LasVenturas By parviz - INFO - Пользователь wertvifis активировал промокод тыквы
+2026-02-28 20:25:22,503 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7696828602 из источника promo
+2026-02-28 20:25:22,708 - LasVenturas By parviz - INFO - Пользователь viccha2 активировал промокод тыквы
+2026-02-28 20:27:25,810 - LasVenturas By parviz - INFO - Пользователь l1ricaaa запросил информацию о бизнесе
+2026-02-28 20:27:58,774 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-02-28 20:27:58,852 - LasVenturas By parviz - INFO - Начислен доход 812$ пользователю 8358458560 из источника farm
+2026-02-28 20:27:58,852 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный доход с фермы 812$
+2026-02-28 20:28:12,882 - LasVenturas By parviz - INFO - Пользователь l1ricaaa запросил информацию о доме
+2026-02-28 20:28:16,687 - LasVenturas By parviz - INFO - Пользователь l1ricaaa оплатил содержание дома: 30000$
+2026-02-28 20:28:22,730 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 61382$, Получил: 61382$
+2026-02-28 20:28:23,724 - LasVenturas By parviz - INFO - Пользователь l1ricaaa запросил магазин домов
+2026-02-28 20:29:59,232 - LasVenturas By parviz - INFO - ❌ Пользователь 8264765149 НЕ имеет нужный текст в bio.
+2026-02-28 20:29:59,314 - LasVenturas By parviz - INFO - Начислен доход 3452$ пользователю 8264765149 из источника bonus
+2026-02-28 20:29:59,314 - LasVenturas By parviz - INFO - Пользователь 8264765149 получил обычный бонус 3452$
+2026-02-28 20:30:02,782 - LasVenturas By parviz - INFO - ❌ Пользователь 8264765149 НЕ имеет нужный текст в bio.
+2026-02-28 20:30:02,872 - LasVenturas By parviz - INFO - Начислен доход 3446$ пользователю 8264765149 из источника farm
+2026-02-28 20:30:02,872 - LasVenturas By parviz - INFO - Пользователь 8264765149 получил обычный доход с фермы 3446$
+2026-02-28 20:30:17,445 - LasVenturas By parviz - INFO - Перевод: флешка → 𝚖𝚛𝚊𝚔𝚘𝚟𝚊 | Отправил: 106898$, Получил: 96209$
+2026-02-28 20:31:55,090 - LasVenturas By parviz - INFO - Игра 'Разгон': 7694717699 | Ставка: 500000 | Результат: lose | Скорость: 139
+2026-02-28 20:31:57,123 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 315
+2026-02-28 20:32:11,017 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 308
+2026-02-28 20:32:21,207 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 104
+2026-02-28 20:32:31,525 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 259
+2026-02-28 20:32:39,950 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 160
+2026-02-28 20:32:48,692 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 289
+2026-02-28 20:32:58,960 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 190
+2026-02-28 20:33:02,921 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7694717699 из источника promo
+2026-02-28 20:33:03,095 - LasVenturas By parviz - INFO - Пользователь AAARonaldo_777 активировал промокод тыквы
+2026-02-28 20:33:03,864 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 227
+2026-02-28 20:33:18,538 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 199
+2026-02-28 20:33:24,848 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 276
+2026-02-28 20:33:32,941 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 269
+2026-02-28 20:33:38,413 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 210
+2026-02-28 20:33:41,906 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 252
+2026-02-28 20:33:45,951 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 235
+2026-02-28 20:33:51,676 - LasVenturas By parviz - INFO - Начислен доход 100000$ пользователю 7922090666 из источника promo
+2026-02-28 20:33:51,843 - LasVenturas By parviz - INFO - Пользователь tavda_88 активировал промокод тыквы
+2026-02-28 20:33:53,759 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 284
+2026-02-28 20:33:57,842 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 229
+2026-02-28 20:34:08,611 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 138
+2026-02-28 20:34:17,973 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 289
+2026-02-28 20:34:26,971 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 198
+2026-02-28 20:35:05,497 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 100000000$, Получил: 90000000$
+2026-02-28 20:35:30,388 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 1000100$, Получил: 900090$
+2026-02-28 20:36:02,551 - LasVenturas By parviz - INFO - Пользователь parvizwp запросил информацию о доме
+2026-02-28 20:37:26,413 - LasVenturas By parviz - INFO - Пользователь parvizwp оплатил содержание дома: 30000$
+2026-02-28 20:37:29,955 - LasVenturas By parviz - INFO - Пользователь parvizwp оплатил содержание дома: 30000$
+2026-02-28 20:37:36,752 - LasVenturas By parviz - INFO - Пользователь parvizwp запросил информацию о доме
+2026-02-28 20:37:38,176 - LasVenturas By parviz - INFO - Пользователь parvizwp оплатил содержание дома: 30000$
+2026-02-28 20:37:39,865 - LasVenturas By parviz - INFO - Пользователь parvizwp оплатил содержание дома: 30000$
+2026-02-28 20:39:54,490 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 192
+2026-02-28 20:40:00,712 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 227
+2026-02-28 20:40:05,916 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 156
+2026-02-28 20:40:12,001 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 281
+2026-02-28 20:40:19,047 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 288
+2026-02-28 20:40:25,210 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 287
+2026-02-28 20:40:32,518 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 311
+2026-02-28 20:40:33,449 - LasVenturas By parviz - INFO - ❌ Пользователь 2130826649 НЕ имеет нужный текст в bio.
+2026-02-28 20:40:33,545 - LasVenturas By parviz - INFO - Начислен доход 3547$ пользователю 2130826649 из источника bonus
+2026-02-28 20:40:33,546 - LasVenturas By parviz - INFO - Пользователь 2130826649 получил обычный бонус 3547$
+2026-02-28 20:40:36,471 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 164
+2026-02-28 20:40:40,759 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 162
+2026-02-28 20:40:44,420 - LasVenturas By parviz - INFO - ❌ Пользователь 2130826649 НЕ имеет нужный текст в bio.
+2026-02-28 20:40:44,502 - LasVenturas By parviz - INFO - Начислен доход 4603$ пользователю 2130826649 из источника farm
+2026-02-28 20:40:44,503 - LasVenturas By parviz - INFO - Пользователь 2130826649 получил обычный доход с фермы 4603$
+2026-02-28 20:40:47,708 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 130
+2026-02-28 20:40:53,448 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 204
+2026-02-28 20:40:58,228 - LasVenturas By parviz - INFO - Перевод: ʜᴇʀᴏɪɴᴏᴠᴀ† → 𝚖𝚛𝚊𝚔𝚘𝚟𝚊 | Отправил: 8150$, Получил: 8150$
+2026-02-28 20:41:20,469 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 500000000 | Результат: win | Скорость: 155
+2026-02-28 20:41:33,537 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 195
+2026-02-28 20:41:42,738 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 151
+2026-02-28 20:41:49,529 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 110
+2026-02-28 20:43:28,502 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 100000000$, Получил: 90000000$
+2026-02-28 20:44:03,300 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 100000$, Получил: 100000$
+2026-02-28 20:46:28,358 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 241
+2026-02-28 20:46:33,436 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 319
+2026-02-28 20:46:35,798 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-02-28 20:46:45,843 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 171
+2026-02-28 20:46:53,307 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: lose | Скорость: 249
+2026-02-28 20:47:01,035 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: lose | Скорость: 280
+2026-02-28 20:47:10,602 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: lose | Скорость: 256
+2026-02-28 20:47:29,138 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 93
+2026-02-28 20:47:40,288 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 96
+2026-02-28 20:47:46,518 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 174
+2026-02-28 20:47:52,425 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 194
+2026-02-28 20:47:58,206 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 185
+2026-02-28 20:48:06,235 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 130
+2026-02-28 20:48:43,351 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 100000000$, Получил: 90000000$
+2026-02-28 20:49:22,266 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 165
+2026-02-28 20:49:29,644 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 273
+2026-02-28 20:49:36,750 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 167
+2026-02-28 20:49:44,157 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 143
+2026-02-28 20:49:55,241 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: lose | Скорость: 296
+2026-02-28 20:50:10,976 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 500000000 | Результат: win | Скорость: 140
+2026-02-28 20:50:25,128 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100000000 | Результат: win | Скорость: 217
+2026-02-28 20:50:55,051 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 100000000$, Получил: 90000000$
+2026-02-28 21:21:02,028 - LasVenturas By parviz - INFO - Игра 'Разгон': 6512241065 | Ставка: 5000000000 | Результат: lose | Скорость: 133
+2026-02-28 21:45:17,953 - LasVenturas By parviz - INFO - Пользователь temeiruki запросил информацию о бизнесе
+2026-02-28 21:45:19,553 - LasVenturas By parviz - INFO - Начислен доход 44601$ пользователю 5815880196 из источника business
+2026-02-28 21:45:30,828 - LasVenturas By parviz - INFO - ❌ Пользователь 5815880196 НЕ имеет нужный текст в bio.
+2026-02-28 21:45:30,909 - LasVenturas By parviz - INFO - Начислен доход 1073$ пользователю 5815880196 из источника bonus
+2026-02-28 21:45:30,909 - LasVenturas By parviz - INFO - Пользователь 5815880196 получил обычный бонус 1073$
+2026-02-28 21:45:34,699 - LasVenturas By parviz - INFO - ❌ Пользователь 5815880196 НЕ имеет нужный текст в bio.
+2026-02-28 21:45:34,779 - LasVenturas By parviz - INFO - Начислен доход 4541$ пользователю 5815880196 из источника farm
+2026-02-28 21:45:34,780 - LasVenturas By parviz - INFO - Пользователь 5815880196 получил обычный доход с фермы 4541$
+2026-02-28 21:50:02,799 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-02-28 22:02:27,673 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-02-28 22:02:27,754 - LasVenturas By parviz - INFO - Начислен доход 1122$ пользователю 6392543992 из источника farm
+2026-02-28 22:02:27,754 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный доход с фермы 1122$
+2026-02-28 22:02:56,703 - LasVenturas By parviz - INFO - Пользователь witch_801 запросил магазин бизнесов
+2026-02-28 22:03:27,606 - LasVenturas By parviz - INFO - Пользователь witch_801 купил бизнес автосалон
+2026-02-28 22:07:57,867 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → Lunraizxch | 🏴‍☠️ piràte | Отправил: 50000000$, Получил: 45000000$
+2026-02-28 22:08:23,737 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → ■ | Отправил: 1000000000$, Получил: 900000000$
+2026-02-28 22:09:21,308 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → 🚬 | Отправил: 2000000000$, Получил: 1800000000$
+2026-02-28 22:09:31,359 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → ■ | Отправил: 2000000000$, Получил: 1800000000$
+2026-02-28 22:14:47,992 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-02-28 22:14:48,089 - LasVenturas By parviz - INFO - Начислен доход 1069$ пользователю 8168027201 из источника farm
+2026-02-28 22:14:48,089 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 1069$
+2026-02-28 22:20:22,140 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → конопля | Отправил: 2000000000$, Получил: 1800000000$
+2026-02-28 22:26:05,190 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-02-28 22:28:27,910 - LasVenturas By parviz - INFO - Игра 'Разгон': 6512241065 | Ставка: 5777777777 | Результат: win | Скорость: 271
+2026-02-28 22:30:34,504 - LasVenturas By parviz - INFO - Игра 'Разгон': 6512241065 | Ставка: 45750000000 | Результат: lose | Скорость: 313
+2026-02-28 22:37:21,572 - LasVenturas By parviz - INFO - Игра 'Разгон': 6512241065 | Ставка: 100000000000 | Результат: lose | Скорость: 179
+2026-02-28 22:44:12,698 - LasVenturas By parviz - INFO - Игра 'Разгон': 6512241065 | Ставка: 250000000000 | Результат: win | Скорость: 272
+2026-02-28 23:20:51,185 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-02-28 23:20:54,214 - LasVenturas By parviz - INFO - Начислен доход 85141$ пользователю 6514588039 из источника business
+2026-02-28 23:22:42,519 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-02-28 23:22:42,520 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-02-28 23:22:42,795 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-02-28 23:22:42,796 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-02-28 23:22:43,323 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-02-28 23:22:43,324 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-02-28 23:22:44,348 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-02-28 23:22:44,349 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-02-28 23:22:46,378 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-02-28 23:22:46,379 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-02-28 23:37:50,801 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 00:01:43,297 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-03-01 00:01:43,299 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-03-01 00:01:43,568 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-03-01 00:01:43,569 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-03-01 00:01:44,086 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-03-01 00:01:44,087 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-03-01 00:01:45,107 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+2026-03-01 00:01:45,108 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 502. Description: Bad Gateway
+
+2026-03-01 00:02:12,121 - TeleBot - ERROR - Infinity polling exception: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+2026-03-01 00:02:12,123 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/http/client.py", line 1395, in getresponse
+    response.begin()
+  File "/usr/local/lib/python3.11/http/client.py", line 325, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/http/client.py", line 286, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1314, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/util/retry.py", line 490, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 162, in _make_request
+    result = _get_req_session().request(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+2026-03-01 01:21:29,802 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 01:29:44,380 - TeleBot - ERROR - Infinity polling exception: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+2026-03-01 01:29:44,383 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/http/client.py", line 1395, in getresponse
+    response.begin()
+  File "/usr/local/lib/python3.11/http/client.py", line 325, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/http/client.py", line 286, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1314, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/util/retry.py", line 490, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/usr/local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1234, in __threaded_polling
+    polling_thread.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 115, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 688, in __retrieve_updates
+    updates = self.get_updates(offset=(self.last_update_id + 1),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 660, in get_updates
+    json_updates = apihelper.get_updates(
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 339, in get_updates
+    return _make_request(token, method_url, params=payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 162, in _make_request
+    result = _get_req_session().request(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=25)
+
+2026-03-01 02:47:04,804 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 03:00:43,894 - LasVenturas By parviz - INFO - 💰 Начислены проценты для 11 счетов
+2026-03-01 03:00:43,895 - LasVenturas By parviz - INFO - 💰 Ежедневные проценты начислены
+2026-03-01 03:01:24,791 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-01 03:01:26,806 - LasVenturas By parviz - INFO - Начислен доход 99818$ пользователю 7733538262 из источника business
+2026-03-01 03:01:54,065 - LasVenturas By parviz - INFO - Игра 'Разгон': 7733538262 | Ставка: 1175147 | Результат: win | Скорость: 228
+2026-03-01 03:20:40,182 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-01 03:20:40,269 - LasVenturas By parviz - INFO - Начислен доход 1729$ пользователю 7457101105 из источника farm
+2026-03-01 03:20:40,269 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 1729$
+2026-03-01 03:20:41,802 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-01 03:20:41,882 - LasVenturas By parviz - INFO - Начислен доход 4108$ пользователю 7457101105 из источника bonus
+2026-03-01 03:20:41,882 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный бонус 4108$
+2026-03-01 04:30:43,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-01 04:30:43,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-01 04:30:43,766 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-01 04:30:43,767 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-01 04:30:43,768 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-01 04:30:43,768 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-01 04:30:43,768 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-01 04:30:43,768 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-01 04:30:43,768 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-01 04:30:43,769 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-01 04:30:43,769 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-01 04:30:43,769 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5424666061 +20000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-01 04:30:43,771 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1754668778 +20000$
+2026-03-01 04:30:43,772 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8358458560 +14000$
+2026-03-01 04:30:43,772 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-01 04:30:43,855 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-01 04:39:24,806 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 05:05:40,052 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-03-01 05:05:40,150 - LasVenturas By parviz - INFO - Начислен доход 4657$ пользователю 8358458560 из источника bonus
+2026-03-01 05:05:40,150 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный бонус 4657$
+2026-03-01 05:05:43,726 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-03-01 05:05:43,812 - LasVenturas By parviz - INFO - Начислен доход 1481$ пользователю 8358458560 из источника farm
+2026-03-01 05:05:43,813 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный доход с фермы 1481$
+2026-03-01 05:06:02,681 - LasVenturas By parviz - INFO - Пользователь l1ricaaa запросил информацию о доме
+2026-03-01 05:06:10,032 - LasVenturas By parviz - INFO - Пользователь l1ricaaa оплатил содержание дома: 30000$
+2026-03-01 05:06:15,492 - LasVenturas By parviz - INFO - Пользователь l1ricaaa запросил информацию о бизнесе
+2026-03-01 05:13:22,807 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 05:29:26,414 - LasVenturas By parviz - INFO - ❌ Пользователь 8340514324 НЕ имеет нужный текст в bio.
+2026-03-01 05:29:26,503 - LasVenturas By parviz - INFO - Начислен доход 1962$ пользователю 8340514324 из источника farm
+2026-03-01 05:29:26,504 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил обычный доход с фермы 1962$
+2026-03-01 05:29:27,497 - LasVenturas By parviz - INFO - ❌ Пользователь 8340514324 НЕ имеет нужный текст в bio.
+2026-03-01 05:29:27,580 - LasVenturas By parviz - INFO - Начислен доход 3697$ пользователю 8340514324 из источника bonus
+2026-03-01 05:29:27,580 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил обычный бонус 3697$
+2026-03-01 05:29:55,483 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 8 ч, сессия e5cdadde
+2026-03-01 05:30:06,455 - LasVenturas By parviz - INFO - Игра 'Разгон': 8340514324 | Ставка: 100000 | Результат: lose | Скорость: 244
+2026-03-01 05:38:46,330 - LasVenturas By parviz - INFO - ❌ Пользователь 2130826649 НЕ имеет нужный текст в bio.
+2026-03-01 05:38:46,417 - LasVenturas By parviz - INFO - Начислен доход 3376$ пользователю 2130826649 из источника farm
+2026-03-01 05:38:46,417 - LasVenturas By parviz - INFO - Пользователь 2130826649 получил обычный доход с фермы 3376$
+2026-03-01 05:38:49,730 - LasVenturas By parviz - INFO - ❌ Пользователь 2130826649 НЕ имеет нужный текст в bio.
+2026-03-01 05:38:49,812 - LasVenturas By parviz - INFO - Начислен доход 1399$ пользователю 2130826649 из источника bonus
+2026-03-01 05:38:49,812 - LasVenturas By parviz - INFO - Пользователь 2130826649 получил обычный бонус 1399$
+2026-03-01 05:39:08,408 - LasVenturas By parviz - INFO - ❌ Пользователь 8047686231 НЕ имеет нужный текст в bio.
+2026-03-01 05:39:08,531 - LasVenturas By parviz - INFO - Начислен доход 2330$ пользователю 8047686231 из источника farm
+2026-03-01 05:39:08,531 - LasVenturas By parviz - INFO - Пользователь 8047686231 получил обычный доход с фермы 2330$
+2026-03-01 05:39:17,334 - LasVenturas By parviz - INFO - ❌ Пользователь 8047686231 НЕ имеет нужный текст в bio.
+2026-03-01 05:39:17,416 - LasVenturas By parviz - INFO - Начислен доход 4980$ пользователю 8047686231 из источника bonus
+2026-03-01 05:39:17,416 - LasVenturas By parviz - INFO - Пользователь 8047686231 получил обычный бонус 4980$
+2026-03-01 05:46:01,331 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-01 05:46:01,383 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-01 05:46:01,441 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-01 05:46:01,566 - LasVenturas By parviz - INFO - Начислен доход 2870$ пользователю 8232024665 из источника bonus
+2026-03-01 05:46:01,567 - LasVenturas By parviz - INFO - Начислен доход 2559$ пользователю 8232024665 из источника farm
+2026-03-01 05:46:01,567 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный бонус 2870$
+2026-03-01 05:46:01,567 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный доход с фермы 2559$
+2026-03-01 05:46:12,164 - LasVenturas By parviz - INFO - Начислен доход 172337$ пользователю 8232024665 из источника business
+2026-03-01 05:46:42,393 - LasVenturas By parviz - INFO - Игра 'Разгон': 8232024665 | Ставка: 462 | Результат: lose | Скорость: 253
+2026-03-01 05:48:43,577 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 запросил информацию о доме
+2026-03-01 05:48:46,472 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 собрал аренду: 177109$
+2026-03-01 05:48:49,243 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 оплатил содержание дома: 30000$
+2026-03-01 05:48:54,148 - LasVenturas By parviz - INFO - Пользователь MORGlopi запросил информацию о доме
+2026-03-01 05:49:10,970 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 3 к, сессия e87ab509
+2026-03-01 05:49:23,350 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 26 ч, сессия 19162279
+2026-03-01 05:49:43,810 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия e05b851a
+2026-03-01 05:50:16,617 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 20000040000 | Результат: win | Скорость: 106
+2026-03-01 05:50:30,953 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия d7918bf8
+2026-03-01 05:50:42,349 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 21 к, сессия a6114364
+2026-03-01 05:50:50,093 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 0 з, сессия 52abb52a
+2026-03-01 05:50:58,678 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия afe95be5
+2026-03-01 05:51:14,193 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 35 к, сессия fa3c976b
+2026-03-01 05:51:21,449 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 4 ч, сессия 5c3f9528
+2026-03-01 05:51:33,840 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 15 к, сессия ad4a4da4
+2026-03-01 05:51:45,945 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 35 к, сессия 0cdfd464
+2026-03-01 05:52:01,086 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия 2df29d24
+2026-03-01 05:52:12,504 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 17 к, сессия dcc535e7
+2026-03-01 05:52:18,936 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 20000160000 | Результат: lose | Скорость: 220
+2026-03-01 05:52:22,651 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 0 з, сессия 04fbeda7
+2026-03-01 05:52:34,045 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 12 ч, сессия 62e149f0
+2026-03-01 05:52:35,459 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 20000000000 | Результат: lose | Скорость: 285
+2026-03-01 05:52:40,652 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 20000160000 | Результат: win | Скорость: 155
+2026-03-01 05:53:05,491 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 29 к, сессия e0f2003a
+2026-03-01 05:53:07,804 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000160000 | Результат: lose | Скорость: 261
+2026-03-01 05:53:32,092 - LasVenturas By parviz - INFO - ❌ Пользователь 6401913458 НЕ имеет нужный текст в bio.
+2026-03-01 05:53:32,175 - LasVenturas By parviz - INFO - Начислен доход 634$ пользователю 6401913458 из источника farm
+2026-03-01 05:53:32,175 - LasVenturas By parviz - INFO - Пользователь 6401913458 получил обычный доход с фермы 634$
+2026-03-01 05:53:38,579 - LasVenturas By parviz - INFO - ❌ Пользователь 6401913458 НЕ имеет нужный текст в bio.
+2026-03-01 05:53:38,659 - LasVenturas By parviz - INFO - Начислен доход 2434$ пользователю 6401913458 из источника bonus
+2026-03-01 05:53:38,660 - LasVenturas By parviz - INFO - Пользователь 6401913458 получил обычный бонус 2434$
+2026-03-01 05:53:40,688 - LasVenturas By parviz - INFO - ❌ Пользователь 7158187651 НЕ имеет нужный текст в bio.
+2026-03-01 05:53:40,766 - LasVenturas By parviz - INFO - Начислен доход 542$ пользователю 7158187651 из источника farm
+2026-03-01 05:53:40,766 - LasVenturas By parviz - INFO - Пользователь 7158187651 получил обычный доход с фермы 542$
+2026-03-01 05:53:41,227 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 201
+2026-03-01 05:53:43,762 - LasVenturas By parviz - INFO - ❌ Пользователь 7158187651 НЕ имеет нужный текст в bio.
+2026-03-01 05:53:43,843 - LasVenturas By parviz - INFO - Начислен доход 2811$ пользователю 7158187651 из источника bonus
+2026-03-01 05:53:43,843 - LasVenturas By parviz - INFO - Пользователь 7158187651 получил обычный бонус 2811$
+2026-03-01 05:53:56,124 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 40000000 | Результат: lose | Скорость: 180
+2026-03-01 05:54:29,001 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 21 к, сессия be2238e5
+2026-03-01 05:54:29,773 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 10000000 | Результат: lose | Скорость: 169
+2026-03-01 05:54:46,391 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия 3d2fdd66
+2026-03-01 05:55:11,402 - LasVenturas By parviz - INFO - Перевод: Исрафил → (◕‿◕) | Отправил: 3068$, Получил: 3068$
+2026-03-01 05:55:11,548 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 20000000000 | Результат: lose | Скорость: 314
+2026-03-01 05:55:15,564 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 244
+2026-03-01 05:55:57,787 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 1 к, сессия 525726ed
+2026-03-01 05:56:21,644 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: lose | Скорость: 270
+2026-03-01 05:56:26,876 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: lose | Скорость: 159
+2026-03-01 05:56:53,546 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 продал дом Дворец
+2026-03-01 05:57:18,407 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 23 к, сессия 25515949
+2026-03-01 05:57:29,781 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 194
+2026-03-01 05:57:46,522 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 31 к, сессия 86fff372
+2026-03-01 05:57:47,358 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: lose | Скорость: 209
+2026-03-01 05:57:50,513 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: lose | Скорость: 255
+2026-03-01 05:57:50,850 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 100
+2026-03-01 05:57:54,284 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: lose | Скорость: 315
+2026-03-01 05:57:58,334 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: lose | Скорость: 147
+2026-03-01 05:58:09,249 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 50000000 | Результат: win | Скорость: 186
+2026-03-01 05:59:07,842 - LasVenturas By parviz - INFO - Перевод: MoRg〖ᴷⁱⁿᴳ𝕿𝖍𝖆𝖓𝖔𝖘༒ → Исрафил | Отправил: 5000000000$, Получил: 4500000000$
+2026-03-01 05:59:47,149 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия b19aa8e6
+2026-03-01 05:59:59,263 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 22 ч, сессия 11133293
+2026-03-01 06:00:09,429 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 24 ч, сессия 7fd96c5f
+2026-03-01 06:00:22,954 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия 43e5cf2a
+2026-03-01 06:00:34,598 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 28 ч, сессия 55d9d12a
+2026-03-01 06:00:53,144 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 32 ч, сессия 748764fe
+2026-03-01 06:00:59,211 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 10 ч, сессия fa292ae0
+2026-03-01 06:01:05,072 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 5000000000 | Результат: lose | Скорость: 302
+2026-03-01 06:01:07,995 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия d6e81612
+2026-03-01 06:01:15,322 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 32 ч, сессия 113566be
+2026-03-01 06:01:25,268 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия bec0fc83
+2026-03-01 06:01:25,926 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: lose | Скорость: 241
+2026-03-01 06:01:43,626 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 22 ч, сессия cb23c3cd
+2026-03-01 06:01:46,175 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия 936e94e9
+2026-03-01 06:01:49,008 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 101
+2026-03-01 06:02:01,779 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 28 ч, сессия 3c28d352
+2026-03-01 06:02:05,476 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: lose | Скорость: 315
+2026-03-01 06:02:08,019 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 22 ч, сессия 35039745
+2026-03-01 06:02:10,973 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 19 к, сессия fdc038e7
+2026-03-01 06:02:15,090 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: lose | Скорость: 110
+2026-03-01 06:02:23,742 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 28 ч, сессия 70eddf03
+2026-03-01 06:02:29,485 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 251
+2026-03-01 06:02:31,146 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 15 к, сессия 3e0cc374
+2026-03-01 06:02:39,200 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 25 к, сессия 67855bb9
+2026-03-01 06:02:40,294 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия 3d31a26b
+2026-03-01 06:02:49,145 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия ff9399b7
+2026-03-01 06:02:57,330 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 2 ч, сессия 38a49508
+2026-03-01 06:13:50,907 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 10 ч, сессия 18a7ea05
+2026-03-01 06:14:02,632 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 1 к, сессия 80e5a3f0
+2026-03-01 06:14:12,096 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия f28a3075
+2026-03-01 06:14:21,851 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 8 ч, сессия aab07aa6
+2026-03-01 06:14:32,834 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 6 ч, сессия 09761ee9
+2026-03-01 06:14:44,595 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия 757bc796
+2026-03-01 06:14:56,799 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 24 ч, сессия 3b5b6bc9
+2026-03-01 06:15:11,987 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия 35758ef9
+2026-03-01 06:15:58,182 - LasVenturas By parviz - INFO - ✅ Установлен префикс 5 для пользователя 7158187651
+2026-03-01 06:16:39,435 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия d358f04c
+2026-03-01 06:16:47,964 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 8 ч, сессия cfe21ea7
+2026-03-01 06:16:57,881 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия 549d17d1
+2026-03-01 06:21:51,135 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия 979322b0
+2026-03-01 06:21:54,137 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 33 к, сессия 8b931806
+2026-03-01 06:21:59,635 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия dae18402
+2026-03-01 06:22:06,048 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 30 ч, сессия 28cb14f0
+2026-03-01 06:22:11,086 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия b6e2ceab
+2026-03-01 06:22:15,131 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 27 к, сессия 7fc8c8e9
+2026-03-01 06:22:19,465 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 32 ч, сессия ef2587c1
+2026-03-01 06:22:40,024 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия ba2c40e7
+2026-03-01 06:22:42,627 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 17 к, сессия 2f8f2f5a
+2026-03-01 06:22:46,171 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 32 ч, сессия daddb8bd
+2026-03-01 06:22:49,623 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 25 к, сессия 03011e68
+2026-03-01 06:22:54,324 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия f3b51050
+2026-03-01 06:22:58,548 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 7 к, сессия 438b489b
+2026-03-01 06:23:00,940 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 30 ч, сессия 9ec81b66
+2026-03-01 06:23:11,040 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 30 ч, сессия ddeeb68d
+2026-03-01 06:23:13,587 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 24 ч, сессия 6d0ca060
+2026-03-01 06:23:24,377 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 19 к, сессия ff68a5fd
+2026-03-01 06:23:43,363 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 5 к, сессия 4ae3f215
+2026-03-01 06:23:52,488 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 26 ч, сессия 76d25f86
+2026-03-01 06:24:06,569 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 8 ч, сессия 5f1d57a7
+2026-03-01 06:33:04,671 - LasVenturas By parviz - INFO - Пользователь kar_inka3 запросил информацию о бизнесе
+2026-03-01 06:33:06,687 - LasVenturas By parviz - INFO - Начислен доход 60216$ пользователю 7309661931 из источника business
+2026-03-01 06:35:43,405 - LasVenturas By parviz - INFO - Игра 'Разгон': 8232024665 | Ставка: 7000 | Результат: lose | Скорость: 270
+2026-03-01 06:36:38,523 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 28 ч, сессия 5391045c
+2026-03-01 06:36:51,084 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия 351b1e98
+2026-03-01 06:37:00,352 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия 17da8861
+2026-03-01 06:37:11,786 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия 1e82d089
+2026-03-01 06:41:09,134 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия 9e010a07
+2026-03-01 06:41:18,994 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 29 к, сессия 9425ae0b
+2026-03-01 06:41:28,692 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 35 к, сессия c994c345
+2026-03-01 06:41:37,151 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 19 к, сессия 41faa820
+2026-03-01 06:41:47,832 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 27 к, сессия 18c94559
+2026-03-01 06:41:54,235 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 24 ч, сессия e2f15c62
+2026-03-01 06:42:06,289 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 32 ч, сессия edf5ee43
+2026-03-01 06:42:17,480 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия 47f833ed
+2026-03-01 06:42:26,312 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия 4fa781a4
+2026-03-01 06:42:37,203 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 27 к, сессия 7a50987d
+2026-03-01 06:42:50,495 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 33 к, сессия 68079b26
+2026-03-01 06:42:55,770 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 10 ч, сессия 726f84aa
+2026-03-01 06:43:05,960 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 21 к, сессия 03685024
+2026-03-01 06:43:16,192 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 24 ч, сессия 5e2023c5
+2026-03-01 06:43:29,744 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 35 к, сессия bc44a082
+2026-03-01 06:43:45,172 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 21 к, сессия ba02ded3
+2026-03-01 06:43:57,271 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 21 к, сессия 9b31eea5
+2026-03-01 06:44:07,708 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 1 к, сессия d8ea078e
+2026-03-01 06:44:16,087 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия 50017e69
+2026-03-01 06:44:28,459 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 23 к, сессия 5ac53bdd
+2026-03-01 06:44:41,690 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 23 к, сессия a8aef000
+2026-03-01 06:44:56,670 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия 1780c662
+2026-03-01 06:45:05,923 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия f7f1c486
+2026-03-01 06:45:21,247 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 23 к, сессия a2efe342
+2026-03-01 06:45:30,643 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: lose | Скорость: 224
+2026-03-01 06:45:35,392 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: lose | Скорость: 242
+2026-03-01 06:45:38,911 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: win | Скорость: 272
+2026-03-01 06:45:42,628 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100 | Результат: win | Скорость: 154
+2026-03-01 06:46:05,353 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 18300000 | Результат: win | Скорость: 199
+2026-03-01 06:46:15,091 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100000000 | Результат: lose | Скорость: 262
+2026-03-01 06:46:23,626 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: lose | Скорость: 239
+2026-03-01 06:46:32,101 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: win | Скорость: 298
+2026-03-01 06:46:35,543 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: lose | Скорость: 223
+2026-03-01 06:46:38,641 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 1000 | Результат: win | Скорость: 198
+2026-03-01 06:46:52,307 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 100000000 | Результат: lose | Скорость: 274
+2026-03-01 06:47:18,072 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 50000000 | Результат: lose | Скорость: 233
+2026-03-01 06:47:20,786 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 50000000 | Результат: lose | Скорость: 224
+2026-03-01 06:47:23,931 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 50000000 | Результат: win | Скорость: 194
+2026-03-01 06:47:31,975 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 500000000 | Результат: lose | Скорость: 109
+2026-03-01 06:47:36,299 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 50000000 | Результат: lose | Скорость: 191
+2026-03-01 06:47:45,390 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 500000000 | Результат: win | Скорость: 221
+2026-03-01 07:02:11,625 - LasVenturas By parviz - INFO - Игра 'Разгон': 649602076 | Ставка: 2000000 | Результат: win | Скорость: 294
+2026-03-01 07:02:23,287 - LasVenturas By parviz - INFO - Игра 'Разгон': 5424666061 | Ставка: 40000000 | Результат: win | Скорость: 250
+2026-03-01 07:11:53,809 - LasVenturas By parviz - INFO - 🎃 Нет чатов для рассылки тыкв
+2026-03-01 07:23:56,762 - LasVenturas By parviz - INFO - Пользователь AAARonaldo_777 запросил информацию о бизнесе
+2026-03-01 07:24:14,291 - LasVenturas By parviz - INFO - Пользователь AAARonaldo_777 запросил информацию о доме
+2026-03-01 07:27:38,314 - LasVenturas By parviz - INFO - Перевод: Исрафил → Азым | Отправил: 250000$, Получил: 225000$
+2026-03-01 07:29:05,480 - LasVenturas By parviz - INFO - Перевод: Исрафил → Азым | Отправил: 12000000$, Получил: 10800000$
+2026-03-01 07:29:56,096 - LasVenturas By parviz - INFO - Игра 'Разгон': 6401913458 | Ставка: 100000000 | Результат: lose | Скорость: 98
+2026-03-01 07:30:11,042 - LasVenturas By parviz - INFO - Игра 'Разгон': 8232024665 | Ставка: 5000 | Результат: win | Скорость: 206
+2026-03-01 07:32:45,676 - LasVenturas By parviz - INFO - Перевод: Исрафил → Азым | Отправил: 5000000$, Получил: 4500000$
+2026-03-01 07:36:33,590 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия 93ff4bc0
+2026-03-01 07:37:25,092 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 5 к, сессия 3461620c
+2026-03-01 07:37:33,560 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 19 к, сессия b4b28221
+2026-03-01 07:37:54,814 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия 76539d4f
+2026-03-01 07:38:05,464 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 13 к, сессия a4a095a9
+2026-03-01 07:38:25,707 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-03-01 07:38:25,798 - LasVenturas By parviz - INFO - Начислен доход 4992$ пользователю 6392543992 из источника farm
+2026-03-01 07:38:25,798 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный доход с фермы 4992$
+2026-03-01 07:38:53,858 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия 56d301c8
+2026-03-01 07:39:02,808 - LasVenturas By parviz - INFO - Пользователь witch_801 запросил информацию о бизнесе
+2026-03-01 07:39:05,219 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 8 ч, сессия c05c62c2
+2026-03-01 07:39:15,038 - LasVenturas By parviz - INFO - Начислен доход 47982$ пользователю 6392543992 из источника business
+2026-03-01 07:39:19,571 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия ba92cc18
+2026-03-01 07:39:48,328 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 29 к, сессия 8232e633
+2026-03-01 07:53:10,031 - LasVenturas By parviz - INFO - 🎃 Тыква отправлена в чат -1003279681531 (награда: 1359140$)
+2026-03-01 07:53:10,096 - LasVenturas By parviz - INFO - Админ 7526512670 отправил тыкву в чат -1003279681531
+2026-03-01 07:57:40,683 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 13 к, сессия cd32dd10
+2026-03-01 07:57:53,461 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 2 ч, сессия 40e70ccd
+2026-03-01 07:57:56,480 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия 15882fb0
+2026-03-01 07:58:09,244 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 18 ч, сессия b49301dc
+2026-03-01 07:58:22,736 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 27 к, сессия eb46a6d1
+2026-03-01 08:02:14,719 - LasVenturas By parviz - INFO - Пользователь Arbuztupoy запросил информацию о бизнесе
+2026-03-01 08:09:39,070 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 224
+2026-03-01 08:10:02,240 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия a19b391b
+2026-03-01 08:10:05,952 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 9 к, сессия a6ebf380
+2026-03-01 08:10:14,435 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 16 ч, сессия 2ef3be64
+2026-03-01 08:10:20,504 - LasVenturas By parviz - INFO - Игра 'Разгон': 7882268176 | Ставка: 10000000000 | Результат: win | Скорость: 298
+2026-03-01 08:10:24,810 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 14 ч, сессия 4bab55db
+2026-03-01 08:10:34,095 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 6 ч, сессия d2bcae24
+2026-03-01 08:10:36,163 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 29 к, сессия 26b9b58b
+2026-03-01 08:10:50,023 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 22 ч, сессия a0f23c7e
