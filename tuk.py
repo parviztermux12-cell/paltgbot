@@ -1167,7 +1167,7 @@ def cmd_start(message):
     welcome_text = (
         f"Привет {mention}, я игровой чат бот, для того чтобы узнать обо мне по больше, "
         f"напиши команду /help или <code>помощь</code>. "
-        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>сюда</a> "
+        f"Если хочешь добавить меня в свой чат, <a href='{add_to_group_url}'>нажми сюда</a> "
     )
 
     bot.send_message(
@@ -1429,483 +1429,7 @@ def bomb_callback(call):
 
     bot.answer_callback_query(call.id)
     
-    # ================== 🎃 ИВЕНТ "ОХОТА НА ТЫКВУ" ==================
-import random
-import threading
-import time
-import sqlite3
-from datetime import datetime, timedelta
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-# Константы
-PUMPKIN_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=7e3e581c9abba980c9b1be8b413bc275_l-10022398-images-thumbs&n=33&w=720&h=720"
-PUMPKIN_DB = "tikvi.db"
-PUMPKIN_MIN_REWARD = 30000
-PUMPKIN_MAX_REWARD = 2000000
-
-# Глобальная переменная для активных событий в чатах
-active_pumpkin_events = {}
-
-# ---------- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ ----------
-def init_pumpkin_db():
-    """Создает таблицы для тыкв в tikvi.db"""
-    conn = sqlite3.connect(PUMPKIN_DB)
-    c = conn.cursor()
     
-    # Таблица статистики пользователей (сколько тыкв собрал и заработал)
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS pumpkin_stats (
-            user_id INTEGER PRIMARY KEY,
-            total_harvested INTEGER DEFAULT 0,
-            total_earned INTEGER DEFAULT 0
-        )
-    """)
-    
-    # Таблица чатов, где был бот (для автоматической рассылки)
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS pumpkin_chats (
-            chat_id INTEGER PRIMARY KEY,
-            added_at TEXT
-        )
-    """)
-    
-    conn.commit()
-    conn.close()
-    logger.info("✅ База данных tikvi.db для ивента 'Охота на тыкву' инициализирована")
-
-init_pumpkin_db()
-
-# ---------- РАБОТА С ЧАТАМИ ДЛЯ РАССЫЛКИ ----------
-def load_pumpkin_chats():
-    """Загружает список чатов для рассылки тыкв"""
-    try:
-        conn = sqlite3.connect(PUMPKIN_DB)
-        c = conn.cursor()
-        c.execute("SELECT chat_id FROM pumpkin_chats")
-        rows = c.fetchall()
-        conn.close()
-        return [row[0] for row in rows]
-    except Exception as e:
-        logger.error(f"Ошибка загрузки чатов для тыкв: {e}")
-        return []
-
-def add_pumpkin_chat(chat_id):
-    """Добавляет чат в список для рассылки"""
-    try:
-        conn = sqlite3.connect(PUMPKIN_DB)
-        c = conn.cursor()
-        c.execute(
-            "INSERT OR IGNORE INTO pumpkin_chats (chat_id, added_at) VALUES (?, ?)",
-            (chat_id, datetime.now().isoformat())
-        )
-        conn.commit()
-        conn.close()
-        logger.info(f"✅ Чат {chat_id} добавлен в рассылку тыкв")
-        return True
-    except Exception as e:
-        logger.error(f"Ошибка добавления чата {chat_id} в рассылку тыкв: {e}")
-        return False
-
-# ---------- РАБОТА СО СТАТИСТИКОЙ ПОЛЬЗОВАТЕЛЯ ----------
-def get_pumpkin_stats(user_id):
-    """Получает статистику тыкв пользователя"""
-    conn = sqlite3.connect(PUMPKIN_DB)
-    c = conn.cursor()
-    c.execute("SELECT total_harvested, total_earned FROM pumpkin_stats WHERE user_id = ?", (user_id,))
-    row = c.fetchone()
-    conn.close()
-    
-    if row:
-        return {
-            "total_harvested": row[0],
-            "total_earned": row[1]
-        }
-    else:
-        return {
-            "total_harvested": 0,
-            "total_earned": 0
-        }
-
-def update_pumpkin_stats(user_id, harvested_count=0, earned_amount=0):
-    """Обновляет статистику тыкв пользователя"""
-    conn = sqlite3.connect(PUMPKIN_DB)
-    c = conn.cursor()
-    
-    # Проверяем, есть ли уже запись
-    c.execute("SELECT 1 FROM pumpkin_stats WHERE user_id = ?", (user_id,))
-    exists = c.fetchone()
-    
-    if exists:
-        c.execute("""
-            UPDATE pumpkin_stats 
-            SET total_harvested = total_harvested + ?, 
-                total_earned = total_earned + ? 
-            WHERE user_id = ?
-        """, (harvested_count, earned_amount, user_id))
-    else:
-        c.execute("""
-            INSERT INTO pumpkin_stats (user_id, total_harvested, total_earned) 
-            VALUES (?, ?, ?)
-        """, (user_id, harvested_count, earned_amount))
-    
-    conn.commit()
-    conn.close()
-
-def calculate_pumpkin_value():
-    """Генерирует случайную стоимость тыквы"""
-    return random.randint(PUMPKIN_MIN_REWARD, PUMPKIN_MAX_REWARD)
-
-def calculate_total_value(quantity):
-    """Рассчитывает общую стоимость тыкв"""
-    return quantity * calculate_pumpkin_value() // 2  # Примерная средняя стоимость
-
-# ---------- ФУНКЦИЯ ДЛЯ ОТПРАВКИ ТЫКВЫ В ЧАТ ----------
-def send_pumpkin_to_chat(chat_id):
-    """Отправляет сообщение о тыкве в конкретный чат"""
-    try:
-        # Проверяем, нет ли уже активного события в этом чате
-        if chat_id in active_pumpkin_events:
-            return False
-        
-        # Генерируем уникальный ID для события
-        event_id = f"pumpkin_{chat_id}_{int(time.time())}"
-        reward = calculate_pumpkin_value()
-        
-        # Сохраняем информацию о событии
-        active_pumpkin_events[chat_id] = {
-            "event_id": event_id,
-            "reward": reward,
-            "active": True,
-            "message_id": None
-        }
-        
-        # Создаем клавиатуру с кнопкой
-        kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("Сорвать тыкву", callback_data=f"harvest_pumpkin_{chat_id}_{event_id}"))
-        
-        # Отправляем сообщение
-        msg = bot.send_photo(
-            chat_id,
-            PUMPKIN_IMAGE_URL,
-            caption="🎃 Успейте сорвать тыкву пока не сорвал кто-то другой",
-            reply_markup=kb
-        )
-        
-        # Сохраняем ID сообщения
-        active_pumpkin_events[chat_id]["message_id"] = msg.message_id
-        
-        logger.info(f"🎃 Тыква отправлена в чат {chat_id} (награда: {reward}$)")
-        return True
-        
-    except Exception as e:
-        logger.error(f"Ошибка отправки тыквы в чат {chat_id}: {e}")
-        if chat_id in active_pumpkin_events:
-            del active_pumpkin_events[chat_id]
-        return False
-
-# ---------- АВТОМАТИЧЕСКАЯ РАССЫЛКА ТЫКВ ----------
-def pumpkin_scheduler():
-    """Автоматически отправляет тыквы в чаты с random интервалом"""
-    while True:
-        try:
-            # Ждем от 30 минут до 2 часов
-            delay = random.randint(1800, 7200)  # 30-120 минут в секундах
-            time.sleep(delay)
-            
-            # Загружаем список чатов
-            chats = load_pumpkin_chats()
-            if not chats:
-                logger.info("🎃 Нет чатов для рассылки тыкв")
-                continue
-            
-            # Выбираем случайный чат
-            chat_id = random.choice(chats)
-            
-            # Отправляем тыкву
-            send_pumpkin_to_chat(chat_id)
-            
-        except Exception as e:
-            logger.error(f"Ошибка в планировщике тыкв: {e}")
-            time.sleep(60)
-
-# ---------- ОБРАБОТЧИК КНОПКИ "СОРВАТЬ ТЫКВУ" ----------
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("harvest_pumpkin_"))
-def harvest_pumpkin_callback(call):
-    try:
-        # Разбираем callback_data
-        parts = call.data.split("_")
-        if len(parts) < 4:
-            bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-            return
-            
-        chat_id = int(parts[2])
-        event_id = parts[3]
-        
-        # Проверяем, активно ли событие
-        if chat_id not in active_pumpkin_events:
-            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
-            return
-        
-        event = active_pumpkin_events[chat_id]
-        if not event["active"] or event["event_id"] != event_id:
-            bot.answer_callback_query(call.id, "❌ Тыква уже сорвана!", show_alert=True)
-            return
-        
-        # Помечаем событие как неактивное
-        event["active"] = False
-        
-        # Получаем информацию о пользователе
-        user_id = call.from_user.id
-        user_name = call.from_user.first_name
-        mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
-        reward = event["reward"]
-        
-        # Обновляем статистику пользователя
-        update_pumpkin_stats(user_id, 1, reward)
-        
-        # Удаляем сообщение с кнопкой
-        try:
-            bot.delete_message(chat_id, call.message.message_id)
-        except Exception as e:
-            logger.error(f"Не удалось удалить сообщение с тыквой: {e}")
-        
-        # Отправляем новое сообщение с результатом
-        result_text = (
-            f"{mention}, поздравляю ты первее всех в этом чате сорвал тыкву себе 🎃\n\n"
-            f"💰 Награда: <code>{reward:,}$</code>\n\n"
-            f"📊 Узнать свою статистику можно введя команду <code>мои тыквы</code>"
-        )
-        
-        bot.send_message(chat_id, result_text, parse_mode="HTML")
-        
-        # Удаляем событие из активных
-        del active_pumpkin_events[chat_id]
-        
-        bot.answer_callback_query(call.id, f"✅ +{reward:,}$")
-        
-    except Exception as e:
-        logger.error(f"Ошибка при срыве тыквы: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
-# ---------- КОМАНДА "МОИ ТЫКВЫ" ----------
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
-def my_pumpkins_command(message):
-    user_id = message.from_user.id
-    user_name = message.from_user.first_name
-    mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
-    
-    # Получаем статистику
-    stats = get_pumpkin_stats(user_id)
-    
-    # Рассчитываем примерную стоимость при продаже
-    avg_value = (PUMPKIN_MIN_REWARD + PUMPKIN_MAX_REWARD) // 2
-    sell_value = stats["total_harvested"] * avg_value
-    
-    text = (
-        f"🎃 Твоя статистика в сборе тыкв:\n\n"
-        f"🍹 Сорвано всего: <code>{stats['total_harvested']}</code>\n"
-        f"🍀 После продажи можно получить: <code>{sell_value:,}$</code>"
-    )
-    
-    # Создаем клавиатуру с кнопкой продажи
-    kb = InlineKeyboardMarkup()
-    kb.add(InlineKeyboardButton("Продать тыквы", callback_data=f"sell_pumpkins_{user_id}"))
-    
-    bot.reply_to(message, text, parse_mode="HTML", reply_markup=kb)
-
-# ---------- ПРОДАЖА ТЫКВ (ПОДТВЕРЖДЕНИЕ) ----------
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("sell_pumpkins_"))
-def sell_pumpkins_confirm(call):
-    try:
-        owner_id = int(call.data.split("_")[2])
-        
-        # Проверка владельца
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
-            return
-        
-        # Получаем статистику
-        stats = get_pumpkin_stats(owner_id)
-        
-        if stats["total_harvested"] == 0:
-            bot.answer_callback_query(call.id, "❌ У тебя нет тыкв для продажи!", show_alert=True)
-            return
-        
-        # Рассчитываем стоимость (случайная цена за каждую тыкву)
-        total_value = 0
-        for _ in range(stats["total_harvested"]):
-            total_value += calculate_pumpkin_value()
-        
-        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
-        
-        text = (
-            f"{mention}, вы точно хотите продать все свои тыквы за <code>{total_value:,}$</code>?"
-        )
-        
-        kb = InlineKeyboardMarkup(row_width=2)
-        kb.add(
-            InlineKeyboardButton("Да", callback_data=f"confirm_sell_pumpkins_{owner_id}_{total_value}"),
-            InlineKeyboardButton("Нет", callback_data=f"cancel_sell_pumpkins_{owner_id}")
-        )
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        
-    except Exception as e:
-        logger.error(f"Ошибка при подтверждении продажи тыкв: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
-# ---------- ПОДТВЕРЖДЕНИЕ ПРОДАЖИ ----------
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("confirm_sell_pumpkins_"))
-def confirm_sell_pumpkins(call):
-    try:
-        parts = call.data.split("_")
-        owner_id = int(parts[3])
-        total_value = int(parts[4])
-        
-        # Проверка владельца
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
-            return
-        
-        # Получаем статистику
-        stats = get_pumpkin_stats(owner_id)
-        
-        if stats["total_harvested"] == 0:
-            bot.answer_callback_query(call.id, "❌ У тебя нет тыкв для продажи!", show_alert=True)
-            return
-        
-        # Начисляем деньги на баланс
-        user_data = get_user_data(owner_id)
-        user_data["balance"] += total_value
-        save_casino_data()
-        
-        # Обновляем статистику (обнуляем тыквы, но сохраняем заработанное)
-        conn = sqlite3.connect(PUMPKIN_DB)
-        c = conn.cursor()
-        c.execute("UPDATE pumpkin_stats SET total_harvested = 0 WHERE user_id = ?", (owner_id,))
-        conn.commit()
-        conn.close()
-        
-        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
-        
-        text = (
-            f"{mention}, вы успешно продали все тыквы за <code>{total_value:,}$</code>.\n"
-            f"Деньги зачислены на баланс 💰"
-        )
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML"
-        )
-        
-        bot.answer_callback_query(call.id, f"✅ +{total_value:,}$")
-        
-    except Exception as e:
-        logger.error(f"Ошибка при продаже тыкв: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
-# ---------- ОТМЕНА ПРОДАЖИ ----------
-@bot.callback_query_handler(func=lambda c: c.data and c.data.startswith("cancel_sell_pumpkins_"))
-def cancel_sell_pumpkins(call):
-    try:
-        owner_id = int(call.data.split("_")[3])
-        
-        # Проверка владельца
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
-            return
-        
-        # Возвращаемся к статистике
-        mention = f'<a href="tg://user?id={owner_id}">{call.from_user.first_name}</a>'
-        stats = get_pumpkin_stats(owner_id)
-        
-        avg_value = (PUMPKIN_MIN_REWARD + PUMPKIN_MAX_REWARD) // 2
-        sell_value = stats["total_harvested"] * avg_value
-        
-        text = (
-            f"🎃 Твоя статистика в сборе тыкв:\n\n"
-            f"🍹 Сорвано всего: <code>{stats['total_harvested']}</code>\n"
-            f"🍀 После продажи можно получить: <code>{sell_value:,}$</code>"
-        )
-        
-        kb = InlineKeyboardMarkup()
-        kb.add(InlineKeyboardButton("Продать тыквы", callback_data=f"sell_pumpkins_{owner_id}"))
-        
-        bot.edit_message_text(
-            text,
-            call.message.chat.id,
-            call.message.message_id,
-            parse_mode="HTML",
-            reply_markup=kb
-        )
-        
-        bot.answer_callback_query(call.id, "❌ Продажа отменена")
-        
-    except Exception as e:
-        logger.error(f"Ошибка при отмене продажи тыкв: {e}")
-        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
-
-# ---------- АВТОМАТИЧЕСКОЕ ДОБАВЛЕНИЕ ЧАТОВ ----------
-# Перехватываем команду "мои тыквы" для автоматического добавления чата
-original_my_pumpkins = my_pumpkins_command
-
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == "мои тыквы")
-def enhanced_my_pumpkins(message):
-    # Добавляем чат в рассылку
-    add_pumpkin_chat(message.chat.id)
-    # Вызываем оригинальную функцию
-    original_my_pumpkins(message)
-
-# ---------- АДМИН КОМАНДА "КИНУТЬ ТЫКВУ" ----------
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == "кинуть тыкву")
-def admin_throw_pumpkin(message):
-    user_id = message.from_user.id
-    
-    # Проверка на админа
-    if user_id not in ADMIN_IDS:
-        # Игнорируем, ничего не отвечаем
-        return
-    
-    # ID чата, куда нужно кинуть тыкву
-    target_chat_id = -1003279681531
-    
-    # Отправляем тыкву в указанный чат
-    if send_pumpkin_to_chat(target_chat_id):
-        bot.reply_to(
-            message,
-            f"✅ Тыква отправлена в чат <code>{target_chat_id}</code>",
-            parse_mode="HTML"
-        )
-        logger.info(f"Админ {user_id} отправил тыкву в чат {target_chat_id}")
-    else:
-        bot.reply_to(
-            message,
-            f"❌ Не удалось отправить тыкву в чат <code>{target_chat_id}</code>\n"
-            f"Возможно, бот не состоит в этом чате или нет прав.",
-            parse_mode="HTML"
-        )
-
-# ---------- ЗАПУСК ПЛАНИРОВЩИКА ----------
-def start_pumpkin_scheduler():
-    """Запускает планировщик рассылки тыкв"""
-    scheduler_thread = threading.Thread(target=pumpkin_scheduler, daemon=True)
-    scheduler_thread.start()
-    logger.info("🎃 Планировщик рассылки тыкв запущен")
-
-# Запускаем планировщик
-start_pumpkin_scheduler()
-
-print("✅ Ивент 'Охота на тыкву' успешно добавлен! (База данных: tikvi.db)")
-print(f"   • Награда: от {PUMPKIN_MIN_REWARD:,}$ до {PUMPKIN_MAX_REWARD:,}$")
-print("   • Команды: 'мои тыквы', 'кинуть тыкву' (админ)")
     
 # ================== 🎁 НОВАЯ СИСТЕМА ПОКУПКИ ПОДАРКОВ (ТОЛЬКО СЕБЕ) ==================
 # ID подарков (Telegram Premium Gifts) и их настройки
@@ -2423,7 +1947,500 @@ def send_telegram_gift(chat_id, user_id, gift_id, text):
 
 print("✅ Система покупки подарков загружена (тексты платные, только себе)")
 
+# ================== 🎲 НОВАЯ ИГРА: ЛЕСТНИЦА (LADDER) ==================
+# Команда: лестница [ставка]
+# Суть: Игроку показывается число от 1 до 100.
+# Нужно угадать, следующее число будет больше или меньше текущего.
+# Можно остановиться в любой момент и забрать текущий выигрыш.
+
+import random
+import uuid
+import time
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+# Словарь для хранения активных игр
+active_ladder_games = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("лестница"))
+def ladder_game_start(message):
+    """
+    Запуск игры "Лестница".
+    Использование: лестница [ставка]
+    """
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        # --- Парсинг ставки ---
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message,
+                         "❌ Укажи ставку!\n"
+                         "Пример: <code>лестница 1000</code>",
+                         parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка должна быть больше 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Ставка должна быть числом!")
+            return
+
+        # --- Проверка баланса ---
+        if user_data["balance"] < bet:
+            bot.reply_to(message,
+                         f"❌ Недостаточно средств!\n"
+                         f"💰 Нужно: {format_number(bet)}$\n"
+                         f"💳 У тебя: {format_number(user_data['balance'])}$",
+                         parse_mode="HTML")
+            return
+
+        # Списываем ставку
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        # Генерация первого числа
+        first_number = random.randint(1, 100)
+
+        # Генерация уникального ID игры
+        game_id = str(uuid.uuid4())[:8]
+
+        # Сохраняем игру
+        active_ladder_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "current_multiplier": 1.0,
+            "current_number": first_number,
+            "last_number": first_number,
+            "active": True,
+            "step": 0
+        }
+
+        # Создаем клавиатуру (ЗАЩИТА: в колбеке передаём ID игры и владельца)
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("⬆️", callback_data=f"ladder_higher_{game_id}_{user_id}"),
+            InlineKeyboardButton("⬇️", callback_data=f"ladder_lower_{game_id}_{user_id}")
+        )
+        kb.add(InlineKeyboardButton("💰 ЗАБРАТЬ", callback_data=f"ladder_cashout_{game_id}_{user_id}"))
+
+        text = (
+            f"🎲 <b>ЛЕСТНИЦА</b>\n\n"
+            f"{mention}, твоя ставка: <code>{format_number(bet)}$</code>\n"
+            f"Текущий множитель: <b>x{active_ladder_games[game_id]['current_multiplier']:.2f}</b>\n\n"
+            f"<b>Число: {first_number}</b>\n\n"
+            f"Следующее число будет больше ⬆️ или меньше ⬇️?"
+        )
+
+        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=kb)
+        active_ladder_games[game_id]["message_id"] = msg.message_id
+
+        # Удаляем команду пользователя (для чистоты)
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Лестница (старт): {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при создании игры!")
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("ladder_"))
+def ladder_game_callback(call):
+    """
+    Обработчик ходов в игре "Лестница".
+    """
+    try:
+        data_parts = call.data.split("_")
+        action = data_parts[1]  # higher, lower, cashout
+        game_id = data_parts[2]
+        owner_id = int(data_parts[3])
+
+        # --- ЗАЩИТА: проверяем владельца ---
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+
+        # --- Проверка существования игры ---
+        if game_id not in active_ladder_games:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+
+        game = active_ladder_games[game_id]
+
+        # Дополнительная проверка на случай коллизий
+        if call.from_user.id != game["user_id"]:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+
+        # --- Проверка, активна ли игра ---
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
+            return
+
+        user_id = game["user_id"]
+        user_data = get_user_data(user_id)
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+
+        # --- ОБРАБОТКА: ЗАБРАТЬ ВЫИГРЫШ ---
+        if action == "cashout":
+            game["active"] = False
+            win_amount = int(game["bet"] * game["current_multiplier"])
+
+            # Начисляем выигрыш
+            user_data["balance"] += win_amount
+            save_casino_data()
+
+            result_text = (
+                f"🎉 {mention}, ты вовремя остановился!\n\n"
+                f"💰 Выигрыш: <code>{format_number(win_amount)}$</code>\n"
+                f"📈 Множитель: <b>x{game['current_multiplier']:.2f}</b>"
+            )
+
+            bot.edit_message_text(
+                result_text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+
+            del active_ladder_games[game_id]
+            bot.answer_callback_query(call.id)
+            return
+
+        # --- ОБРАБОТКА: ХОД ---
+        if action in ["higher", "lower"]:
+            # Генерируем новое число
+            new_number = random.randint(1, 100)
+
+            # Проверка
+            is_higher = new_number > game["current_number"]
+            is_lower = new_number < game["current_number"]
+            is_equal = new_number == game["current_number"]
+
+            player_won = False
+            if action == "higher" and is_higher:
+                player_won = True
+            elif action == "lower" and is_lower:
+                player_won = True
+
+            # --- Ничья (проигрыш) ---
+            if is_equal:
+                game["active"] = False
+                result_text = (
+                    f"😵 {mention}, выпало то же число <b>{new_number}</b>.\n"
+                    f"💸 Ты потерял <code>{format_number(game['bet'])}$</code>."
+                )
+                bot.edit_message_text(
+                    result_text,
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_ladder_games[game_id]
+                bot.answer_callback_query(call.id, "❌ Ничья! Ты проиграл.")
+                return
+
+            # --- Победа ---
+            if player_won:
+                game["current_multiplier"] = round(game["current_multiplier"] + 0.2, 2)
+                game["step"] += 1
+                game["last_number"] = game["current_number"]
+                game["current_number"] = new_number
+
+                potential_win = int(game["bet"] * game["current_multiplier"])
+
+                # Обновляем клавиатуру (с защитой)
+                kb = InlineKeyboardMarkup(row_width=2)
+                kb.add(
+                    InlineKeyboardButton("⬆️", callback_data=f"ladder_higher_{game_id}_{user_id}"),
+                    InlineKeyboardButton("⬇️", callback_data=f"ladder_lower_{game_id}_{user_id}")
+                )
+                kb.add(InlineKeyboardButton("💰 ЗАБРАТЬ", callback_data=f"ladder_cashout_{game_id}_{user_id}"))
+
+                text = (
+                    f"🎲 <b>ЛЕСТНИЦА</b> (Ход {game['step']})\n\n"
+                    f"{mention}, ставка: <code>{format_number(game['bet'])}$</code>\n"
+                    f"Множитель: <b>x{game['current_multiplier']:.2f}</b>\n"
+                    f"Возможный выигрыш: <code>{format_number(potential_win)}$</code>\n\n"
+                    f"Было: <b>{game['last_number']}</b>\n"
+                    f"<b>Стало: {game['current_number']}</b>\n\n"
+                    f"Дальше?"
+                )
+
+                bot.edit_message_text(
+                    text,
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML",
+                    reply_markup=kb
+                )
+                bot.answer_callback_query(call.id, f"✅ Угадал! Множитель +0.2")
+
+            # --- Проигрыш ---
+            else:
+                game["active"] = False
+                result_text = (
+                    f"💥 {mention}, ты ошибся!\n\n"
+                    f"Ты выбрал <b>{'ВЫШЕ' if action == 'higher' else 'НИЖЕ'}</b>, а выпало <b>{new_number}</b>.\n"
+                    f"💸 Ты потерял ставку: <code>{format_number(game['bet'])}$</code>"
+                )
+                bot.edit_message_text(
+                    result_text,
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_ladder_games[game_id]
+                bot.answer_callback_query(call.id, "❌ Ты проиграл!")
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Лестница (ход): {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+print("✅ Новая игра 'Лестница' успешно добавлена!")
+
+# ================== НАЛОГОВАЯ СИСТЕМА ==================
+TAX_DB = "taxes.db"
+
+# Инициализация базы данных налогов
+def init_tax_db():
+    conn = sqlite3.connect(TAX_DB)
+    c = conn.cursor()
     
+    # Таблица для хранения истории налоговых списаний
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS tax_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            amount INTEGER NOT NULL,
+            balance_before INTEGER NOT NULL,
+            balance_after INTEGER NOT NULL,
+            tax_date TEXT NOT NULL
+        )
+    """)
+    
+    # Таблица для хранения статистики пользователя
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS tax_stats (
+            user_id INTEGER PRIMARY KEY,
+            total_tax_paid INTEGER DEFAULT 0,
+            last_tax_date TEXT
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+    logger.info("✅ База данных налогов инициализирована")
+
+init_tax_db()
+
+def record_tax_payment(user_id, amount, balance_before, balance_after):
+    """Записывает налоговое списание в историю"""
+    conn = sqlite3.connect(TAX_DB)
+    c = conn.cursor()
+    
+    tax_date = datetime.now().isoformat()
+    
+    # Записываем в историю
+    c.execute("""
+        INSERT INTO tax_history (user_id, amount, balance_before, balance_after, tax_date)
+        VALUES (?, ?, ?, ?, ?)
+    """, (user_id, amount, balance_before, balance_after, tax_date))
+    
+    # Обновляем статистику пользователя
+    c.execute("""
+        INSERT OR REPLACE INTO tax_stats (user_id, total_tax_paid, last_tax_date)
+        VALUES (?, COALESCE((SELECT total_tax_paid FROM tax_stats WHERE user_id = ?), 0) + ?, ?)
+    """, (user_id, user_id, amount, tax_date))
+    
+    conn.commit()
+    conn.close()
+
+def get_user_tax_history(user_id, limit=10):
+    """Получает историю налоговых списаний пользователя"""
+    conn = sqlite3.connect(TAX_DB)
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT amount, tax_date 
+        FROM tax_history 
+        WHERE user_id = ? 
+        ORDER BY tax_date DESC 
+        LIMIT ?
+    """, (user_id, limit))
+    
+    history = c.fetchall()
+    conn.close()
+    return history
+
+def get_user_tax_stats(user_id):
+    """Получает статистику налоговых списаний пользователя"""
+    conn = sqlite3.connect(TAX_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT total_tax_paid, last_tax_date FROM tax_stats WHERE user_id = ?", (user_id,))
+    stats = c.fetchone()
+    conn.close()
+    
+    if stats:
+        return {
+            "total_paid": stats[0],
+            "last_date": stats[1]
+        }
+    return {
+        "total_paid": 0,
+        "last_date": None
+    }
+
+# ================== АДМИН КОМАНДА: СНЯТЬ НАЛОГ ==================
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "снять налог")
+def admin_collect_tax(message):
+    user_id = message.from_user.id
+    
+    # Проверяем, админ ли
+    if user_id not in ADMIN_IDS:
+        # Админ команда - бот игнорирует
+        return
+    
+    # Отправляем начальное сообщение
+    status_msg = bot.reply_to(message, 
+        "🧾 <b>Сбор налогов начат...</b>\n\n"
+        "⏳ Обработка...",
+        parse_mode="HTML"
+    )
+    
+    # Счетчики
+    total_collected = 0
+    taxed_users = 0
+    skipped_users = 0
+    processed = 0
+    
+    # Проходим по всем пользователям
+    for user_id_str, user_data in casino_data.items():
+        processed += 1
+        uid = int(user_id_str)
+        balance = user_data.get("balance", 0)
+        
+        # Обновляем статус каждые 50 пользователей
+        if processed % 50 == 0:
+            try:
+                bot.edit_message_text(
+                    f"🧾 <b>Сбор налогов...</b>\n\n"
+                    f"📊 Обработано: <code>{processed}</code> пользователей\n"
+                    f"💰 Собрано: <code>{format_number(total_collected)}$</code>\n"
+                    f"✅ Обложено налогом: <code>{taxed_users}</code>\n"
+                    f"⏭ Пропущено: <code>{skipped_users}</code>",
+                    status_msg.chat.id,
+                    status_msg.message_id,
+                    parse_mode="HTML"
+                )
+            except:
+                pass
+        
+        # Проверяем условие: баланс больше 100 млн
+        if balance > 100000000:
+            # Считаем налог 10%
+            tax_amount = int(balance * 0.1)
+            new_balance = balance - tax_amount
+            
+            # Сохраняем старый баланс для записи
+            old_balance = user_data["balance"]
+            
+            # Списываем налог
+            user_data["balance"] = new_balance
+            
+            # Записываем в историю налогов
+            record_tax_payment(uid, tax_amount, old_balance, new_balance)
+            
+            # Обновляем счетчики
+            total_collected += tax_amount
+            taxed_users += 1
+            
+            # НЕ ОТПРАВЛЯЕМ УВЕДОМЛЕНИЯ ПОЛЬЗОВАТЕЛЯМ
+        else:
+            skipped_users += 1
+    
+    # Сохраняем все изменения
+    save_casino_data()
+    
+    # Формируем итоговый отчет
+    final_text = (
+        f"✅ <b>СБОР НАЛОГОВ ЗАВЕРШЕН</b> ✅\n\n"
+        f"📊 <b>СТАТИСТИКА:</b>\n"
+        f"• Всего обработано пользователей: <code>{processed}</code>\n"
+        f"• Пользователей с балансом >100M$: <code>{taxed_users}</code>\n"
+        f"• Пользователей с балансом <100M$: <code>{skipped_users}</code>\n"
+        f"• Всего собрано налогов: <code>{format_number(total_collected)}$</code>\n\n"
+        f"📅 Дата сбора: <b>{datetime.now().strftime('%d.%m.%Y %H:%M')}</b>"
+    )
+    
+    bot.edit_message_text(
+        final_text,
+        status_msg.chat.id,
+        status_msg.message_id,
+        parse_mode="HTML"
+    )
+    
+    logger.info(f"Админ {message.from_user.id} провел сбор налогов. Собрано: {total_collected}$")
+
+# ================== КОМАНДА ДЛЯ ПОЛЬЗОВАТЕЛЕЙ: МОЙ НАЛОГ ==================
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "мой налог")
+def my_tax_info(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    # Получаем статистику пользователя
+    stats = get_user_tax_stats(user_id)
+    history = get_user_tax_history(user_id, 10)  # Последние 10 списаний
+    
+    # Формируем текст ответа
+    if stats["total_paid"] > 0:
+        text = (
+            f"📄 <b>Статистика списаний ваших налогов под 10%:</b>\n\n"
+        )
+        
+        # Добавляем историю списаний
+        for amount, tax_date in history:
+            # Форматируем дату для красивого отображения
+            try:
+                date_obj = datetime.fromisoformat(tax_date)
+                formatted_date = date_obj.strftime("%d.%m.%Y %H:%M")
+            except:
+                formatted_date = tax_date
+                
+            text += f"<code>{format_number(amount)}$</code> - <b>{formatted_date}</b>\n"
+        
+        # Добавляем итоговую статистику
+        text += f"\n💰 <b>Всего уплачено налогов:</b> <code>{format_number(stats['total_paid'])}$</code>"
+        
+        if stats["last_date"]:
+            try:
+                last_date_obj = datetime.fromisoformat(stats["last_date"])
+                last_formatted = last_date_obj.strftime("%d.%m.%Y %H:%M")
+                text += f"\n📅 <b>Последний налог:</b> {last_formatted}"
+            except:
+                pass
+    else:
+        text = (
+            f"📄 <b>Статистика списаний ваших налогов под 10%:</b>\n\n"
+            f"<i>У вас пока не было налоговых списаний.</i>"
+        )
+    
+    # Отправляем ответом на сообщение пользователя
+    bot.reply_to(message, text, parse_mode="HTML")
+
+print("✅ Налоговая система загружена и готова к работе! 🧾")
     
     # ================== АДМИН-КОМАНДЫ ДЛЯ ГРУПП (УЛУЧШЕНО) ==================
 
@@ -6170,7 +6187,6 @@ def balance_cmd(message):
         f"➤ <b>БАЛАНС</b>\n\n"
         f"👤 <b>Имя:</b> {clickable}\n"
         f"💰 <b>Баланс:</b> <code>{format_number(data['balance'])}$</code>\n"
-        f"🔰 <b>Префикс:</b> {prefix_display}\n"
         f"💎 <b>VIP:</b> {vip_display}"
     )
 
@@ -8256,7 +8272,6 @@ def balance_cmd(message):
         f"➤ <b>БАЛАНС</b>\n\n"
         f"👤 <b>Имя:</b> {clickable}\n"
         f"💰 <b>Баланс:</b> <code>{format_number(data['balance'])}$</code>\n"
-        f"🔰 <b>Префикс:</b> {prefix_display}\n"
         f"💎 <b>VIP:</b> {vip_display}"
     )
 
@@ -8418,11 +8433,32 @@ def back_balance(call):
 
 # ======================================================
 # ======================================================
-# ТОПЫ
+# ================== ТОПЫ ==================
 # ======================================================
 
-@bot.message_handler(func=lambda m: m.text and m.text.lower() == "топ")
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("топ"))
 def top_cmd(message):
+    # Парсим количество из команды
+    parts = message.text.lower().split()
+    limit = 50  # По умолчанию 50
+    
+    if len(parts) > 1:
+        try:
+            requested_limit = int(parts[1])
+            # Проверяем допустимые значения: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+            if requested_limit in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
+                limit = requested_limit
+            else:
+                # Если ввели неподдерживаемое число, показываем подсказку
+                bot.reply_to(message, 
+                    "❌ Допустимые значения: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100\n"
+                    "Примеры: <code>топ 10</code>, <code>топ 50</code>, <code>топ 100</code>",
+                    parse_mode="HTML")
+                return
+        except ValueError:
+            # Если ввели не число, игнорируем и используем стандартное значение 50
+            pass
+    
     # Быстро собираем данные
     users = []
     
@@ -8438,11 +8474,11 @@ def top_cmd(message):
     # Сортируем по балансу
     users.sort(key=lambda x: x[1], reverse=True)
     
-    # Берем топ 100
-    top_users = users[:50]
+    # Берем нужное количество
+    top_users = users[:limit]
 
-    # Формируем текст одним блоком (без тегов <blockquote>)
-    text = "🏆 <b>Топ 50 игроков:</b>\n\n"
+    # Формируем текст
+    text = f"🏆 <b>Топ {limit} игроков:</b>\n\n"
     
     for i, (uid, bal) in enumerate(top_users, 1):
         try:
@@ -8463,9 +8499,13 @@ def top_cmd(message):
             
             # Получаем префикс если есть
             up = get_user_prefix(uid)
-            pref = f"{up['name']} " if up else ""
-            
-            text += f"{i}. {pref}<a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
+            # Берем только эмодзи из префикса (первое слово)
+            if up:
+                # Разделяем строку префикса (например "🔥 Огонь" -> "🔥")
+                prefix_emoji = up['name'].split()[0] if up['name'] else ""
+                text += f"{i}. {prefix_emoji} <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
+            else:
+                text += f"{i}. <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
             
         except Exception as e:
             # Если ошибка - просто показываем ID
@@ -8474,7 +8514,7 @@ def top_cmd(message):
 
     # Если топ пустой
     if not top_users:
-        text = "🏆 <b>Топ игроков:</b>\n\n📊 Пока нет данных для топа"
+        text = f"🏆 <b>Топ {limit} игроков:</b>\n\n📊 Пока нет данных для топа"
 
     # Быстрая отправка
     bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
@@ -11900,7 +11940,7 @@ HELP_CONTENT = {
 [🏆] <b>топ</b> — топ-50 игроков по балансу
 [🍉] <b>мой профиль</b> — профиль с краткой информацией
 [🎁] <b>бонус</b> — ежедневный бонус (1000-15000$)
-[🚜] <b>ферма</b> — фарм валюты (раз в 2 часа)
+[📄] <b>мой налог</b> — статистика списанных сумм налоговой
 [💸] <b>п [сумма]</b> — перевод денег (ответом)
 [🎫] <b>промо [название]</b> — активировать промокод
 [⭐] <b>задонатить [сумма]</b> — пополнить через Telegram Stars
@@ -11928,6 +11968,7 @@ HELP_CONTENT = {
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
 [🍹] <b>бомба [ставка]</b>
+[☁️] <b>лестница [ставка]</b>
 [🐿️] <b>белка [ставка]</b>
 [🏎️] <b>разгон [ставка]</b>
 [💣] <b>мины [ставка]</b>
@@ -11939,7 +11980,7 @@ HELP_CONTENT = {
 [🎯] <b>тир [ставка]</b>
 [🪙] <b>рб [ставка] [орёл/решка]</b>
 [🎲] <b>кубик [ставка]</b>
-[❌⭕] <b>кнб [ставка]</b>
+[⭕] <b>кнб [ставка]</b>
 
 """,
 
@@ -12034,9 +12075,6 @@ HELP_CONTENT = {
 <b>🎏 РЫБАЛКА:</b>
 [🎣] <b>рыбачить</b> — Начать рыбалку
 [🐟] <b>моя рыбалка</b> — Статистика рыбалок
-
-<b>🍹 ОХОТА НА ТЫКВ:</b>
-[🎃] <b>мои тыквы</b> — меню продажи и информации
 
 """,
 
