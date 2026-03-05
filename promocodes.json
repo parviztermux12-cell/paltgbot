@@ -1550,5 +1550,73 @@
       1248832437,
       1448932943
     ]
+  },
+  "ZS2Q9KW1": {
+    "amount": 320,
+    "max_activations": 18,
+    "current_activations": 3,
+    "activated_by": [
+      7526512670,
+      7457101105,
+      7174147624
+    ]
+  },
+  "G00KXYIT": {
+    "amount": 4274,
+    "max_activations": 4,
+    "current_activations": 4,
+    "activated_by": [
+      7526512670,
+      7457101105,
+      7174147624,
+      8452337057
+    ]
+  },
+  "9ZJXLMZK": {
+    "amount": 3092,
+    "max_activations": 5,
+    "current_activations": 3,
+    "activated_by": [
+      7457101105,
+      7526512670,
+      1248832437
+    ]
+  },
+  "89": {
+    "amount": 1,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8452337057
+    ]
+  },
+  "WB0J05B9": {
+    "amount": 3354,
+    "max_activations": 6,
+    "current_activations": 5,
+    "activated_by": [
+      1448932943,
+      7696828602,
+      8340514324,
+      1248832437,
+      6512241065
+    ]
+  },
+  "скоро_обнова": {
+    "amount": 250000,
+    "max_activations": 10,
+    "current_activations": 10,
+    "activated_by": [
+      777000,
+      7526512670,
+      1248832437,
+      5203713503,
+      7985048553,
+      6401913458,
+      5694141752,
+      5424666061,
+      8589562480,
+      7309661931
+    ]
   }
 }

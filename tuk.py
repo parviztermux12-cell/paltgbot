@@ -2301,7 +2301,7 @@ def get_user_tax_stats(user_id):
         "last_date": None
     }
 
-# ================== АДМИН КОМАНДА: СНЯТЬ НАЛОГ ==================
+# ================== АДМИН КОМАНДА: СНЯТЬ НАЛОГ (ИСПРАВЛЕННАЯ) ==================
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() == "снять налог")
 def admin_collect_tax(message):
@@ -2321,7 +2321,8 @@ def admin_collect_tax(message):
     
     # Счетчики
     total_collected = 0
-    taxed_users = 0
+    taxed_balance_users = 0
+    taxed_bank_users = 0
     skipped_users = 0
     processed = 0
     
@@ -2331,6 +2332,10 @@ def admin_collect_tax(message):
         uid = int(user_id_str)
         balance = user_data.get("balance", 0)
         
+        # Получаем банковский счет пользователя
+        bank_account = get_bank_account(uid)
+        bank_balance = bank_account.get("balance", 0) if bank_account else 0
+        
         # Обновляем статус каждые 50 пользователей
         if processed % 50 == 0:
             try:
@@ -2338,7 +2343,8 @@ def admin_collect_tax(message):
                     f"🧾 <b>Сбор налогов...</b>\n\n"
                     f"📊 Обработано: <code>{processed}</code> пользователей\n"
                     f"💰 Собрано: <code>{format_number(total_collected)}$</code>\n"
-                    f"✅ Обложено налогом: <code>{taxed_users}</code>\n"
+                    f"✅ Обложено налогом (баланс): <code>{taxed_balance_users}</code>\n"
+                    f"✅ Обложено налогом (банк): <code>{taxed_bank_users}</code>\n"
                     f"⏭ Пропущено: <code>{skipped_users}</code>",
                     status_msg.chat.id,
                     status_msg.message_id,
@@ -2347,9 +2353,11 @@ def admin_collect_tax(message):
             except:
                 pass
         
-        # Проверяем условие: баланс больше 100 млн
+        user_taxed = False
+        user_tax_amount = 0
+        
+        # Налог с основного баланса (> 100 млн)
         if balance > 100000000:
-            # Считаем налог 10%
             tax_amount = int(balance * 0.1)
             new_balance = balance - tax_amount
             
@@ -2359,14 +2367,33 @@ def admin_collect_tax(message):
             # Списываем налог
             user_data["balance"] = new_balance
             
-            # Записываем в историю налогов
-            record_tax_payment(uid, tax_amount, old_balance, new_balance)
+            user_tax_amount += tax_amount
+            user_taxed = True
+            taxed_balance_users += 1
+        
+        # Налог с банковского счета (> 1 млрд)
+        if bank_balance > 1000000000:  # 1 миллиард
+            bank_tax_amount = int(bank_balance * 0.1)
+            new_bank_balance = bank_balance - bank_tax_amount
             
-            # Обновляем счетчики
-            total_collected += tax_amount
-            taxed_users += 1
+            # Обновляем банковский счет
+            conn = sqlite3.connect(BANK_DB)
+            c = conn.cursor()
+            c.execute("UPDATE bank_accounts SET balance = ? WHERE user_id = ?", 
+                     (new_bank_balance, uid))
+            conn.commit()
+            conn.close()
             
-            # НЕ ОТПРАВЛЯЕМ УВЕДОМЛЕНИЯ ПОЛЬЗОВАТЕЛЯМ
+            user_tax_amount += bank_tax_amount
+            user_taxed = True
+            taxed_bank_users += 1
+        
+        # Если был налог, записываем в историю
+        if user_taxed:
+            total_collected += user_tax_amount
+            record_tax_payment(uid, user_tax_amount, balance + bank_balance, 
+                              (balance - (balance if balance > 100000000 else 0)) + 
+                              (bank_balance - (bank_tax_amount if bank_balance > 1000000000 else 0)))
         else:
             skipped_users += 1
     
@@ -2378,8 +2405,10 @@ def admin_collect_tax(message):
         f"✅ <b>СБОР НАЛОГОВ ЗАВЕРШЕН</b> ✅\n\n"
         f"📊 <b>СТАТИСТИКА:</b>\n"
         f"• Всего обработано пользователей: <code>{processed}</code>\n"
-        f"• Пользователей с балансом >100M$: <code>{taxed_users}</code>\n"
-        f"• Пользователей с балансом <100M$: <code>{skipped_users}</code>\n"
+        f"• Обложено налогом (баланс >100M$): <code>{taxed_balance_users}</code>\n"
+        f"• Обложено налогом (банк >1B$): <code>{taxed_bank_users}</code>\n"
+        f"• Всего обложено налогом: <code>{taxed_balance_users + taxed_bank_users}</code>\n"
+        f"• Пропущено (без налогов): <code>{skipped_users}</code>\n"
         f"• Всего собрано налогов: <code>{format_number(total_collected)}$</code>\n\n"
         f"📅 Дата сбора: <b>{datetime.now().strftime('%d.%m.%Y %H:%M')}</b>"
     )
@@ -18103,15 +18132,20 @@ def activate_promo(message):
         save_casino_data()
         save_promocodes()
         
+        # Создаем кликабельное упоминание пользователя
+        user_mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
         if actual_amount > 0:
-            bot.reply_to(message, f"✅ Промокод активирован, ты получил {format_number(actual_amount)}$")
+            # Формируем сообщение в нужном формате
+            response_text = f"{user_mention}, ты успешно активировал промокод и получил <code>{format_number(actual_amount)}$</code>"
+            bot.reply_to(message, response_text, parse_mode="HTML")
         else:
             bot.reply_to(message, "✅ Промокод активирован, но достигнут дневной лимит дохода!")
         
         logger.info(f"Пользователь {message.from_user.username} активировал промокод {promo_name}")
         
     except (IndexError, ValueError):
-        bot.reply_to(message, "❌ Используйте: промо [код]")
+        bot.reply_to(message, "❌ Используйте: промо [название]")
     except Exception as e:
         bot.reply_to(message, "❌ Ошибка активации промокода!")
         logger.error(f"Ошибка активации промокода: {e}")
