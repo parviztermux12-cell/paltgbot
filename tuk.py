@@ -1947,6 +1947,61 @@ def send_telegram_gift(chat_id, user_id, gift_id, text):
 
 print("✅ Система покупки подарков загружена (тексты платные, только себе)")
 
+@bot.message_handler(func=lambda m: m.text and m.text.lower() == "статистика бота")
+def bot_stats(message):
+    # Проверяем, является ли пользователь админом
+    if message.from_user.id not in ADMIN_IDS:
+        # Игнорируем обычных пользователей (бот молчит)
+        logger.info(f"Пользователь {message.from_user.id} попытался вызвать статистику бота")
+        return
+    
+    try:
+        # Быстрый подсчет пользователей (просто количество записей в casino_data)
+        total_users = len(casino_data)
+        
+        # Подсчет пользователей с положительным балансом
+        users_with_balance = 0
+        total_balance = 0
+        max_balance = 0
+        max_balance_user = None
+        
+        # Один проход по данным для сбора всей статистики
+        for uid_str, data in casino_data.items():
+            bal = data.get("balance", 0)
+            if bal > 0:
+                users_with_balance += 1
+                total_balance += bal
+                
+                if bal > max_balance:
+                    max_balance = bal
+                    max_balance_user = int(uid_str)
+        
+        # Формируем текст статистики
+        text = (
+            f"📊 <b>Статистика бота</b>\n\n"
+            f"👥 <b>Пользователей в базе:</b> <code>{total_users}</code>\n"
+            f"💰 <b>Активных игроков:</b> <code>{users_with_balance}</code>\n"
+            f"💵 <b>Общий баланс:</b> <code>{format_number(total_balance)}$</code>\n"
+            f"🏆 <b>Максимальный баланс:</b> <code>{format_number(max_balance)}$</code>"
+        )
+        
+        # Добавляем информацию о рекордсмене, если есть
+        if max_balance_user:
+            try:
+                user = bot.get_chat(max_balance_user)
+                user_name = user.first_name
+                text += f"\n👑 <b>Рекордсмен:</b> <a href=\"tg://user?id={max_balance_user}\">{user_name}</a>"
+            except:
+                text += f"\n👑 <b>Рекордсмен ID:</b> <code>{max_balance_user}</code>"
+        
+        # Отправляем статистику
+        bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
+        
+        logger.info(f"Админ {message.from_user.id} запросил статистику бота")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при получении статистики бота: {e}")
+        bot.send_message(message.chat.id, "❌ Произошла ошибка при получении статистики")
 # ================== 🎲 НОВАЯ ИГРА: ЛЕСТНИЦА (LADDER) ==================
 # Команда: лестница [ставка]
 # Суть: Игроку показывается число от 1 до 100.
@@ -8474,28 +8529,25 @@ def top_cmd(message):
     if len(parts) > 1:
         try:
             requested_limit = int(parts[1])
-            # Проверяем допустимые значения: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
-            if requested_limit in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
+            # Проверяем допустимые значения
+            if requested_limit in [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500]:
                 limit = requested_limit
             else:
-                # Если ввели неподдерживаемое число, показываем подсказку
                 bot.reply_to(message, 
-                    "❌ Допустимые значения: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100\n"
+                    "❌ Допустимые значения: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500\n"
                     "Примеры: <code>топ 10</code>, <code>топ 50</code>, <code>топ 100</code>",
                     parse_mode="HTML")
                 return
         except ValueError:
-            # Если ввели не число, игнорируем и используем стандартное значение 50
             pass
     
-    # Быстро собираем данные
+    # Собираем данные пользователей
     users = []
-    
     for uid_str, data in casino_data.items():
         try:
             uid = int(uid_str)
             bal = data.get("balance", 0)
-            if bal > 0:  # Только те, у кого есть деньги
+            if bal > 0:
                 users.append((uid, bal))
         except:
             continue
@@ -8503,50 +8555,237 @@ def top_cmd(message):
     # Сортируем по балансу
     users.sort(key=lambda x: x[1], reverse=True)
     
-    # Берем нужное количество
-    top_users = users[:limit]
-
-    # Формируем текст
-    text = f"🏆 <b>Топ {limit} игроков:</b>\n\n"
+    # Если топ пустой
+    if not users:
+        bot.send_message(message.chat.id, f"🏆 <b>Топ {limit} игроков:</b>\n\n📊 Пока нет данных для топа", 
+                        parse_mode="HTML", disable_web_page_preview=True)
+        return
     
-    for i, (uid, bal) in enumerate(top_users, 1):
+    # Если лимит <= 100 - показываем сразу
+    if limit <= 100:
+        send_top_page(message, users, limit, 1, message.from_user.id)
+    else:
+        # Для больших списков показываем с пагинацией
+        send_top_page_with_pagination(message, users, limit, 1, message.from_user.id)
+
+def send_top_page(message, users, limit, page, owner_id):
+    """Отправляет или редактирует сообщение с одной страницей топа"""
+    start_idx = (page - 1) * 100
+    end_idx = min(start_idx + 100, limit)
+    
+    # Берем нужное количество
+    top_users = users[:limit][start_idx:end_idx]
+    
+    # Формируем текст
+    if limit <= 100:
+        text = f"🏆 <b>Топ {limit} игроков:</b>\n\n"
+    else:
+        text = f"🏆 <b>Топ {limit} игроков (страница {page} из { (limit + 99) // 100 }):</b>\n\n"
+    
+    # Нумерация с учетом страницы
+    for i, (uid, bal) in enumerate(top_users, start_idx + 1):
         try:
             # Получаем имя пользователя
             user_data = get_user_data(uid)
             first_name = user_data.get("_first_name", f"User {uid}")
             
-            # Если имя не кэшировано, пробуем получить
             if first_name == f"User {uid}":
                 try:
                     user = bot.get_chat(uid)
                     first_name = user.first_name
-                    # Кэшируем для будущих запросов
                     user_data["_first_name"] = first_name
                     save_casino_data()
                 except:
                     first_name = f"User {uid}"
             
-            # Получаем префикс если есть
+            # Получаем префикс
             up = get_user_prefix(uid)
-            # Берем только эмодзи из префикса (первое слово)
             if up:
-                # Разделяем строку префикса (например "🔥 Огонь" -> "🔥")
                 prefix_emoji = up['name'].split()[0] if up['name'] else ""
                 text += f"{i}. {prefix_emoji} <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
             else:
                 text += f"{i}. <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
             
         except Exception as e:
-            # Если ошибка - просто показываем ID
             text += f"{i}. User {uid} — {format_number(bal)}$\n"
             continue
+    
+    # Проверяем, нужно ли отправить новое сообщение или отредактировать существующее
+    if hasattr(message, 'message_id') and message.chat.id:
+        # Редактируем существующее сообщение
+        try:
+            bot.edit_message_text(
+                text,
+                message.chat.id,
+                message.message_id,
+                parse_mode="HTML",
+                disable_web_page_preview=True
+            )
+        except Exception as e:
+            # Если не получилось отредактировать (например, сообщение не найдено), отправляем новое
+            bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
+    else:
+        # Отправляем новое сообщение
+        bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
 
-    # Если топ пустой
-    if not top_users:
-        text = f"🏆 <b>Топ {limit} игроков:</b>\n\n📊 Пока нет данных для топа"
+def send_top_page_with_pagination(message, users, limit, page, owner_id):
+    """Отправляет или редактирует сообщение с пагинацией"""
+    start_idx = (page - 1) * 100
+    end_idx = min(start_idx + 100, limit)
+    
+    # Берем нужное количество
+    top_users = users[:limit][start_idx:end_idx]
+    
+    # Рассчитываем общее количество страниц
+    total_pages = (limit + 99) // 100
+    
+    # Формируем текст
+    text = f"🏆 <b>Топ {limit} игроков (страница {page} из {total_pages}):</b>\n\n"
+    
+    # Нумерация с учетом страницы
+    for i, (uid, bal) in enumerate(top_users, start_idx + 1):
+        try:
+            user_data = get_user_data(uid)
+            first_name = user_data.get("_first_name", f"User {uid}")
+            
+            if first_name == f"User {uid}":
+                try:
+                    user = bot.get_chat(uid)
+                    first_name = user.first_name
+                    user_data["_first_name"] = first_name
+                    save_casino_data()
+                except:
+                    first_name = f"User {uid}"
+            
+            up = get_user_prefix(uid)
+            if up:
+                prefix_emoji = up['name'].split()[0] if up['name'] else ""
+                text += f"{i}. {prefix_emoji} <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
+            else:
+                text += f"{i}. <a href=\"tg://user?id={uid}\">{first_name}</a> — {format_number(bal)}$\n"
+            
+        except Exception as e:
+            text += f"{i}. User {uid} — {format_number(bal)}$\n"
+            continue
+    
+    # Создаем клавиатуру с пагинацией (без эмодзи)
+    kb = InlineKeyboardMarkup()
+    
+    # Кнопки навигации (только текст, без эмодзи)
+    nav_buttons = []
+    if page > 1:
+        nav_buttons.append(InlineKeyboardButton("Назад", callback_data=f"top_page_{limit}_{page-1}_{owner_id}"))
+    if page < total_pages:
+        nav_buttons.append(InlineKeyboardButton("Вперед", callback_data=f"top_page_{limit}_{page+1}_{owner_id}"))
+    
+    if nav_buttons:
+        if len(nav_buttons) == 2:
+            kb.row(nav_buttons[0], nav_buttons[1])
+        else:
+            kb.row(nav_buttons[0])
+    
+    # Кнопка для возврата к обычному топу (без эмодзи)
+    kb.add(InlineKeyboardButton("Показать всё", callback_data=f"top_all_{limit}_{owner_id}"))
+    
+    # Проверяем, нужно ли отправить новое сообщение или отредактировать существующее
+    if hasattr(message, 'message_id') and message.chat.id:
+        # Редактируем существующее сообщение
+        try:
+            bot.edit_message_text(
+                text,
+                message.chat.id,
+                message.message_id,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=kb
+            )
+        except Exception as e:
+            # Если не получилось отредактировать, отправляем новое
+            bot.send_message(
+                message.chat.id, 
+                text, 
+                parse_mode="HTML", 
+                disable_web_page_preview=True, 
+                reply_markup=kb
+            )
+    else:
+        # Отправляем новое сообщение
+        bot.send_message(
+            message.chat.id, 
+            text, 
+            parse_mode="HTML", 
+            disable_web_page_preview=True, 
+            reply_markup=kb
+        )
 
-    # Быстрая отправка
-    bot.send_message(message.chat.id, text, parse_mode="HTML", disable_web_page_preview=True)
+@bot.callback_query_handler(func=lambda c: c.data.startswith("top_page_"))
+def top_page_callback(call):
+    """Обработчик переключения страниц топа с защитой от чужих нажатий"""
+    try:
+        parts = call.data.split("_")
+        limit = int(parts[2])
+        page = int(parts[3])
+        owner_id = int(parts[4])
+        
+        # ЗАЩИТА: проверяем, что нажимает владелец кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Собираем данные пользователей
+        users = []
+        for uid_str, data in casino_data.items():
+            try:
+                uid = int(uid_str)
+                bal = data.get("balance", 0)
+                if bal > 0:
+                    users.append((uid, bal))
+            except:
+                continue
+        
+        users.sort(key=lambda x: x[1], reverse=True)
+        
+        # Обновляем сообщение (редактируем существующее)
+        send_top_page_with_pagination(call.message, users, limit, page, owner_id)
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, "❌ Ошибка загрузки страницы")
+        logger.error(f"Ошибка в top_page_callback: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("top_all_"))
+def top_all_callback(call):
+    """Обработчик показа полного топа с защитой от чужих нажатий"""
+    try:
+        parts = call.data.split("_")
+        limit = int(parts[2])
+        owner_id = int(parts[3])
+        
+        # ЗАЩИТА: проверяем, что нажимает владелец кнопки
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Собираем данные пользователей
+        users = []
+        for uid_str, data in casino_data.items():
+            try:
+                uid = int(uid_str)
+                bal = data.get("balance", 0)
+                if bal > 0:
+                    users.append((uid, bal))
+            except:
+                continue
+        
+        users.sort(key=lambda x: x[1], reverse=True)
+        
+        # Показываем первую страницу без пагинации (редактируем существующее)
+        send_top_page(call.message, users, limit, 1, owner_id)
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        bot.answer_callback_query(call.id, "❌ Ошибка")
+        logger.error(f"Ошибка в top_all_callback: {e}")
 
 
 
@@ -18074,28 +18313,115 @@ def transfer_money(message):
         logger.error(f"Ошибка перевода: {e}")
         bot.reply_to(message, "❌ Произошла ошибка при переводе средств!")
 
-# ================== МОЙ ПРОФИЛЬ (СО СТАТИСТИКОЙ ПЕРЕВОДОВ) ==================
+# ================== МОЙ ПРОФИЛЬ (ОБНОВЛЕННАЯ ВЕРСИЯ) ==================
 
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мой профиль", "профиль"])
 def my_profile(message):
-    """Показывает профиль пользователя со статистикой"""
+    """Показывает профиль пользователя с расширенной информацией"""
     user_id = message.from_user.id
     user_name = message.from_user.first_name
     mention = f'<a href="tg://user?id={user_id}">{user_name}</a>'
     
     # Получаем данные пользователя
     user_data = get_user_data(user_id)
-    transfer_stats = get_user_transfer_stats(user_id)
     
-    # Сумма всех переводов = отправлено + получено
-    total_transfers = transfer_stats["total_sent"] + transfer_stats["total_received"]
+    # Получаем описание профиля (био)
+    try:
+        user = bot.get_chat(user_id)
+        user_bio = getattr(user, 'bio', None)
+        if user_bio:
+            bio_text = user_bio
+        else:
+            bio_text = "Нету..."
+    except:
+        bio_text = "Нету..."
     
-    # Формируем текст профиля
+    # Получаем username
+    username = f"@{message.from_user.username}" if message.from_user.username else "Нет"
+    
+    # Получаем префикс
+    prefix_data = get_user_prefix(user_id)
+    prefix_display = prefix_data["name"] if prefix_data else "Нет"
+    
+    # Получаем VIP статус
+    vip_data = user_data.get("vip", {})
+    vip_level = vip_data.get("level", 0)
+    if vip_level > 0:
+        vip_info = VIP_LEVELS.get(vip_level, {})
+        vip_display = f"{vip_info.get('prefix', '⭐')} {vip_info.get('name', 'VIP')}"
+    else:
+        vip_display = "Нет"
+    
+    # Получаем информацию о браке
+    marriage = get_marriage(user_id)
+    if marriage:
+        partner_id = marriage["partner_id"]
+        try:
+            partner = bot.get_chat(partner_id)
+            partner_name = partner.first_name
+            partner_mention = f'<a href="tg://user?id={partner_id}">{partner_name}</a>'
+            marriage_status = f"В браке с {partner_mention}"
+        except:
+            marriage_status = "В браке"
+    else:
+        marriage_status = "Не в браке"
+    
+    # Получаем информацию о рефералах
+    ref_data = get_user_referral_data(user_id)
+    referrals_count = len(ref_data.get("referrals", []))
+    
+    # Получаем информацию о питомце
+    pet_data = get_pet(user_id)
+    if pet_data:
+        pet_id, pet_name, pet_price, pet_satiety, pet_level, pet_xp, pet_last_update = pet_data
+        pet_info = f"{pet_name} (ур. {pet_level})"
+    else:
+        pet_info = "Нет"
+    
+    # Получаем информацию о тянке
+    if user_data.get("tyanka"):
+        tyanka_name = user_data["tyanka"].get("name", "Неизвестно")
+        tyanka_info = f"{tyanka_name}"
+    else:
+        tyanka_info = "Нет"
+    
+    # Получаем информацию о машине
+    if user_data.get("car"):
+        car_name = user_data["car"].get("name", "Неизвестно")
+        car_info = f"{car_name}"
+    else:
+        car_info = "Нет"
+    
+    # Получаем информацию о бизнесе
+    if user_data.get("business"):
+        business_name = user_data["business"].get("name", "Неизвестно")
+        business_info = f"{business_name}"
+    else:
+        business_info = "Нет"
+    
+    # Получаем информацию о доме
+    if user_data.get("house"):
+        house_name = user_data["house"].get("name", "Неизвестно")
+        house_info = f"{house_name}"
+    else:
+        house_info = "Нет"
+    
+    # Формируем текст профиля со стикерами и жирными шрифтами
     text = (
-        f"👤 Информация про тебя:\n\n"
-        f"🥭 ID: <code>{user_id}</code>\n"
-        f"🥥 Баланс: <code>{format_number(user_data['balance'])}$</code>\n"
-        f"🥞 Сумма всех переводов: <code>{format_number(total_transfers)}$</code>"
+        f"👤 <b>Ник:</b> {mention}\n"
+        f"📱 <b>Username:</b> {username}\n"
+        f"🆔 <b>ID:</b> <code>{user_id}</code>\n"
+        f"📝 <b>Описание:</b> {bio_text}\n"
+        f"💰 <b>Баланс:</b> <code>{format_number(user_data['balance'])}$</code>\n"
+        f"🏷️ <b>Префикс:</b> {prefix_display}\n"
+        f"💎 <b>VIP:</b> {vip_display}\n"
+        f"💍 <b>Брак:</b> {marriage_status}\n"
+        f"👥 <b>Рефералы:</b> {referrals_count}\n"
+        f"🐾 <b>Питомец:</b> {pet_info}\n"
+        f"👩 <b>Тянка:</b> {tyanka_info}\n"
+        f"🚗 <b>Машина:</b> {car_info}\n"
+        f"🏢 <b>Бизнес:</b> {business_info}\n"
+        f"🏠 <b>Дом:</b> {house_info}"
     )
     
     # Отправляем ответом на сообщение пользователя
@@ -18557,125 +18883,169 @@ def broadcast_message(message):
         bot.reply_to(message, "❌ Ошибка рассылки!")
         logger.error(f"Ошибка рассылки: {e}")
 
-# ================== ПОИСК ИГРОКА ==================
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("найти "))
-def search_player(message):
-    if not is_admin(message.from_user.id):
-        return
-        
-    try:
-        query = message.text.split(maxsplit=2)[2]
-        
-        # Поиск по ID
-        if query.isdigit():
-            user_id = int(query)
-            if str(user_id) in casino_data:
-                user_data = casino_data[str(user_id)]
-                try:
-                    user = bot.get_chat(user_id)
-                    username = user.username if user.username else "Нет username"
-                    name = user.first_name
-                except:
-                    username = "Неизвестно"
-                    name = "Неизвестно"
-                    
-                response = (f"👤 <b>Найден игрок:</b>\n\n"
-                           f"ID: {user_id}\n"
-                           f"Имя: {name}\n"
-                           f"Username: @{username}\n"
-                           f"Баланс: {format_number(user_data['balance'])}$\n"
-                           f"Банк: {format_number(user_data['bank_balance'])}$")
-                
-                if user_data.get("tyanka"):
-                    response += f"\nТянка: {user_data['tyanka']['name']}"
-                if user_data.get("business"):
-                    response += f"\nБизнес: {user_data['business']['name']}"
-                if user_data.get("house"):
-                    response += f"\nДом: {user_data['house']['name']}"
-                if user_data.get("car"):
-                    response += f"\nМашина: {user_data['car']['name']}"
-                    
-                bot.reply_to(message, response, parse_mode="HTML")
-                return
-                
-        # Поиск по username (без @)
-        for user_id, user_data in casino_data.items():
-            try:
-                user = bot.get_chat(int(user_id))
-                if user.username and user.username.lower() == query.lower():
-                    response = (f"👤 <b>Найден игрок:</b>\n\n"
-                               f"ID: {user_id}\n"
-                               f"Имя: {user.first_name}\n"
-                               f"Username: @{user.username}\n"
-                               f"Баланс: {format_number(user_data['balance'])}$\n"
-                               f"Банк: {format_number(user_data['bank_balance'])}$")
-                    
-                    if user_data.get("tyanka"):
-                        response += f"\nТянка: {user_data['tyanka']['name']}"
-                    if user_data.get("business"):
-                        response += f"\nБизнес: {user_data['business']['name']}"
-                    if user_data.get("house"):
-                        response += f"\nДом: {user_data['house']['name']}"
-                    if user_data.get("car"):
-                        response += f"\nМашина: {user_data['car']['name']}"
-                        
-                    bot.reply_to(message, response, parse_mode="HTML")
-                    return
-                    
-            except:
-                continue
-                
-        # Поиск по имени
-        for user_id, user_data in casino_data.items():
-            try:
-                user = bot.get_chat(int(user_id))
-                if user.first_name and query.lower() in user.first_name.lower():
-                    response = (f"👤 <b>Найден игрок:</b>\n\n"
-                               f"ID: {user_id}\n"
-                               f"Имя: {user.first_name}\n"
-                               f"Username: @{user.username if user.username else 'Нет'}\n"
-                               f"Баланс: {format_number(user_data['balance'])}$\n"
-                               f"Банк: {format_number(user_data['bank_balance'])}$")
-                    
-                    if user_data.get("tyanka"):
-                        response += f"\nТянка: {user_data['tyanka']['name']}"
-                    if user_data.get("business"):
-                        response += f"\nБизнес: {user_data['business']['name']}"
-                    if user_data.get("house"):
-                        response += f"\nДом: {user_data['house']['name']}"
-                    if user_data.get("car"):
-                        response += f"\nМашина: {user_data['car']['name']}"
-                        
-                    bot.reply_to(message, response, parse_mode="HTML")
-                    return
-                    
-            except:
-                continue
-                
-        bot.reply_to(message, "❌ Игрок не найден!")
-        
-    except (IndexError, ValueError):
-        bot.reply_to(message, "❌ Используйте: найти игрок [ID/имя/username]")
-    except Exception as e:
-        bot.reply_to(message, "❌ Ошибка поиска!")
-        logger.error(f"Ошибка поиска игрока: {e}")
         
 
+# ================== ОБНОВЛЕННАЯ КОМАНДА ЛОГОВ /log ==================
 
-# ================== КОМАНДА ЛОГОВ ==================
+# Словарь для хранения временных состояний, чтобы знать, какой лог мы ждем
+_log_request_state = {}
+
 @bot.message_handler(commands=['log'])
-def send_logs(message):
-    if not is_admin(message.from_user.id):
-        bot.reply_to(message, "❌ Недостаточно прав!")
+def log_panel(message):
+    """Показывает панель управления логами (только для админов)"""
+    user_id = message.from_user.id
+
+    # Проверка на администратора
+    if user_id not in ADMIN_IDS:
+        # Игнорируем команду от обычного пользователя
+        logger.info(f"Пользователь {user_id} попытался использовать команду /log")
         return
-        
+
+    # Текст панели
+    panel_text = (
+        "📋 <b>Панель управления логами</b>\n\n"
+        "Выберите тип лога для просмотра:"
+    )
+
+    # Создаем клавиатуру с кнопками
+    markup = InlineKeyboardMarkup(row_width=2)
+    markup.add(
+        InlineKeyboardButton("👤 Лог пользователя", callback_data="log_user"),
+        InlineKeyboardButton("📜 Весь лог (bot_logs.txt)", callback_data="log_full")
+    )
+    markup.add(
+        InlineKeyboardButton("💸 Лог переводов", callback_data="log_transfers"),
+        InlineKeyboardButton("🛒 Лог покупок", callback_data="log_purchases")
+    )
+    markup.add(
+        InlineKeyboardButton("🎮 Лог игр", callback_data="log_games")
+    )
+
+    bot.send_message(message.chat.id, panel_text, reply_markup=markup, parse_mode="HTML")
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('log_'))
+def log_callback_handler(call):
+    """Обрабатывает нажатия на кнопки в панели логов"""
+    user_id = call.from_user.id
+
+    # Двойная проверка на администратора (на всякий случай)
+    if user_id not in ADMIN_IDS:
+        bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+        return
+
+    action = call.data.split('_', 1)[1] # Отделяем 'log_' от остальной части
+
+    # --- Обработка кнопки "Весь лог" (сразу отправляем файл) ---
+    if action == "full":
+        bot.answer_callback_query(call.id) # Просто закрываем уведомление
+        try:
+            with open("bot_logs.txt", "rb") as f:
+                bot.send_document(call.message.chat.id, f, caption="📋 Полный лог бота (bot_logs.txt)")
+            logger.info(f"Админ {user_id} запросил полный лог")
+        except FileNotFoundError:
+            bot.send_message(call.message.chat.id, "❌ Файл bot_logs.txt не найден.")
+        except Exception as e:
+            bot.send_message(call.message.chat.id, f"❌ Ошибка отправки лога: {e}")
+            logger.error(f"Ошибка отправки полного лога: {e}")
+        return
+
+    # --- Для остальных кнопок (где нужен ID пользователя) ---
+    # Сохраняем, какой лог хочет админ
+    _log_request_state[user_id] = action
+    bot.answer_callback_query(call.id)
+
+    # Запрашиваем ID
+    bot.send_message(
+        call.message.chat.id,
+        f"👤 Введите ID пользователя для получения лога '<b>{action}</b>':",
+        parse_mode="HTML"
+    )
+
+
+@bot.message_handler(func=lambda message: message.from_user.id in _log_request_state)
+def handle_log_id_input(message):
+    """Обрабатывает ввод ID пользователя для получения конкретного лога"""
+    admin_id = message.from_user.id
+
+    # Проверка на администратора (на всякий случай)
+    if admin_id not in ADMIN_IDS:
+        # Если вдруг состояние осталось, но юзер не админ — чистим и игнорим
+        _log_request_state.pop(admin_id, None)
+        return
+
+    # Получаем тип запрошенного лога из временного хранилища
+    log_type = _log_request_state.pop(admin_id) # Удаляем запись после получения
+
+    target_user_id = message.text.strip()
+
+    # Простейшая валидация, что ввели число
+    if not target_user_id.isdigit():
+        bot.send_message(message.chat.id, "❌ ID должен состоять только из цифр. Попробуйте снова через /log.")
+        return
+
+    # Определяем имя файла в зависимости от типа лога
+    filename = None
+    caption_prefix = ""
+    if log_type == "user":
+        # Для лога пользователя мы должны создать отдельный файл.
+        # Так как в исходном коде нет отдельного лога по пользователям,
+        # мы создадим временный файл, отфильтровав основной лог.
+        # Это пример. В идеале, нужно логировать действия пользователей в отдельный файл.
+        try:
+            # Попытка отфильтровать основной лог (bot_logs.txt) по ID
+            user_log_filename = f"user_{target_user_id}_log.txt"
+            with open("bot_logs.txt", "r", encoding="utf-8") as main_log, \
+                 open(user_log_filename, "w", encoding="utf-8") as user_log:
+                found = False
+                for line in main_log:
+                    if f" {target_user_id}" in line or f":{target_user_id}]" in line or f"({target_user_id})" in line:
+                        user_log.write(line)
+                        found = True
+                if not found:
+                    user_log.write(f"Записей для пользователя {target_user_id} не найдено в основном логе.")
+
+            filename = user_log_filename
+            caption_prefix = f"👤 Лог пользователя {target_user_id} (отфильтрован из bot_logs.txt)"
+        except FileNotFoundError:
+            bot.send_message(message.chat.id, "❌ Основной файл логов (bot_logs.txt) не найден.")
+            return
+        except Exception as e:
+            bot.send_message(message.chat.id, f"❌ Ошибка обработки лога: {e}")
+            logger.error(f"Ошибка фильтрации лога для пользователя {target_user_id}: {e}")
+            return
+
+    elif log_type == "transfers":
+        filename = "transfer_logs.txt"
+        caption_prefix = f"💸 Лог переводов для пользователя {target_user_id}"
+    elif log_type == "purchases":
+        filename = "purchase_logs.txt"
+        caption_prefix = f"🛒 Лог покупок для пользователя {target_user_id}"
+    elif log_type == "games":
+        filename = "game_logs.txt"
+        caption_prefix = f"🎮 Лог игр для пользователя {target_user_id}"
+    else:
+        bot.send_message(message.chat.id, "❌ Неизвестный тип лога.")
+        return
+
+    # Отправляем файл
     try:
-        with open("bot_logs.txt", "rb") as f:
-            bot.send_document(message.chat.id, f, caption="📋 Логи бота")
-        logger.info(f"Админ {message.from_user.username} запросил логи")
+        with open(filename, "rb") as f:
+            bot.send_document(message.chat.id, f, caption=caption_prefix)
+        logger.info(f"Админ {admin_id} запросил лог '{log_type}' для пользователя {target_user_id}")
+    except FileNotFoundError:
+        bot.send_message(message.chat.id, f"❌ Файл {filename} не найден.")
     except Exception as e:
-        bot.reply_to(message, "❌ Ошибка отправки логов!")
-        logger.error(f"Ошибка отправки логов: {e}")
+        bot.send_message(message.chat.id, f"❌ Ошибка отправки лога: {e}")
+        logger.error(f"Ошибка отправки лога {filename}: {e}")
+    finally:
+        # Если мы создавали временный файл для лога пользователя, удаляем его
+        if log_type == "user" and filename and filename.startswith("user_"):
+            try:
+                import os
+                os.remove(filename)
+            except:
+                pass
         
 
 # ================== ЗАПУСК БОТА ==================
