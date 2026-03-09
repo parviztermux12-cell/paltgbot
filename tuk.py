@@ -1308,6 +1308,343 @@ def admin_referrals_top(message):
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
     
+    # ================== 🍬 НОВАЯ ИГРА: КОНФЕТКА (CANDY HUNT) ==================
+# Команда: конфетка [ставка] или конфета [ставка]
+# Поле 2x3 (6 клеток), 3 конфеты, 3 пустых клетки
+
+import random
+import uuid
+
+# Словарь для хранения активных игр
+active_candy_games = {}
+
+# Настройки игры
+CANDY_MULTIPLIER_PER_CANDY = 0.35  # +0.35 к множителю за каждую конфету
+CANDY_TOTAL_CELLS = 6               # Всего клеток 2x3
+CANDY_COUNT = 3                      # Количество конфет
+
+def create_candy_board():
+    """Создает доску и прячет конфеты (3 случайных индекса от 0 до 5)"""
+    candy_positions = random.sample(range(CANDY_TOTAL_CELLS), CANDY_COUNT)
+    return candy_positions
+
+def format_candy_board(opened_cells, candy_positions):
+    """
+    Форматирует доску для отображения.
+    opened_cells: список индексов открытых клеток.
+    candy_positions: список индексов, где лежат конфеты.
+    """
+    board = []
+    for i in range(CANDY_TOTAL_CELLS):
+        if i in opened_cells:
+            # Если клетка открыта, показываем, что там
+            if i in candy_positions:
+                board.append("🍬")  # Конфета
+            else:
+                board.append("⬛")  # Пусто
+        else:
+            board.append("⚫")  # Неоткрытая клетка
+
+    # Собираем в сетку 2x3
+    return (f"{board[0]} | {board[1]} | {board[2]}\n"
+            f"{board[3]} | {board[4]} | {board[5]}")
+
+def check_candy_owner(call, user_id):
+    """Проверка владельца кнопки"""
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+        return False
+    return True
+
+def candy_keyboard(game_id, user_id, opened_cells, show_cashout=False):
+    """Создает клавиатуру для игры"""
+    kb = InlineKeyboardMarkup(row_width=3)
+    
+    # Создаем кнопки для каждой клетки
+    row1_buttons = []
+    row2_buttons = []
+    
+    for i in range(CANDY_TOTAL_CELLS):
+        button = InlineKeyboardButton(
+            "⚫", 
+            callback_data=f"candy_open_{game_id}_{i}_{user_id}"
+        )
+        if i < 3:
+            row1_buttons.append(button)
+        else:
+            row2_buttons.append(button)
+    
+    kb.row(*row1_buttons)
+    kb.row(*row2_buttons)
+    
+    # Кнопка "Забрать выигрыш" (появляется после нахождения хотя бы одной конфеты)
+    if show_cashout:
+        kb.add(InlineKeyboardButton("💸 Забрать выигрыш", callback_data=f"candy_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith(("конфетка", "конфета")))
+def candy_game_start(message):
+    """
+    Запуск игры "Конфетка".
+    Использование: конфетка [ставка]
+    """
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        # --- Парсинг ставки ---
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message,
+                         f"{mention}, укажи ставку!\n\n"
+                         f"🍬 <b>Найди 3 конфеты в полях, в остальных трёх - минус ставка</b>\n\n"
+                         f"<b>Пример:</b> <code>конфетка 1000</code>",
+                         parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка должна быть больше 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Ставка должна быть числом!")
+            return
+
+        # --- Проверка баланса ---
+        if user_data["balance"] < bet:
+            bot.reply_to(message,
+                         f"❌ {mention}, недостаточно средств!\n\n"
+                         f"💰 Нужно: <code>{format_number(bet)}$</code>\n"
+                         f"💳 У тебя: <code>{format_number(user_data['balance'])}$</code>",
+                         parse_mode="HTML")
+            return
+
+        # Списываем ставку
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        # Генерация уникального ID игры
+        game_id = str(uuid.uuid4())[:8]
+
+        # Создаем доску с конфетами
+        candy_positions = create_candy_board()
+
+        # Сохраняем игру
+        active_candy_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "candy_positions": candy_positions,
+            "opened_cells": [],
+            "candies_found": 0,
+            "current_multiplier": 1.0,
+            "active": True
+        }
+
+        # Текст игры
+        text = (f"{mention}, найди конфеты! 🍬\n\n"
+                f"<b>Ставка:</b> <code>{format_number(bet)}$</code>\n"
+                f"<b>Множитель:</b> <code>x1.00</code>\n\n"
+                f"{format_candy_board([], candy_positions)}")
+
+        # Отправляем сообщение
+        msg = bot.send_message(
+            chat_id,
+            text,
+            parse_mode="HTML",
+            reply_markup=candy_keyboard(game_id, user_id, [], show_cashout=False)
+        )
+
+        # Сохраняем ID сообщения
+        active_candy_games[game_id]["message_id"] = msg.message_id
+
+        # Удаляем команду пользователя (для чистоты)
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Конфетка (старт): {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при создании игры!")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("candy_open_"))
+def candy_open_cell(call):
+    """Обработчик открытия клетки"""
+    try:
+        # Разбираем callback_data: candy_open_GAMEID_CELL_OWNERID
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = int(parts[3])
+        owner_id = int(parts[4])
+
+        # Проверка владельца
+        if not check_candy_owner(call, owner_id):
+            return
+
+        # Проверка существования игры
+        if game_id not in active_candy_games:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+
+        game = active_candy_games[game_id]
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+
+        # Проверка, активна ли игра
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
+            return
+
+        # Проверка, не открыта ли уже клетка
+        if cell in game["opened_cells"]:
+            bot.answer_callback_query(call.id, "❌ Эта клетка уже открыта!")
+            return
+
+        # Открываем клетку
+        game["opened_cells"].append(cell)
+
+        # Проверяем, есть ли в клетке конфета
+        if cell in game["candy_positions"]:
+            # Нашли конфету!
+            game["candies_found"] += 1
+            game["current_multiplier"] = round(1.0 + (game["candies_found"] * CANDY_MULTIPLIER_PER_CANDY), 2)
+
+            # Проверяем, все ли конфеты найдены
+            if game["candies_found"] >= CANDY_COUNT:
+                # Найдены все конфеты - автоматический выигрыш
+                win_amount = int(game["bet"] * game["current_multiplier"])
+                user_data = get_user_data(user_id)
+                user_data["balance"] += win_amount
+                save_casino_data()
+
+                text = (f"{mention}, 🎉 <b>ТЫ НАШЁЛ ВСЕ КОНФЕТЫ!</b>\n\n"
+                        f"💰 Выигрыш: <code>{format_number(win_amount)}$</code>\n"
+                        f"📈 Множитель: <b>x{game['current_multiplier']:.2f}</b>\n"
+                        f"🍬 Найдено конфет: <code>{game['candies_found']}</code>\n\n"
+                        f"{format_candy_board(game['opened_cells'], game['candy_positions'])}")
+
+                game["active"] = False
+                bot.edit_message_text(
+                    text,
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_candy_games[game_id]
+                bot.answer_callback_query(call.id, "🎉 Ты выиграл!")
+                return
+
+            # Не все конфеты найдены - показываем сообщение о находке
+            show_cashout = True  # После первой конфеты появляется кнопка
+            text = (f"{mention}, 🍬 <b>Ты нашёл конфету!</b>\n\n"
+                    f"<b>Ставка:</b> <code>{format_number(game['bet'])}$</code>\n"
+                    f"<b>Текущий множитель:</b> <b>x{game['current_multiplier']:.2f}</b>\n"
+                    f"<b>Найдено конфет:</b> <code>{game['candies_found']}/{CANDY_COUNT}</code>\n\n"
+                    f"Продолжай искать или забирай выигрыш!\n\n"
+                    f"{format_candy_board(game['opened_cells'], game['candy_positions'])}")
+
+        else:
+            # Пустая клетка - проигрыш
+            text = (f"{mention}, 😢 <b>Тут, к сожалению, не было конфет...</b>\n\n"
+                    f"💸 Ты потерял ставку: <code>{format_number(game['bet'])}$</code>\n\n"
+                    f"{format_candy_board(game['opened_cells'], game['candy_positions'])}")
+
+            game["active"] = False
+            bot.edit_message_text(
+                text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+            del active_candy_games[game_id]
+            bot.answer_callback_query(call.id, "❌ Ты проиграл!")
+            return
+
+        # Обновляем сообщение
+        show_cashout = game["candies_found"] > 0
+        bot.edit_message_text(
+            text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML",
+            reply_markup=candy_keyboard(game_id, user_id, game["opened_cells"], show_cashout)
+        )
+
+        bot.answer_callback_query(call.id, f"✅ Клетка открыта!")
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Конфетка (открытие): {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("candy_cashout_"))
+def candy_cashout(call):
+    """Обработчик кнопки 'Забрать выигрыш'"""
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        # Проверка владельца
+        if not check_candy_owner(call, owner_id):
+            return
+
+        # Проверка существования игры
+        if game_id not in active_candy_games:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+
+        game = active_candy_games[game_id]
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+
+        # Проверка, активна ли игра
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!")
+            return
+
+        # Проверка, есть ли что забирать (должна быть найдена хотя бы одна конфета)
+        if game["candies_found"] == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала найди хотя бы одну конфету!")
+            return
+
+        # Рассчитываем выигрыш
+        win_amount = int(game["bet"] * game["current_multiplier"])
+        user_data = get_user_data(user_id)
+        user_data["balance"] += win_amount
+        save_casino_data()
+
+        # Формируем правильное окончание для слова "конфет"
+        candy_word = "конфету" if game["candies_found"] == 1 else "конфет"
+
+        text = (f"{mention}, ✅ <b>Ты успешно забрал выигрыш!</b>\n\n"
+                f"💰 Выигрыш: <code>{format_number(win_amount)}$</code>\n"
+                f"📈 Множитель: <b>x{game['current_multiplier']:.2f}</b>\n"
+                f"🍬 Нашёл <code>{game['candies_found']}</code> {candy_word}\n\n"
+                f"{format_candy_board(game['opened_cells'], game['candy_positions'])}")
+
+        game["active"] = False
+        bot.edit_message_text(
+            text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML"
+        )
+
+        del active_candy_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win_amount)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Конфетка (выигрыш): {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+print("✅ Игра 'Конфетка' (6 клеток, 3 конфеты) успешно загружена! 🍬")
+    
     # ================== 💣 ИГРА "ОБЕЗВРЕДЬ БОМБУ" ==================
 
 BOMB_COOLDOWN = 120  # 2 минуты
@@ -12235,6 +12572,7 @@ HELP_CONTENT = {
 
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
+[🍬] <b>конфетка [ставка]</b>
 [🍹] <b>бомба [ставка]</b>
 [☁️] <b>лестница [ставка]</b>
 [🐿️] <b>белка [ставка]</b>

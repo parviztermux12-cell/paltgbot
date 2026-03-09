@@ -14,5 +14,17 @@
                 "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
             }
         ]
+    },
+    "-1003880804092": {
+        "7102403681": [
+            {
+                "type": "single",
+                "amount": 13,
+                "value": [
+                    14
+                ],
+                "mention": "<a href=\"tg://user?id=7102403681\">〄</a>"
+            }
+        ]
     }
 }

@@ -6789,3 +6789,1765 @@ telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsucc
 2026-03-06 15:22:58,865 - LasVenturas By parviz - INFO - Me_Vangog перешел на страницу 1 машин
 2026-03-06 15:26:37,379 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о доме
 2026-03-06 15:28:03,856 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 200000000$, Получил: 180000000$
+2026-03-06 15:36:30,377 - LasVenturas By parviz - INFO - ✅ Система пассивного VIP дохода запущена (интервал: 3 часа)
+2026-03-06 15:36:30,394 - LasVenturas By parviz - INFO - ✅ База данных налогов инициализирована
+2026-03-06 15:36:30,400 - LasVenturas By parviz - INFO - ✅ База данных кейсов инициализирована
+2026-03-06 15:36:30,414 - LasVenturas By parviz - INFO - ✅ Система начисления банковских процентов запущена (ежедневно в 03:00)
+2026-03-06 15:36:30,428 - LasVenturas By parviz - INFO - ✅ В базе уже есть 5 префиксов
+2026-03-06 15:36:30,711 - LasVenturas By parviz - INFO - Бот Iris запущен!
+2026-03-06 15:36:32,987 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 100 | Результат: win | Скорость: 166
+2026-03-06 15:38:00,934 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод хззззззззз
+2026-03-06 15:40:19,005 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 7526512670 из источника promo
+2026-03-06 15:40:19,248 - LasVenturas By parviz - INFO - Пользователь parvizwp активировал промокод хззззззззз
+2026-03-06 15:40:25,974 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 8168027201 из источника promo
+2026-03-06 15:40:26,173 - LasVenturas By parviz - INFO - Пользователь Me_Vangog активировал промокод хззззззззз
+2026-03-06 15:40:37,032 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 5815880196 из источника promo
+2026-03-06 15:40:37,235 - LasVenturas By parviz - INFO - Пользователь temeiruki активировал промокод хззззззззз
+2026-03-06 15:40:54,141 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 8483733925 из источника promo
+2026-03-06 15:40:54,279 - LasVenturas By parviz - INFO - Пользователь BRBRRREEYYPIYPAY активировал промокод хззззззззз
+2026-03-06 15:41:14,213 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 7696828602 из источника promo
+2026-03-06 15:41:14,461 - LasVenturas By parviz - INFO - Пользователь viccha2 активировал промокод хззззззззз
+2026-03-06 15:41:24,341 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 7060923750 из источника promo
+2026-03-06 15:41:24,615 - LasVenturas By parviz - INFO - Пользователь DrReddock активировал промокод хззззззззз
+2026-03-06 15:41:28,356 - TeleBot - ERROR - Infinity polling exception: name '_make_fake_message_from_call' is not defined
+2026-03-06 15:41:28,358 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 7120, in broadcast_back
+    fake = _make_fake_message_from_call(call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name '_make_fake_message_from_call' is not defined
+
+2026-03-06 15:41:48,439 - TeleBot - ERROR - Infinity polling exception: name '_make_fake_message_from_call' is not defined
+2026-03-06 15:41:48,441 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 7120, in broadcast_back
+    fake = _make_fake_message_from_call(call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name '_make_fake_message_from_call' is not defined
+
+2026-03-06 15:43:37,264 - LasVenturas By parviz - INFO - ❌ Пользователь 7060923750 НЕ имеет нужный текст в bio.
+2026-03-06 15:43:37,352 - LasVenturas By parviz - INFO - Начислен доход 3350$ пользователю 7060923750 из источника farm
+2026-03-06 15:43:37,352 - LasVenturas By parviz - INFO - Пользователь 7060923750 получил обычный доход с фермы 3350$
+2026-03-06 15:43:56,979 - LasVenturas By parviz - INFO - ❌ Пользователь 7060923750 НЕ имеет нужный текст в bio.
+2026-03-06 15:43:57,132 - LasVenturas By parviz - INFO - Начислен доход 2822$ пользователю 7060923750 из источника bonus
+2026-03-06 15:43:57,133 - LasVenturas By parviz - INFO - Пользователь 7060923750 получил обычный бонус 2822$
+2026-03-06 15:44:05,386 - LasVenturas By parviz - ERROR - Ошибка рассылки в 7158187651: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 15:44:10,228 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5246784210: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 15:44:13,075 - LasVenturas By parviz - ERROR - Ошибка рассылки в 8335186885: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 15:44:14,540 - LasVenturas By parviz - INFO - ❌ Пользователь 8483733925 НЕ имеет нужный текст в bio.
+2026-03-06 15:44:14,600 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5225670948: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 15:44:14,631 - LasVenturas By parviz - INFO - Начислен доход 2264$ пользователю 8483733925 из источника farm
+2026-03-06 15:44:14,631 - LasVenturas By parviz - INFO - Пользователь 8483733925 получил обычный доход с фермы 2264$
+2026-03-06 15:44:14,923 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5136803222: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 15:44:15,284 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5146086495: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 15:44:15,604 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5247587352: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 15:44:16,195 - LasVenturas By parviz - INFO - ❌ Пользователь 8483733925 НЕ имеет нужный текст в bio.
+2026-03-06 15:44:16,283 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5179640457: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 15:44:16,288 - LasVenturas By parviz - INFO - Начислен доход 2587$ пользователю 8483733925 из источника bonus
+2026-03-06 15:44:16,288 - LasVenturas By parviz - INFO - Пользователь 8483733925 получил обычный бонус 2587$
+2026-03-06 15:44:16,991 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5153595262: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 15:44:17,325 - LasVenturas By parviz - ERROR - Ошибка рассылки в 6527752172: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 15:46:36,854 - LasVenturas By parviz - INFO - Перевод: erkex → ❤️‍🩹𝙴𝙲𝙾𝙸𝚂𝚃❤️‍🩹 | Отправил: 5000000$, Получил: 4500000$
+2026-03-06 15:46:51,948 - LasVenturas By parviz - INFO - Перевод: parviz → ■ | Отправил: 200000$, Получил: 180000$
+2026-03-06 15:46:52,011 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 1448932943 из источника promo
+2026-03-06 15:46:52,290 - LasVenturas By parviz - INFO - Пользователь PROSTODAVRON активировал промокод хззззззззз
+2026-03-06 15:46:58,304 - LasVenturas By parviz - INFO - Перевод: erkex → ❤️‍🩹𝙴𝙲𝙾𝙸𝚂𝚃❤️‍🩹 | Отправил: 50000000$, Получил: 45000000$
+2026-03-06 15:47:25,894 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 1461110 | Результат: lose | Скорость: 233
+2026-03-06 15:47:41,024 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 19 к, сессия 828ef130
+2026-03-06 15:48:16,096 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 17 к, сессия 87441c60
+2026-03-06 15:48:54,083 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод 1093
+2026-03-06 15:51:05,502 - LasVenturas By parviz - INFO - Начислен доход 350000$ пользователю 8084177547 из источника promo
+2026-03-06 15:51:05,689 - LasVenturas By parviz - INFO - Пользователь Thomas4Shelby активировал промокод хззззззззз
+2026-03-06 16:11:56,688 - LasVenturas By parviz - INFO - Пользователь Arbuztupoy запросил информацию о бизнесе
+2026-03-06 16:49:17,270 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 694114312930793 | Результат: lose | Скорость: 95
+2026-03-06 16:50:18,737 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 100 | Результат: lose | Скорость: 167
+2026-03-06 16:50:27,172 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 100 | Результат: lose | Скорость: 306
+2026-03-06 16:50:33,839 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 100 | Результат: win | Скорость: 216
+2026-03-06 16:50:55,755 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 100000000000000 | Результат: lose | Скорость: 308
+2026-03-06 16:51:16,667 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → Принц | Отправил: 99$, Получил: 99$
+2026-03-06 16:52:36,753 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 500000000000000 | Результат: lose | Скорость: 113
+2026-03-06 16:52:48,089 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 500000000000000 | Результат: lose | Скорость: 129
+2026-03-06 16:53:44,426 - LasVenturas By parviz - INFO - Перевод: 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 → Принц | Отправил: 2700150450749829$, Получил: 2430135405674847$
+2026-03-06 16:55:46,827 - LasVenturas By parviz - INFO - Игра 'Разгон': 1248832437 | Ставка: 550000000000000 | Результат: lose | Скорость: 192
+2026-03-06 17:00:44,670 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-06 17:00:44,671 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2610, in mute_user
+    bot.restrict_chat_member(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4467, in restrict_chat_member
+    return apihelper.restrict_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1281, in restrict_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-06 17:23:42,377 - LasVenturas By parviz - INFO - ✅ Чат -1003652978963 автоматически добавлен в рассылку
+2026-03-06 17:24:11,230 - LasVenturas By parviz - INFO - Перевод: Classic → 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 | Отправил: 48118745646428729$, Получил: 43306871081785856$
+2026-03-06 17:24:45,344 - LasVenturas By parviz - INFO - Перевод: 𝗙𝗥𝗘𝗗 → 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 | Отправил: 18225599156418032$, Получил: 16403039240776229$
+2026-03-06 17:29:41,873 - LasVenturas By parviz - INFO - Перевод: . → 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 | Отправил: 2798000000035000$, Получил: 2518200000031500$
+2026-03-06 17:32:18,256 - LasVenturas By parviz - INFO - Пользователь arsenlox2 запросил информацию о бизнесе
+2026-03-06 17:32:22,267 - LasVenturas By parviz - INFO - Пользователь arsenlox2 запросил информацию о доме
+2026-03-06 17:32:24,436 - LasVenturas By parviz - INFO - Пользователь arsenlox2 оплатил содержание дома: 30000$
+2026-03-06 17:37:28,066 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 25000000000000 | Результат: win | Скорость: 222
+2026-03-06 17:37:43,162 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 250000000000000 | Результат: lose | Скорость: 103
+2026-03-06 17:37:59,891 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 25000000000000 | Результат: lose | Скорость: 212
+2026-03-06 17:38:39,457 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 875000000000000 | Результат: win | Скорость: 96
+2026-03-06 17:39:29,519 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 1000000000000000 | Результат: win | Скорость: 293
+2026-03-06 17:39:51,716 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 500000000000000 | Результат: lose | Скорость: 120
+2026-03-06 17:40:45,972 - LasVenturas By parviz - INFO - Перевод: . → 𝙸𝚣𝚣𝚣𝚢 𝙶𝚊𝚖𝚎 | Отправил: 1000000000$, Получил: 900000000$
+2026-03-06 17:41:07,378 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 624999000000000 | Результат: win | Скорость: 188
+2026-03-06 17:41:35,234 - LasVenturas By parviz - INFO - Перевод: . → 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 | Отправил: 1000000000$, Получил: 900000000$
+2026-03-06 17:42:01,496 - LasVenturas By parviz - INFO - Перевод: . → 𝙰𝚁𝙱𝚄𝚉𝙸𝙺 | Отправил: 6000000000000$, Получил: 5400000000000$
+2026-03-06 17:42:42,066 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 243997000000000 | Результат: lose | Скорость: 150
+2026-03-06 17:43:06,592 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 2500000000000000 | Результат: lose | Скорость: 133
+2026-03-06 17:43:18,853 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 5000000000000 | Результат: win | Скорость: 173
+2026-03-06 17:48:25,455 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 4000000000000000 | Результат: win | Скорость: 99
+2026-03-06 17:48:33,988 - LasVenturas By parviz - INFO - ❌ Пользователь 8340514324 НЕ имеет нужный текст в bio.
+2026-03-06 17:48:34,085 - LasVenturas By parviz - INFO - Начислен доход 2502$ пользователю 8340514324 из источника farm
+2026-03-06 17:48:34,086 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил обычный доход с фермы 2502$
+2026-03-06 17:53:53,602 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 150000000000000 | Результат: lose | Скорость: 219
+2026-03-06 17:56:10,185 - LasVenturas By parviz - INFO - Игра 'Разгон': 6769029176 | Ставка: 6000000000000000 | Результат: lose | Скорость: 150
+2026-03-06 17:56:28,637 - LasVenturas By parviz - INFO - ❌ Пользователь 7158187651 НЕ имеет нужный текст в bio.
+2026-03-06 17:56:28,796 - LasVenturas By parviz - INFO - Начислен доход 4593$ пользователю 7158187651 из источника farm
+2026-03-06 17:56:28,796 - LasVenturas By parviz - INFO - Пользователь 7158187651 получил обычный доход с фермы 4593$
+2026-03-06 17:56:31,518 - LasVenturas By parviz - INFO - ❌ Пользователь 7158187651 НЕ имеет нужный текст в bio.
+2026-03-06 17:56:31,640 - LasVenturas By parviz - INFO - Начислен доход 2545$ пользователю 7158187651 из источника bonus
+2026-03-06 17:56:31,640 - LasVenturas By parviz - INFO - Пользователь 7158187651 получил обычный бонус 2545$
+2026-03-06 17:57:57,315 - LasVenturas By parviz - INFO - Пользователь arsenlox2 запросил информацию о бизнесе
+2026-03-06 17:58:01,666 - LasVenturas By parviz - INFO - Пользователь arsenlox2 запросил информацию о доме
+2026-03-06 17:58:05,258 - LasVenturas By parviz - INFO - Пользователь arsenlox2 собрал аренду: 3213485$
+2026-03-06 18:01:19,674 - LasVenturas By parviz - INFO - Админ parvizwp убрал 900000001 у пользователя 8293824305
+2026-03-06 18:17:43,230 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-06 18:17:58,093 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-06 18:17:58,179 - LasVenturas By parviz - INFO - Начислен доход 3516$ пользователю 6514588039 из источника bonus
+2026-03-06 18:17:58,180 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный бонус 3516$
+2026-03-06 18:17:59,720 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-06 18:17:59,805 - LasVenturas By parviz - INFO - Начислен доход 865$ пользователю 6514588039 из источника farm
+2026-03-06 18:17:59,805 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный доход с фермы 865$
+2026-03-06 18:19:32,952 - LasVenturas By parviz - INFO - Перевод: 🚬 → prettyboy777🫩 | Отправил: 100000$, Получил: 100000$
+2026-03-06 18:20:29,722 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: query is too old and response timeout expired or query ID is invalid
+2026-03-06 18:20:29,723 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/app/tuk.py", line 8750, in top_page_callback
+    bot.answer_callback_query(call.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 6551, in answer_callback_query
+    return apihelper.answer_callback_query(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 2037, in answer_callback_query
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: query is too old and response timeout expired or query ID is invalid
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 8753, in top_page_callback
+    bot.answer_callback_query(call.id, "❌ Ошибка загрузки страницы")
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 6551, in answer_callback_query
+    return apihelper.answer_callback_query(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 2037, in answer_callback_query
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: query is too old and response timeout expired or query ID is invalid
+
+2026-03-06 18:22:17,690 - LasVenturas By parviz - INFO - Начислен доход 300000$ пользователю 8340514324 из источника admin_gift
+2026-03-06 18:22:17,779 - LasVenturas By parviz - INFO - Админ parvizwp выдал 300000 пользователю 8340514324
+2026-03-06 18:29:19,674 - LasVenturas By parviz - INFO - ✅ Чат -1002394011535 автоматически добавлен в рассылку
+2026-03-06 18:29:24,294 - LasVenturas By parviz - INFO - Пользователь parvizwp запросил информацию о доме
+2026-03-06 18:29:26,379 - LasVenturas By parviz - INFO - Пользователь parvizwp собрал аренду: 109490$
+2026-03-06 18:31:53,659 - LasVenturas By parviz - INFO - ✅ Установлен префикс 5 для пользователя 7425273521
+2026-03-06 18:32:04,997 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message can't be deleted
+2026-03-06 18:32:04,998 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 8514, in back_balance
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 2115, in delete_message
+    return apihelper.delete_message(self.token, chat_id, message_id, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1757, in delete_message
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message can't be deleted
+
+2026-03-06 18:32:16,397 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message can't be deleted
+2026-03-06 18:32:16,398 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 8514, in back_balance
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 2115, in delete_message
+    return apihelper.delete_message(self.token, chat_id, message_id, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1757, in delete_message
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message can't be deleted
+
+2026-03-06 18:32:33,009 - LasVenturas By parviz - INFO - Перевод: 𝙷𝚄𝙽𝚃𝙴𝚁 ᡕᠵデᡁ᠊╾━ → Эдгар | Отправил: 100000000$, Получил: 90000000$
+2026-03-06 18:34:12,655 - LasVenturas By parviz - INFO - Пользователь You_feya запросил информацию о доме
+2026-03-06 18:34:14,115 - LasVenturas By parviz - INFO - Пользователь You_feya собрал аренду: 83296$
+2026-03-06 18:34:15,652 - LasVenturas By parviz - INFO - Пользователь You_feya оплатил содержание дома: 10000$
+2026-03-06 18:34:17,252 - LasVenturas By parviz - INFO - Пользователь You_feya запросил магазин домов
+2026-03-06 18:34:21,227 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-06 18:34:25,684 - LasVenturas By parviz - INFO - Начислен доход 124253$ пользователю 7733538262 из источника business
+2026-03-06 18:34:31,831 - LasVenturas By parviz - INFO - Перевод: 𝙷𝚄𝙽𝚃𝙴𝚁 ᡕᠵデᡁ᠊╾━ → 😈𝔸𝕟𝕒𝕤𝕥𝕖𝕪𝕤𝕙𝕒😈 | Отправил: 100000000$, Получил: 90000000$
+2026-03-06 18:35:08,165 - LasVenturas By parviz - INFO - Игра 'Разгон': 5900561182 | Ставка: 209549 | Результат: lose | Скорость: 150
+2026-03-06 18:35:24,967 - LasVenturas By parviz - INFO - Игра 'Разгон': 809656806 | Ставка: 40000000 | Результат: lose | Скорость: 163
+2026-03-06 18:35:38,479 - LasVenturas By parviz - INFO - Игра 'Разгон': 809656806 | Ставка: 72000000 | Результат: lose | Скорость: 320
+2026-03-06 18:36:11,905 - LasVenturas By parviz - INFO - Перевод: . → Эдгар | Отправил: 2000000$, Получил: 1800000$
+2026-03-06 18:36:16,436 - LasVenturas By parviz - INFO - Игра 'Разгон': 809656806 | Ставка: 1800000 | Результат: lose | Скорость: 231
+2026-03-06 18:36:27,307 - LasVenturas By parviz - INFO - Перевод: . → Эдгар | Отправил: 2000000$, Получил: 1800000$
+2026-03-06 18:36:35,053 - LasVenturas By parviz - INFO - Игра 'Разгон': 809656806 | Ставка: 1800000 | Результат: lose | Скорость: 236
+2026-03-06 18:36:51,071 - LasVenturas By parviz - INFO - Игра 'Разгон': 649602076 | Ставка: 30000000 | Результат: win | Скорость: 149
+2026-03-06 18:37:18,521 - LasVenturas By parviz - INFO - Игра 'Разгон': 7733538262 | Ставка: 10000000 | Результат: win | Скорость: 276
+2026-03-06 18:39:31,916 - LasVenturas By parviz - INFO - Перевод: Никита → Бусинка | Отправил: 60111$, Получил: 60111$
+2026-03-06 18:40:10,075 - LasVenturas By parviz - INFO - Бизнес автоматически удален - закончились материалы
+2026-03-06 18:40:15,298 - LasVenturas By parviz - INFO - Пользователь Salim_999 запросил информацию о бизнесе
+2026-03-06 18:40:18,345 - LasVenturas By parviz - INFO - Начислен доход 238936$ пользователю 5264373801 из источника business
+2026-03-06 18:40:21,459 - LasVenturas By parviz - INFO - Админ 7526512670 запросил статистику бота
+2026-03-06 18:40:33,110 - LasVenturas By parviz - INFO - Пользователь tavda_88 запросил магазин домов
+2026-03-06 18:44:18,966 - LasVenturas By parviz - INFO - ❌ Пользователь 5369584460 НЕ имеет нужный текст в bio.
+2026-03-06 18:44:19,059 - LasVenturas By parviz - INFO - Начислен доход 2607$ пользователю 5369584460 из источника bonus
+2026-03-06 18:44:19,059 - LasVenturas By parviz - INFO - Пользователь 5369584460 получил обычный бонус 2607$
+2026-03-06 18:44:40,315 - LasVenturas By parviz - INFO - Начислен доход 25000$ пользователю 5369584460 из источника promo
+2026-03-06 18:44:40,488 - LasVenturas By parviz - INFO - Пользователь delyxsqt активировал промокод новенький
+2026-03-06 18:44:49,007 - LasVenturas By parviz - INFO - Перевод: parviz → 🪽 | Отправил: 200000$, Получил: 180000$
+2026-03-06 18:44:52,787 - LasVenturas By parviz - INFO - Игра 'Разгон': 5900561182 | Ставка: 60000 | Результат: lose | Скорость: 282
+2026-03-06 18:44:55,542 - LasVenturas By parviz - INFO - Перевод: parviz → ••♫︎デリックス↻︎ | Отправил: 150000$, Получил: 135000$
+2026-03-06 18:49:52,983 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-06 18:49:53,083 - LasVenturas By parviz - INFO - Начислен доход 3614$ пользователю 7457101105 из источника farm
+2026-03-06 18:49:53,083 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 3614$
+2026-03-06 18:58:13,096 - LasVenturas By parviz - INFO - 🎮 Игра футбол: ставка 200, шанс 0.931, результат ПРОИГРЫШ
+2026-03-06 19:04:00,861 - LasVenturas By parviz - INFO - Админ 7526512670 изменил количество мин с 6 на 5
+2026-03-06 19:07:01,969 - LasVenturas By parviz - INFO - Начислен доход 20000000$ пользователю 7696828602 из источника promo
+2026-03-06 19:07:02,173 - LasVenturas By parviz - INFO - Пользователь viccha2 активировал промокод 1093
+2026-03-06 19:08:26,813 - LasVenturas By parviz - ERROR - Ошибка рассылки в 7158187651: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:08:31,434 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5246784210: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 19:08:34,273 - LasVenturas By parviz - ERROR - Ошибка рассылки в 8335186885: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:08:35,737 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5225670948: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 19:08:36,058 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5136803222: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:08:36,452 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5146086495: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:08:36,774 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5247587352: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:08:37,445 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5179640457: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:08:38,171 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5153595262: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:08:38,627 - LasVenturas By parviz - ERROR - Ошибка рассылки в 6527752172: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:09:16,671 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод 582
+2026-03-06 19:09:34,991 - LasVenturas By parviz - INFO - Пользователь laoo_777 запросил информацию о доме
+2026-03-06 19:09:43,278 - LasVenturas By parviz - INFO - Пользователь laoo_777 запросил информацию о бизнесе
+2026-03-06 19:16:46,320 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:16:46,321 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 865, in activate_cheque
+    bot.send_message(message.chat.id, "⚠️ Все активации уже использованы.")
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1834, in send_message
+    apihelper.send_message(
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 282, in send_message
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+
+2026-03-06 19:23:55,243 - TeleBot - ERROR - Infinity polling exception: name '_FakeMessage' is not defined
+2026-03-06 19:23:55,245 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 6869, in broadcast_back_to_preview
+    fake_msg = _FakeMessage(call.message.chat.id, call.from_user)
+               ^^^^^^^^^^^^
+NameError: name '_FakeMessage' is not defined
+
+2026-03-06 19:24:22,772 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5246784210: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 19:24:25,812 - LasVenturas By parviz - ERROR - Ошибка рассылки в 8335186885: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:24:27,309 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5225670948: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-06 19:24:27,629 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5136803222: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:24:28,005 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5146086495: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:24:28,326 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5247587352: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:24:29,011 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5179640457: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:24:29,771 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5153595262: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-06 19:24:30,111 - LasVenturas By parviz - ERROR - Ошибка рассылки в 6527752172: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-06 19:26:30,370 - LasVenturas By parviz - INFO - Начислен доход 20000000$ пользователю 7158187651 из источника promo
+2026-03-06 19:26:30,565 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 активировал промокод 582
+2026-03-06 19:29:19,599 - LasVenturas By parviz - INFO - Игра 'Разгон': 7158187651 | Ставка: 20000000 | Результат: lose | Скорость: 235
+2026-03-06 19:52:00,003 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-06 19:52:00,103 - LasVenturas By parviz - INFO - Начислен доход 2021$ пользователю 8168027201 из источника farm
+2026-03-06 19:52:00,103 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 2021$
+2026-03-06 19:52:20,524 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-06 19:52:20,607 - LasVenturas By parviz - INFO - Начислен доход 3195$ пользователю 7696828602 из источника farm
+2026-03-06 19:52:20,607 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный доход с фермы 3195$
+2026-03-06 20:19:02,600 - LasVenturas By parviz - INFO - ✅ Чат -5176595822 автоматически добавлен в рассылку
+2026-03-06 20:30:04,314 - LasVenturas By parviz - INFO - Перевод: 𝙷𝚄𝙽𝚃𝙴𝚁 ᡕᠵデᡁ᠊╾━ → . | Отправил: 50000000$, Получил: 45000000$
+2026-03-06 20:56:32,933 - LasVenturas By parviz - INFO - Пользователь parvizwp запросил информацию о доме
+2026-03-06 20:56:34,788 - LasVenturas By parviz - INFO - Пользователь parvizwp собрал аренду: 29422$
+2026-03-06 20:58:28,435 - LasVenturas By parviz - INFO - Перевод: kotoks → Kotiks✟ | Отправил: 500$, Получил: 500$
+2026-03-06 20:58:43,535 - LasVenturas By parviz - INFO - Перевод: kotoks → Kotiks✟ | Отправил: 4500$, Получил: 4500$
+2026-03-07 00:36:30,380 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-07 00:36:30,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-07 00:36:30,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-07 00:36:30,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-07 00:36:30,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-07 00:36:30,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-07 00:36:30,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-07 00:36:30,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-07 00:36:30,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-07 00:36:30,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-07 00:36:30,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-07 00:36:30,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-07 00:36:30,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-07 00:36:30,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-07 00:36:30,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-07 00:36:30,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-07 00:36:30,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-07 00:36:30,385 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-07 00:36:30,385 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-07 00:36:30,385 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-07 00:36:30,386 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-07 00:36:30,386 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-07 00:36:30,386 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-07 00:36:30,386 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-07 00:36:30,387 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-07 00:36:30,387 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-07 00:36:30,387 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-07 00:36:30,389 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-07 00:36:30,390 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-07 00:36:30,390 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-07 00:36:30,390 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-07 00:36:30,390 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-07 00:36:30,391 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-07 00:36:30,391 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-07 00:36:30,391 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-07 00:36:30,554 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-07 01:42:14,122 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-07 01:42:14,216 - LasVenturas By parviz - INFO - Начислен доход 4724$ пользователю 7457101105 из источника farm
+2026-03-07 01:42:14,216 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 4724$
+2026-03-07 01:42:16,072 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-07 01:42:16,159 - LasVenturas By parviz - INFO - Начислен доход 2328$ пользователю 7457101105 из источника bonus
+2026-03-07 01:42:16,159 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный бонус 2328$
+2026-03-07 03:00:30,544 - LasVenturas By parviz - INFO - 💰 Начислены проценты для 11 счетов
+2026-03-07 03:00:30,544 - LasVenturas By parviz - INFO - 💰 Ежедневные проценты начислены
+2026-03-07 03:17:41,825 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-07 03:17:44,217 - LasVenturas By parviz - INFO - Начислен доход 167551$ пользователю 6514588039 из источника business
+2026-03-07 03:43:55,133 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-03-07 03:43:55,225 - LasVenturas By parviz - INFO - Начислен доход 3682$ пользователю 6392543992 из источника bonus
+2026-03-07 03:43:55,225 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный бонус 3682$
+2026-03-07 03:43:57,743 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-03-07 03:43:57,829 - LasVenturas By parviz - INFO - Начислен доход 2595$ пользователю 6392543992 из источника farm
+2026-03-07 03:43:57,829 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный доход с фермы 2595$
+2026-03-07 03:44:24,644 - LasVenturas By parviz - INFO - Пользователь witch_801 запросил информацию о бизнесе
+2026-03-07 03:44:27,031 - LasVenturas By parviz - INFO - Начислен доход 143572$ пользователю 6392543992 из источника business
+2026-03-07 05:08:59,923 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-07 05:09:00,021 - LasVenturas By parviz - INFO - Начислен доход 2312$ пользователю 5694141752 из источника farm
+2026-03-07 05:09:00,021 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный доход с фермы 2312$
+2026-03-07 05:09:04,525 - LasVenturas By parviz - INFO - Пользователь kirill_xranytel запросил информацию о бизнесе
+2026-03-07 05:09:10,686 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-07 05:09:10,777 - LasVenturas By parviz - INFO - Начислен доход 1569$ пользователю 5694141752 из источника bonus
+2026-03-07 05:09:10,777 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный бонус 1569$
+2026-03-07 05:30:40,215 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 05:30:40,310 - LasVenturas By parviz - INFO - Начислен доход 3710$ пользователю 8168027201 из источника farm
+2026-03-07 05:30:40,310 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 3710$
+2026-03-07 05:30:41,765 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 05:30:41,862 - LasVenturas By parviz - INFO - Начислен доход 4736$ пользователю 8168027201 из источника bonus
+2026-03-07 05:30:41,863 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный бонус 4736$
+2026-03-07 05:31:20,845 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 05:31:32,336 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил магазин бизнесов
+2026-03-07 05:31:46,429 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 05:31:48,422 - LasVenturas By parviz - INFO - Начислен доход 141762$ пользователю 8168027201 из источника business
+2026-03-07 05:31:59,765 - LasVenturas By parviz - INFO - Пользователь Me_Vangog купил бизнес автосалон
+2026-03-07 05:32:06,413 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 06:36:30,554 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-07 06:36:30,555 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-07 06:36:30,555 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-07 06:36:30,555 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-07 06:36:30,556 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-07 06:36:30,557 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-07 06:36:30,558 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-07 06:36:30,559 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-07 06:36:30,560 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-07 06:36:30,560 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-07 06:36:30,560 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-07 06:36:30,562 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-07 06:36:30,658 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-07 06:41:27,406 - TeleBot - ERROR - Infinity polling exception: name '_make_fake_message_from_call' is not defined
+2026-03-07 06:41:27,407 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 7128, in broadcast_refresh
+    fake = _make_fake_message_from_call(call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name '_make_fake_message_from_call' is not defined
+
+2026-03-07 06:41:37,027 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод 10193
+2026-03-07 06:41:53,418 - LasVenturas By parviz - INFO - Начислен доход 500000$ пользователю 777000 из источника promo
+2026-03-07 06:41:53,629 - LasVenturas By parviz - INFO - Пользователь None активировал промокод 10193
+2026-03-07 06:42:09,424 - LasVenturas By parviz - INFO - Начислен доход 500000$ пользователю 6042757664 из источника promo
+2026-03-07 06:42:09,576 - LasVenturas By parviz - INFO - Пользователь erkex18 активировал промокод 10193
+2026-03-07 06:42:29,348 - LasVenturas By parviz - INFO - Начислен доход 500000$ пользователю 8168027201 из источника promo
+2026-03-07 06:42:29,521 - LasVenturas By parviz - INFO - Пользователь Me_Vangog активировал промокод 10193
+2026-03-07 06:44:03,382 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 07:09:43,908 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-07 07:09:44,002 - LasVenturas By parviz - INFO - Начислен доход 29670$ пользователю 8340514324 из источника farm_premium
+2026-03-07 07:09:44,002 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ доход с фермы 29670$
+2026-03-07 07:09:47,635 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-07 07:09:47,722 - LasVenturas By parviz - INFO - Начислен доход 23920$ пользователю 8340514324 из источника bonus_premium
+2026-03-07 07:09:47,722 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ бонус 23920$
+2026-03-07 07:10:46,164 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 0 з, сессия 59e3790d
+2026-03-07 07:11:04,419 - LasVenturas By parviz - INFO - Перевод: parviz → prettyboy777🫩 | Отправил: 900000$, Получил: 810000$
+2026-03-07 07:11:29,437 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 26 ч, сессия 5bf8e3c6
+2026-03-07 07:11:43,977 - LasVenturas By parviz - INFO - Перевод: parviz → prettyboy777🫩 | Отправил: 500000$, Получил: 450000$
+2026-03-07 07:12:44,847 - LasVenturas By parviz - INFO - ❌ Пользователь 7526512670 НЕ имеет нужный текст в bio.
+2026-03-07 07:12:44,948 - LasVenturas By parviz - INFO - Начислен доход 2609$ пользователю 7526512670 из источника bonus
+2026-03-07 07:12:44,949 - LasVenturas By parviz - INFO - Пользователь 7526512670 получил обычный бонус 2609$
+2026-03-07 07:12:46,433 - LasVenturas By parviz - INFO - ❌ Пользователь 7526512670 НЕ имеет нужный текст в bio.
+2026-03-07 07:12:46,525 - LasVenturas By parviz - INFO - Начислен доход 1172$ пользователю 7526512670 из источника farm
+2026-03-07 07:12:46,525 - LasVenturas By parviz - INFO - Пользователь 7526512670 получил обычный доход с фермы 1172$
+2026-03-07 07:13:36,289 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 15 к, сессия c0715642
+2026-03-07 07:15:00,174 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 27 к, сессия 42a949c9
+2026-03-07 07:30:23,024 - LasVenturas By parviz - ERROR - Ошибка в обработчике мин: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+2026-03-07 07:38:19,180 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-07 07:38:20,711 - LasVenturas By parviz - INFO - Начислен доход 130652$ пользователю 7733538262 из источника business
+2026-03-07 07:43:37,137 - LasVenturas By parviz - INFO - Игра 'Разгон': 7733538262 | Ставка: 836012 | Результат: lose | Скорость: 197
+2026-03-07 09:08:37,830 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 09:08:37,933 - LasVenturas By parviz - INFO - Начислен доход 4849$ пользователю 8168027201 из источника farm
+2026-03-07 09:08:37,933 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 4849$
+2026-03-07 09:09:27,507 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-07 09:09:27,592 - LasVenturas By parviz - INFO - Начислен доход 1777$ пользователю 7457101105 из источника farm
+2026-03-07 09:09:27,592 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 1777$
+2026-03-07 09:09:33,341 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-07 09:09:36,675 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-07 09:09:37,741 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-07 09:13:37,574 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 3561$, Получил: 3561$
+2026-03-07 09:14:24,838 - LasVenturas By parviz - INFO - Игра 'Разгон': 8168027201 | Ставка: 50000 | Результат: win | Скорость: 130
+2026-03-07 09:14:59,789 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о бизнесе
+2026-03-07 09:15:09,936 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о доме
+2026-03-07 09:15:23,018 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-07 09:15:23,103 - LasVenturas By parviz - INFO - Начислен доход 1269$ пользователю 7696828602 из источника farm
+2026-03-07 09:15:23,103 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный доход с фермы 1269$
+2026-03-07 09:15:27,225 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-07 09:15:27,310 - LasVenturas By parviz - INFO - Начислен доход 1786$ пользователю 7696828602 из источника bonus
+2026-03-07 09:15:27,310 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный бонус 1786$
+2026-03-07 09:15:56,561 - LasVenturas By parviz - INFO - ❌ Пользователь 5900561182 НЕ имеет нужный текст в bio.
+2026-03-07 09:15:56,648 - LasVenturas By parviz - INFO - Начислен доход 1219$ пользователю 5900561182 из источника bonus
+2026-03-07 09:15:56,648 - LasVenturas By parviz - INFO - Пользователь 5900561182 получил обычный бонус 1219$
+2026-03-07 09:16:16,370 - LasVenturas By parviz - INFO - Перевод: Никита → Бусинка | Отправил: 1100000$, Получил: 990000$
+2026-03-07 09:22:09,657 - LasVenturas By parviz - INFO - Пользователь nervous_abuse запросил информацию о бизнесе
+2026-03-07 09:22:11,709 - LasVenturas By parviz - INFO - Начислен доход 192866$ пользователю 1375612102 из источника business
+2026-03-07 09:41:01,605 - LasVenturas By parviz - INFO - ❌ Пользователь 6401913458 НЕ имеет нужный текст в bio.
+2026-03-07 09:41:01,646 - LasVenturas By parviz - INFO - ❌ Пользователь 6401913458 НЕ имеет нужный текст в bio.
+2026-03-07 09:41:01,803 - LasVenturas By parviz - INFO - Начислен доход 3685$ пользователю 6401913458 из источника farm
+2026-03-07 09:41:01,803 - LasVenturas By parviz - INFO - Начислен доход 3060$ пользователю 6401913458 из источника bonus
+2026-03-07 09:41:01,803 - LasVenturas By parviz - INFO - Пользователь 6401913458 получил обычный доход с фермы 3685$
+2026-03-07 09:41:01,803 - LasVenturas By parviz - INFO - Пользователь 6401913458 получил обычный бонус 3060$
+2026-03-07 09:49:08,004 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о доме
+2026-03-07 09:49:13,067 - LasVenturas By parviz - INFO - Пользователь Me_Vangog оплатил содержание дома: 30000$
+2026-03-07 09:49:17,982 - LasVenturas By parviz - INFO - Пользователь Me_Vangog собрал аренду: 221348$
+2026-03-07 09:49:23,500 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил магазин домов
+2026-03-07 09:49:38,053 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о доме
+2026-03-07 09:50:08,382 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 09:51:50,809 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 500000 | Результат: win | Скорость: 243
+2026-03-07 09:59:47,595 - LasVenturas By parviz - INFO - Перевод: 🚬 → ■ | Отправил: 5000000$, Получил: 4500000$
+2026-03-07 09:59:55,729 - LasVenturas By parviz - INFO - Перевод: конопля → ■ | Отправил: 20000000$, Получил: 18000000$
+2026-03-07 10:01:29,910 - LasVenturas By parviz - INFO - 🎮 Игра баскетбол: ставка 106110, шанс 0.498, результат ВЫИГРЫШ
+2026-03-07 10:01:53,538 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-07 10:01:57,921 - LasVenturas By parviz - INFO - Начислен доход 22495$ пользователю 8168027201 из источника business
+2026-03-07 10:02:15,739 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о доме
+2026-03-07 10:03:02,380 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о доме
+2026-03-07 10:03:12,622 - LasVenturas By parviz - INFO - Пользователь Me_Vangog продал дом Дворец
+2026-03-07 10:08:02,959 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 10:08:02,960 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 10:08:15,409 - LasVenturas By parviz - INFO - Пользователь temeiruki купил бизнес отель
+2026-03-07 10:08:24,778 - LasVenturas By parviz - INFO - temeiruki открыл магазин машин (страница 1)
+2026-03-07 10:08:26,404 - LasVenturas By parviz - INFO - Перевод: 🚬 → ■ | Отправил: 15007775$, Получил: 13506998$
+2026-03-07 10:08:29,917 - LasVenturas By parviz - INFO - temeiruki перешел на страницу 2 машин
+2026-03-07 10:09:00,605 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 10000000 | Результат: win | Скорость: 162
+2026-03-07 10:09:44,704 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 23 к, сессия 92bf9dfd
+2026-03-07 10:10:03,524 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 36 ч, сессия 382fe464
+2026-03-07 10:10:15,895 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 10000000 | Результат: win | Скорость: 233
+2026-03-07 10:10:21,969 - LasVenturas By parviz - INFO - None открыл магазин машин (страница 1)
+2026-03-07 10:11:50,555 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 11 к, сессия eb1a9a21
+2026-03-07 10:13:54,891 - LasVenturas By parviz - INFO - Пользователь temeiruki запросил информацию о бизнесе
+2026-03-07 10:14:00,764 - LasVenturas By parviz - INFO - Перевод: 🚬 → ■ | Отправил: 50000000$, Получил: 45000000$
+2026-03-07 10:14:03,159 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 1000000 | Результат: win | Скорость: 285
+2026-03-07 10:14:15,504 - LasVenturas By parviz - INFO - Пользователь temeiruki купил бизнес отель
+2026-03-07 10:15:46,389 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 33333333 | Результат: lose | Скорость: 274
+2026-03-07 10:16:19,893 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 50000000 | Результат: win | Скорость: 160
+2026-03-07 10:17:23,648 - LasVenturas By parviz - INFO - Пользователь Salim_999 запросил информацию о бизнесе
+2026-03-07 10:19:30,614 - LasVenturas By parviz - INFO - Админ 7526512670 провел сбор налогов. Собрано: 200100529746$
+2026-03-07 10:52:47,317 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-07 10:53:06,604 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-07 10:53:14,630 - LasVenturas By parviz - INFO - Начислен доход 453772$ пользователю 8232024665 из источника business
+2026-03-07 10:53:20,114 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-07 11:18:52,152 - LasVenturas By parviz - INFO - Игра 'Разгон': 649602076 | Ставка: 30000000 | Результат: lose | Скорость: 281
+2026-03-07 11:19:18,401 - LasVenturas By parviz - INFO - Игра 'Разгон': 649602076 | Ставка: 50000000 | Результат: lose | Скорость: 130
+2026-03-07 12:17:17,187 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-07 12:17:17,296 - LasVenturas By parviz - INFO - Начислен доход 31681$ пользователю 8340514324 из источника farm_premium
+2026-03-07 12:17:17,297 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ доход с фермы 31681$
+2026-03-07 12:27:54,927 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-07 12:28:05,816 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-07 12:28:05,912 - LasVenturas By parviz - INFO - Начислен доход 3590$ пользователю 6514588039 из источника bonus
+2026-03-07 12:28:05,912 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный бонус 3590$
+2026-03-07 12:28:07,181 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-07 12:28:07,275 - LasVenturas By parviz - INFO - Начислен доход 2676$ пользователю 6514588039 из источника farm
+2026-03-07 12:28:07,276 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный доход с фермы 2676$
+2026-03-07 12:36:30,658 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-07 12:36:30,659 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-07 12:36:30,660 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-07 12:36:30,660 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-07 12:36:30,660 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-07 12:36:30,660 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-07 12:36:30,660 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-07 12:36:30,661 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-07 12:36:30,661 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-07 12:36:30,661 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-07 12:36:30,661 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-07 12:36:30,661 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-07 12:36:30,662 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-07 12:36:30,663 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-07 12:36:30,664 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-07 12:36:30,664 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-07 12:36:30,664 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-07 12:36:30,664 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-07 12:36:30,665 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-07 12:36:30,665 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-07 12:36:30,665 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-07 12:36:30,665 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-07 12:36:30,754 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-07 12:54:37,426 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-07 12:54:37,526 - LasVenturas By parviz - INFO - Начислен доход 4803$ пользователю 7457101105 из источника farm
+2026-03-07 12:54:37,526 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 4803$
+2026-03-07 12:58:05,986 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 12:58:06,105 - LasVenturas By parviz - INFO - Начислен доход 3351$ пользователю 8168027201 из источника farm
+2026-03-07 12:58:06,105 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 3351$
+2026-03-07 12:59:57,100 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 50000000$, Получил: 45000000$
+2026-03-07 13:18:47,463 - LasVenturas By parviz - INFO - Перевод: конопля → prettyboy777🫩 | Отправил: 1$, Получил: 1$
+2026-03-07 13:46:33,415 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 13:46:33,417 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 14:14:26,838 - LasVenturas By parviz - INFO - Игра 'Разгон': 8232024665 | Ставка: 1352 | Результат: lose | Скорость: 156
+2026-03-07 14:15:28,065 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 14:15:28,066 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 3100, in unban_user
+    bot.unban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4380, in unban_chat_member
+    return apihelper.unban_chat_member(self.token, chat_id, user_id, only_if_banned)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1264, in unban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 14:23:01,053 - LasVenturas By parviz - INFO - 🛡 Модерация: очистка сообщений | Админ: 7526512670 | Цель: -1002394011535 | 150 сообщений
+2026-03-07 14:24:22,410 - LasVenturas By parviz - INFO - 🛡 Модерация: очистка сообщений | Админ: 7526512670 | Цель: -1002394011535 | 30 сообщений
+2026-03-07 14:25:26,852 - LasVenturas By parviz - INFO - ❌ Пользователь 5815880196 НЕ имеет нужный текст в bio.
+2026-03-07 14:25:26,953 - LasVenturas By parviz - INFO - Начислен доход 4692$ пользователю 5815880196 из источника farm
+2026-03-07 14:25:26,953 - LasVenturas By parviz - INFO - Пользователь 5815880196 получил обычный доход с фермы 4692$
+2026-03-07 14:25:28,357 - LasVenturas By parviz - INFO - ❌ Пользователь 5815880196 НЕ имеет нужный текст в bio.
+2026-03-07 14:25:28,454 - LasVenturas By parviz - INFO - Начислен доход 3554$ пользователю 5815880196 из источника bonus
+2026-03-07 14:25:28,454 - LasVenturas By parviz - INFO - Пользователь 5815880196 получил обычный бонус 3554$
+2026-03-07 14:25:34,790 - LasVenturas By parviz - INFO - Пользователь temeiruki запросил информацию о бизнесе
+2026-03-07 14:25:58,049 - LasVenturas By parviz - INFO - Игра 'Разгон': 5815880196 | Ставка: 628246 | Результат: lose | Скорость: 218
+2026-03-07 14:54:30,805 - LasVenturas By parviz - INFO - Перевод: конопля → Даврон | Отправил: 20000000$, Получил: 18000000$
+2026-03-07 14:58:25,321 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 8000000 | Результат: win | Скорость: 283
+2026-03-07 14:58:42,621 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 10000000 | Результат: lose | Скорость: 246
+2026-03-07 14:58:45,161 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 14:58:45,162 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 14:59:33,405 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 14:59:33,406 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 15:12:49,554 - LasVenturas By parviz - INFO - ❌ Пользователь 6872096244 НЕ имеет нужный текст в bio.
+2026-03-07 15:12:49,665 - LasVenturas By parviz - INFO - Начислен доход 4779$ пользователю 6872096244 из источника farm
+2026-03-07 15:12:49,665 - LasVenturas By parviz - INFO - Пользователь 6872096244 получил обычный доход с фермы 4779$
+2026-03-07 15:19:39,458 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 55020000$, Получил: 49518000$
+2026-03-07 15:28:05,838 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 15:28:05,840 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 3100, in unban_user
+    bot.unban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4380, in unban_chat_member
+    return apihelper.unban_chat_member(self.token, chat_id, user_id, only_if_banned)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1264, in unban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 15:29:19,615 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-07 15:29:19,708 - LasVenturas By parviz - INFO - Начислен доход 2864$ пользователю 7457101105 из источника farm
+2026-03-07 15:29:19,708 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 2864$
+2026-03-07 15:29:30,494 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-07 15:29:31,714 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-07 15:29:38,679 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-07 15:29:43,551 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 15:29:43,642 - LasVenturas By parviz - INFO - Начислен доход 2209$ пользователю 8168027201 из источника farm
+2026-03-07 15:29:43,642 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 2209$
+2026-03-07 15:29:51,109 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 15:29:51,110 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2610, in mute_user
+    bot.restrict_chat_member(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4467, in restrict_chat_member
+    return apihelper.restrict_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1281, in restrict_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 15:39:14,713 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 5000000 | Результат: lose | Скорость: 204
+2026-03-07 16:09:12,358 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 16:09:12,360 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2610, in mute_user
+    bot.restrict_chat_member(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4467, in restrict_chat_member
+    return apihelper.restrict_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1281, in restrict_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 16:24:19,205 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-07 16:24:19,307 - LasVenturas By parviz - INFO - Начислен доход 30043$ пользователю 8340514324 из источника farm_premium
+2026-03-07 16:24:19,307 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ доход с фермы 30043$
+2026-03-07 16:50:44,868 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 1000000 | Результат: lose | Скорость: 221
+2026-03-07 16:51:47,986 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 1000000 | Результат: lose | Скорость: 202
+2026-03-07 16:51:56,142 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 2000000 | Результат: lose | Скорость: 118
+2026-03-07 16:52:11,576 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 4000000 | Результат: lose | Скорость: 184
+2026-03-07 16:52:26,800 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 8000000 | Результат: lose | Скорость: 169
+2026-03-07 16:52:38,728 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 1600000 | Результат: lose | Скорость: 191
+2026-03-07 16:53:26,242 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 20000000 | Результат: lose | Скорость: 165
+2026-03-07 16:54:30,382 - LasVenturas By parviz - INFO - Игра 'Разгон': 7696828602 | Ставка: 40000000 | Результат: win | Скорость: 105
+2026-03-07 16:56:11,070 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 2350000$, Получил: 2115000$
+2026-03-07 16:58:06,459 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 50000000$, Получил: 45000000$
+2026-03-07 17:33:08,492 - LasVenturas By parviz - INFO - Пользователь You_feya запросил информацию о доме
+2026-03-07 17:33:10,424 - LasVenturas By parviz - INFO - Пользователь You_feya собрал аренду: 57454$
+2026-03-07 17:33:11,552 - LasVenturas By parviz - INFO - Пользователь You_feya оплатил содержание дома: 10000$
+2026-03-07 17:48:13,887 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-07 17:48:13,989 - LasVenturas By parviz - INFO - Начислен доход 4135$ пользователю 8168027201 из источника farm
+2026-03-07 17:48:13,989 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 4135$
+2026-03-07 18:36:30,755 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-07 18:36:30,755 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-07 18:36:30,756 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-07 18:36:30,757 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-07 18:36:30,758 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-07 18:36:30,758 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-07 18:36:30,758 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-07 18:36:30,758 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-07 18:36:30,759 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-07 18:36:30,759 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-07 18:36:30,759 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-07 18:36:30,760 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-07 18:36:30,760 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-07 18:36:30,760 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-07 18:36:30,761 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-07 18:36:30,761 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-07 18:36:30,761 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-07 18:36:30,761 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-07 18:36:30,762 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-07 18:36:30,762 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-07 18:36:30,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-07 18:36:30,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-07 18:36:30,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-07 18:36:30,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-07 18:36:30,764 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-07 18:36:30,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-07 18:36:30,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-07 18:36:30,765 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-07 18:36:30,878 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-07 19:03:13,775 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-07 19:03:13,878 - LasVenturas By parviz - INFO - Начислен доход 14226$ пользователю 8340514324 из источника farm_premium
+2026-03-07 19:03:13,878 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ доход с фермы 14226$
+2026-03-07 19:06:39,953 - LasVenturas By parviz - INFO - Перевод: 🚬 → prettyboy777🫩 | Отправил: 20000$, Получил: 20000$
+2026-03-07 19:15:30,360 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о бизнесе
+2026-03-07 19:15:38,511 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о доме
+2026-03-07 19:38:15,978 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-07 19:38:15,979 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-07 20:28:50,164 - LasVenturas By parviz - INFO - ❌ Пользователь 6751064072 НЕ имеет нужный текст в bio.
+2026-03-07 20:28:50,271 - LasVenturas By parviz - INFO - Начислен доход 1536$ пользователю 6751064072 из источника farm
+2026-03-07 20:28:50,271 - LasVenturas By parviz - INFO - Пользователь 6751064072 получил обычный доход с фермы 1536$
+2026-03-07 20:29:04,752 - LasVenturas By parviz - INFO - Бизнес автоматически удален - закончились материалы
+2026-03-07 20:29:20,109 - LasVenturas By parviz - INFO - Пользователь Hamz040 запросил магазин бизнесов
+2026-03-07 21:10:56,782 - LasVenturas By parviz - INFO - Пользователь Sanok_15 запросил информацию о бизнесе
+2026-03-07 21:10:58,816 - LasVenturas By parviz - INFO - Начислен доход 487188$ пользователю 8119076018 из источника business
+2026-03-07 21:48:24,743 - LasVenturas By parviz - INFO - ❌ Пользователь 1448932943 НЕ имеет нужный текст в bio.
+2026-03-07 21:48:24,843 - LasVenturas By parviz - INFO - Начислен доход 4520$ пользователю 1448932943 из источника farm
+2026-03-07 21:48:24,843 - LasVenturas By parviz - INFO - Пользователь 1448932943 получил обычный доход с фермы 4520$
+2026-03-07 21:48:27,054 - LasVenturas By parviz - INFO - ❌ Пользователь 1448932943 НЕ имеет нужный текст в bio.
+2026-03-07 21:48:27,153 - LasVenturas By parviz - INFO - Начислен доход 1339$ пользователю 1448932943 из источника bonus
+2026-03-07 21:48:27,153 - LasVenturas By parviz - INFO - Пользователь 1448932943 получил обычный бонус 1339$
+2026-03-07 22:06:13,926 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-07 22:06:16,282 - LasVenturas By parviz - INFO - Начислен доход 188088$ пользователю 6514588039 из источника business
+2026-03-08 00:36:30,878 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-08 00:36:30,879 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-08 00:36:30,880 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-08 00:36:30,880 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-08 00:36:30,880 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-08 00:36:30,881 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-08 00:36:30,882 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-08 00:36:30,882 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-08 00:36:30,882 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-08 00:36:30,882 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-08 00:36:30,883 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-08 00:36:30,883 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-08 00:36:30,883 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-08 00:36:30,883 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-08 00:36:30,883 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-08 00:36:30,884 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-08 00:36:30,884 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-08 00:36:30,885 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-08 00:36:30,886 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-08 00:36:30,887 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-08 00:36:30,986 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-08 02:34:39,473 - LasVenturas By parviz - INFO - Тянка автоматически ушла (сытость: 0)
+2026-03-08 02:34:39,477 - TeleBot - ERROR - Infinity polling exception: 'NoneType' object is not subscriptable
+2026-03-08 02:34:39,478 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 16529, in my_tyanka
+    info = TYANKA_DATA[tyanka["name"]]
+                       ~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+2026-03-08 03:00:30,556 - LasVenturas By parviz - INFO - 💰 Начислены проценты для 11 счетов
+2026-03-08 03:00:30,557 - LasVenturas By parviz - INFO - 💰 Ежедневные проценты начислены
+2026-03-08 04:00:04,282 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 04:00:04,283 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2610, in mute_user
+    bot.restrict_chat_member(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4467, in restrict_chat_member
+    return apihelper.restrict_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1281, in restrict_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 04:00:47,609 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 04:00:49,475 - LasVenturas By parviz - INFO - Начислен доход 203746$ пользователю 7733538262 из источника business
+2026-03-08 04:02:31,452 - LasVenturas By parviz - INFO - Игра 'Разгон': 7733538262 | Ставка: 788168 | Результат: win | Скорость: 107
+2026-03-08 04:27:13,171 - LasVenturas By parviz - INFO - Пользователь Me_Vangog купил бизнес отель
+2026-03-08 04:27:47,911 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-08 04:27:48,004 - LasVenturas By parviz - INFO - Начислен доход 4662$ пользователю 8168027201 из источника farm
+2026-03-08 04:27:48,004 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 4662$
+2026-03-08 04:27:52,718 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-08 04:27:52,810 - LasVenturas By parviz - INFO - Начислен доход 4161$ пользователю 8168027201 из источника bonus
+2026-03-08 04:27:52,811 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный бонус 4161$
+2026-03-08 04:47:29,500 - LasVenturas By parviz - INFO - ✅ Система пассивного VIP дохода запущена (интервал: 3 часа)
+2026-03-08 04:47:29,504 - LasVenturas By parviz - INFO - ✅ База данных налогов инициализирована
+2026-03-08 04:47:29,505 - LasVenturas By parviz - INFO - ✅ База данных кейсов инициализирована
+2026-03-08 04:47:29,513 - LasVenturas By parviz - INFO - ✅ Система начисления банковских процентов запущена (ежедневно в 03:00)
+2026-03-08 04:47:29,516 - LasVenturas By parviz - INFO - ✅ В базе уже есть 5 префиксов
+2026-03-08 04:47:31,925 - LasVenturas By parviz - INFO - Бот Iris запущен!
+2026-03-08 04:48:45,377 - LasVenturas By parviz - INFO - ✅ Система пассивного VIP дохода запущена (интервал: 3 часа)
+2026-03-08 04:48:45,378 - LasVenturas By parviz - INFO - ✅ База данных налогов инициализирована
+2026-03-08 04:48:45,379 - LasVenturas By parviz - INFO - ✅ База данных кейсов инициализирована
+2026-03-08 04:48:45,380 - LasVenturas By parviz - INFO - ✅ Система начисления банковских процентов запущена (ежедневно в 03:00)
+2026-03-08 04:48:45,381 - LasVenturas By parviz - INFO - ✅ В базе уже есть 5 префиксов
+2026-03-08 04:48:45,694 - LasVenturas By parviz - INFO - Бот Iris запущен!
+2026-03-08 05:36:52,784 - LasVenturas By parviz - INFO - Админ parvizwp создал промокод с_8_марта_парни
+2026-03-08 05:37:10,463 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 777000 из источника promo
+2026-03-08 05:37:10,740 - LasVenturas By parviz - INFO - Пользователь None активировал промокод с_8_марта_парни
+2026-03-08 05:37:53,057 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5369584460 из источника promo
+2026-03-08 05:37:53,239 - LasVenturas By parviz - INFO - Пользователь delyxsqt активировал промокод с_8_марта_парни
+2026-03-08 05:38:44,782 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7526512670 из источника promo
+2026-03-08 05:38:44,980 - LasVenturas By parviz - INFO - Пользователь parvizwp активировал промокод с_8_марта_парни
+2026-03-08 05:39:21,103 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5424666061 из источника promo
+2026-03-08 05:39:21,281 - LasVenturas By parviz - INFO - Пользователь downp3pe активировал промокод с_8_марта_парни
+2026-03-08 05:42:22,350 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7309661931 из источника promo
+2026-03-08 05:42:22,619 - LasVenturas By parviz - INFO - Пользователь kar_inka3 активировал промокод с_8_марта_парни
+2026-03-08 05:55:12,878 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8168027201 из источника promo
+2026-03-08 05:55:13,125 - LasVenturas By parviz - INFO - Пользователь Me_Vangog активировал промокод с_8_марта_парни
+2026-03-08 05:55:30,261 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 1375612102 из источника promo
+2026-03-08 05:55:30,491 - LasVenturas By parviz - INFO - Пользователь nervous_abuse активировал промокод с_8_марта_парни
+2026-03-08 05:55:56,054 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8483733925 из источника promo
+2026-03-08 05:55:56,210 - LasVenturas By parviz - INFO - Пользователь BRBRRREEYYPIYPAY активировал промокод с_8_марта_парни
+2026-03-08 05:56:10,256 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7060923750 из источника promo
+2026-03-08 05:56:10,477 - LasVenturas By parviz - INFO - Пользователь DrReddock активировал промокод с_8_марта_парни
+2026-03-08 05:56:13,945 - LasVenturas By parviz - INFO - ❌ Пользователь 7060923750 НЕ имеет нужный текст в bio.
+2026-03-08 05:56:14,027 - LasVenturas By parviz - INFO - Начислен доход 2671$ пользователю 7060923750 из источника farm
+2026-03-08 05:56:14,027 - LasVenturas By parviz - INFO - Пользователь 7060923750 получил обычный доход с фермы 2671$
+2026-03-08 05:56:16,151 - LasVenturas By parviz - INFO - ❌ Пользователь 7060923750 НЕ имеет нужный текст в bio.
+2026-03-08 05:56:16,234 - LasVenturas By parviz - INFO - Начислен доход 1794$ пользователю 7060923750 из источника bonus
+2026-03-08 05:56:16,234 - LasVenturas By parviz - INFO - Пользователь 7060923750 получил обычный бонус 1794$
+2026-03-08 05:56:33,023 - LasVenturas By parviz - INFO - ❌ Пользователь 8483733925 НЕ имеет нужный текст в bio.
+2026-03-08 05:56:33,106 - LasVenturas By parviz - INFO - Начислен доход 3270$ пользователю 8483733925 из источника farm
+2026-03-08 05:56:33,106 - LasVenturas By parviz - INFO - Пользователь 8483733925 получил обычный доход с фермы 3270$
+2026-03-08 05:56:34,914 - LasVenturas By parviz - INFO - ❌ Пользователь 8483733925 НЕ имеет нужный текст в bio.
+2026-03-08 05:56:35,010 - LasVenturas By parviz - INFO - Начислен доход 1226$ пользователю 8483733925 из источника bonus
+2026-03-08 05:56:35,010 - LasVenturas By parviz - INFO - Пользователь 8483733925 получил обычный бонус 1226$
+2026-03-08 05:57:51,231 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7696828602 из источника promo
+2026-03-08 05:57:51,485 - LasVenturas By parviz - INFO - Пользователь viccha2 активировал промокод с_8_марта_парни
+2026-03-08 05:58:32,989 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 80000$, Получил: 80000$
+2026-03-08 06:01:30,403 - LasVenturas By parviz - INFO - Перевод: конопля → ••♫︎デリックス↻︎ | Отправил: 100000$, Получил: 100000$
+2026-03-08 06:02:00,137 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 25000000$, Получил: 22500000$
+2026-03-08 06:04:34,903 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8358458560 из источника promo
+2026-03-08 06:04:35,181 - LasVenturas By parviz - INFO - Пользователь l1ricaaa активировал промокод с_8_марта_парни
+2026-03-08 06:08:30,624 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8232024665 из источника promo
+2026-03-08 06:08:30,769 - LasVenturas By parviz - INFO - Пользователь None активировал промокод с_8_марта_парни
+2026-03-08 06:09:10,295 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 06:09:18,063 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-08 06:09:20,369 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-08 06:09:40,435 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-08 06:09:40,518 - LasVenturas By parviz - INFO - Начислен доход 1641$ пользователю 8232024665 из источника farm
+2026-03-08 06:09:40,518 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный доход с фермы 1641$
+2026-03-08 06:09:42,827 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-08 06:09:42,913 - LasVenturas By parviz - INFO - Начислен доход 1235$ пользователю 8232024665 из источника bonus
+2026-03-08 06:09:42,914 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный бонус 1235$
+2026-03-08 06:10:41,114 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-08 06:10:41,211 - LasVenturas By parviz - INFO - Начислен доход 4015$ пользователю 7696828602 из источника farm
+2026-03-08 06:10:41,211 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный доход с фермы 4015$
+2026-03-08 06:10:44,223 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-08 06:10:44,308 - LasVenturas By parviz - INFO - Начислен доход 4291$ пользователю 7696828602 из источника bonus
+2026-03-08 06:10:44,308 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный бонус 4291$
+2026-03-08 06:43:25,111 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8452337057 из источника promo
+2026-03-08 06:43:25,415 - LasVenturas By parviz - INFO - Пользователь Kot_pravosudiya_official активировал промокод с_8_марта_парни
+2026-03-08 06:49:27,271 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7906982110 из источника promo
+2026-03-08 06:49:27,510 - LasVenturas By parviz - INFO - Пользователь Ma1usha152 активировал промокод с_8_марта_парни
+2026-03-08 07:11:54,685 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 07:11:54,687 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 07:21:29,068 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-08 07:21:29,156 - LasVenturas By parviz - INFO - Начислен доход 3066$ пользователю 7457101105 из источника farm
+2026-03-08 07:21:29,156 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 3066$
+2026-03-08 07:21:38,497 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-08 07:21:38,585 - LasVenturas By parviz - INFO - Начислен доход 2251$ пользователю 7457101105 из источника bonus
+2026-03-08 07:21:38,585 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный бонус 2251$
+2026-03-08 07:22:14,621 - LasVenturas By parviz - INFO - ❌ Пользователь 7985048553 НЕ имеет нужный текст в bio.
+2026-03-08 07:22:14,705 - LasVenturas By parviz - INFO - Начислен доход 2223$ пользователю 7985048553 из источника farm
+2026-03-08 07:22:14,705 - LasVenturas By parviz - INFO - Пользователь 7985048553 получил обычный доход с фермы 2223$
+2026-03-08 07:23:12,482 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7457101105 из источника promo
+2026-03-08 07:23:12,676 - LasVenturas By parviz - INFO - Пользователь None активировал промокод с_8_марта_парни
+2026-03-08 07:24:36,332 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-08 07:24:37,633 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-08 07:24:42,076 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 07:45:34,613 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 6042757664 из источника promo
+2026-03-08 07:45:34,811 - LasVenturas By parviz - INFO - Пользователь erkex18 активировал промокод с_8_марта_парни
+2026-03-08 07:46:07,310 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-08 07:46:07,386 - LasVenturas By parviz - INFO - ✅ Пользователь 8340514324 имеет нужный текст в bio.
+2026-03-08 07:46:07,428 - LasVenturas By parviz - INFO - Начислен доход 12841$ пользователю 8340514324 из источника farm_premium
+2026-03-08 07:46:07,428 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ доход с фермы 12841$
+2026-03-08 07:46:07,577 - LasVenturas By parviz - INFO - Начислен доход 31489$ пользователю 8340514324 из источника bonus_premium
+2026-03-08 07:46:07,577 - LasVenturas By parviz - INFO - Пользователь 8340514324 получил ПРЕМИУМ бонус 31489$
+2026-03-08 08:01:31,101 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 6401913458 из источника promo
+2026-03-08 08:01:31,340 - LasVenturas By parviz - INFO - Пользователь Israfil_0205 активировал промокод с_8_марта_парни
+2026-03-08 08:23:11,031 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 91694$, Получил: 91694$
+2026-03-08 08:23:43,110 - LasVenturas By parviz - INFO - Перевод: конопля → 🚬 | Отправил: 500000$, Получил: 450000$
+2026-03-08 08:27:57,420 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-08 08:29:31,407 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5246784210: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-08 08:29:34,310 - LasVenturas By parviz - ERROR - Ошибка рассылки в 8335186885: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-08 08:29:35,763 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5225670948: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: the group chat was deleted
+2026-03-08 08:29:36,081 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5136803222: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-08 08:29:36,533 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5146086495: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-08 08:29:36,851 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5247587352: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-08 08:29:37,541 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5179640457: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-08 08:29:38,459 - LasVenturas By parviz - ERROR - Ошибка рассылки в -5153595262: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: group chat was upgraded to a supergroup chat
+2026-03-08 08:29:38,786 - LasVenturas By parviz - ERROR - Ошибка рассылки в 6527752172: A request to the Telegram API was unsuccessful. Error code: 403. Description: Forbidden: bot was blocked by the user
+2026-03-08 08:31:12,307 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5264373801 из источника promo
+2026-03-08 08:31:12,541 - LasVenturas By parviz - INFO - Пользователь Salim_999 активировал промокод с_8_марта_парни
+2026-03-08 08:56:07,324 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5694141752 из источника promo
+2026-03-08 08:56:07,495 - LasVenturas By parviz - INFO - Пользователь kirill_xranytel активировал промокод с_8_марта_парни
+2026-03-08 08:58:56,748 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 6282991913 из источника promo
+2026-03-08 08:58:56,924 - LasVenturas By parviz - INFO - Пользователь Weapingo активировал промокод с_8_марта_парни
+2026-03-08 08:59:26,410 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 2130826649 из источника promo
+2026-03-08 08:59:26,617 - LasVenturas By parviz - INFO - Пользователь elviskka активировал промокод с_8_марта_парни
+2026-03-08 09:00:14,044 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8047686231 из источника promo
+2026-03-08 09:00:14,227 - LasVenturas By parviz - INFO - Пользователь wetyliks активировал промокод с_8_марта_парни
+2026-03-08 09:01:16,151 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8264765149 из источника promo
+2026-03-08 09:01:16,348 - LasVenturas By parviz - INFO - Пользователь wertvifis активировал промокод с_8_марта_парни
+2026-03-08 09:22:17,663 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-08 09:22:17,750 - LasVenturas By parviz - INFO - Начислен доход 1029$ пользователю 8168027201 из источника farm
+2026-03-08 09:22:17,750 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 1029$
+2026-03-08 09:22:31,211 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-08 09:22:34,689 - LasVenturas By parviz - INFO - Начислен доход 49224$ пользователю 8168027201 из источника business
+2026-03-08 09:26:24,223 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-03-08 09:26:24,223 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-03-08 09:26:24,411 - LasVenturas By parviz - INFO - Начислен доход 1313$ пользователю 8358458560 из источника farm
+2026-03-08 09:26:24,411 - LasVenturas By parviz - INFO - Начислен доход 1896$ пользователю 8358458560 из источника bonus
+2026-03-08 09:26:24,411 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный доход с фермы 1313$
+2026-03-08 09:26:24,411 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный бонус 1896$
+2026-03-08 09:29:32,382 - LasVenturas By parviz - INFO - Перевод: 🚬 → prettyboy777🫩 | Отправил: 1$, Получил: 1$
+2026-03-08 09:30:31,403 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8340514324 из источника promo
+2026-03-08 09:30:31,592 - LasVenturas By parviz - INFO - Пользователь prettyboy_777 активировал промокод с_8_марта_парни
+2026-03-08 09:32:39,770 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 2 ч, сессия ff1a658e
+2026-03-08 09:34:14,914 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 10 ч, сессия 5b696225
+2026-03-08 09:35:32,906 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о бизнесе
+2026-03-08 09:35:41,195 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о доме
+2026-03-08 09:39:51,271 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8095860146 из источника promo
+2026-03-08 09:39:51,478 - LasVenturas By parviz - INFO - Пользователь None активировал промокод с_8_марта_парни
+2026-03-08 09:39:59,106 - LasVenturas By parviz - INFO - Начислен доход 25000$ пользователю 8095860146 из источника promo
+2026-03-08 09:39:59,298 - LasVenturas By parviz - INFO - Пользователь None активировал промокод новенький
+2026-03-08 09:40:06,423 - LasVenturas By parviz - INFO - ✅ Чат 8095860146 автоматически добавлен в рассылку
+2026-03-08 10:02:38,489 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 1448932943 из источника promo
+2026-03-08 10:02:38,735 - LasVenturas By parviz - INFO - Пользователь PROSTODAVRON активировал промокод с_8_марта_парни
+2026-03-08 10:03:00,252 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 1000000 | Результат: win | Скорость: 100
+2026-03-08 10:03:12,989 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 2000000 | Результат: lose | Скорость: 295
+2026-03-08 10:15:40,286 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 10:15:40,287 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 3100, in unban_user
+    bot.unban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4380, in unban_chat_member
+    return apihelper.unban_chat_member(self.token, chat_id, user_id, only_if_banned)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1264, in unban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 10:46:23,629 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-08 11:07:04,106 - LasVenturas By parviz - INFO - ✅ Пользователь 8095860146 имеет нужный текст в bio.
+2026-03-08 11:07:04,208 - LasVenturas By parviz - INFO - Начислен доход 25805$ пользователю 8095860146 из источника farm_premium
+2026-03-08 11:07:04,208 - LasVenturas By parviz - INFO - Пользователь 8095860146 получил ПРЕМИУМ доход с фермы 25805$
+2026-03-08 11:07:13,672 - LasVenturas By parviz - INFO - ✅ Пользователь 8095860146 имеет нужный текст в bio.
+2026-03-08 11:07:13,759 - LasVenturas By parviz - INFO - Начислен доход 25203$ пользователю 8095860146 из источника bonus_premium
+2026-03-08 11:07:13,759 - LasVenturas By parviz - INFO - Пользователь 8095860146 получил ПРЕМИУМ бонус 25203$
+2026-03-08 11:15:53,137 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5332678270 из источника promo
+2026-03-08 11:15:53,427 - LasVenturas By parviz - INFO - Пользователь chupiic активировал промокод с_8_марта_парни
+2026-03-08 12:56:41,453 - LasVenturas By parviz - INFO - Перевод: parviz → У | Отправил: 1000000$, Получил: 900000$
+2026-03-08 13:44:27,550 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 5446191917 из источника promo
+2026-03-08 13:44:27,811 - LasVenturas By parviz - INFO - Пользователь lunraishik активировал промокод с_8_марта_парни
+2026-03-08 13:48:45,380 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-08 13:48:45,380 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-08 13:48:45,381 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-08 13:48:45,382 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-08 13:48:45,383 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-08 13:48:45,384 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-08 13:48:45,385 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-08 13:48:45,472 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-08 13:48:46,361 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-08 14:00:53,166 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-08 14:00:56,071 - LasVenturas By parviz - INFO - Начислен доход 159110$ пользователю 6514588039 из источника business
+2026-03-08 14:06:38,981 - LasVenturas By parviz - INFO - Пользователь Salim_999 запросил информацию о бизнесе
+2026-03-08 14:18:19,998 - LasVenturas By parviz - ERROR - Ошибка отправки подарка админу 7526512670: Ошибка запроса: Bad Request: PEER_ID_INVALID
+2026-03-08 14:19:34,026 - LasVenturas By parviz - INFO - ❌ Пользователь 8168027201 НЕ имеет нужный текст в bio.
+2026-03-08 14:19:34,110 - LasVenturas By parviz - INFO - Начислен доход 4643$ пользователю 8168027201 из источника farm
+2026-03-08 14:19:34,110 - LasVenturas By parviz - INFO - Пользователь 8168027201 получил обычный доход с фермы 4643$
+2026-03-08 14:20:07,679 - LasVenturas By parviz - INFO - ❌ Пользователь 7696828602 НЕ имеет нужный текст в bio.
+2026-03-08 14:20:07,769 - LasVenturas By parviz - INFO - Начислен доход 2115$ пользователю 7696828602 из источника farm
+2026-03-08 14:20:07,769 - LasVenturas By parviz - INFO - Пользователь 7696828602 получил обычный доход с фермы 2115$
+2026-03-08 14:21:57,422 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-08 14:21:57,557 - LasVenturas By parviz - INFO - Начислен доход 3035$ пользователю 7457101105 из источника farm
+2026-03-08 14:21:57,558 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 3035$
+2026-03-08 14:22:00,895 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-08 14:22:02,695 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-08 14:22:04,463 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 14:23:12,276 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7307656251 из источника promo
+2026-03-08 14:23:12,525 - LasVenturas By parviz - INFO - Пользователь n1sell активировал промокод с_8_марта_парни
+2026-03-08 14:23:44,697 - LasVenturas By parviz - INFO - Перевод: 🚬 → конопля | Отправил: 74172114$, Получил: 66754903$
+2026-03-08 14:25:00,760 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о бизнесе
+2026-03-08 14:25:06,523 - LasVenturas By parviz - INFO - Пользователь viccha2 запросил информацию о доме
+2026-03-08 14:25:43,599 - LasVenturas By parviz - INFO - Игра 'Разгон': 7307656251 | Ставка: 780000 | Результат: win | Скорость: 212
+2026-03-08 14:41:36,706 - LasVenturas By parviz - INFO - Начислен доход 30000$ пользователю 8095860146 из источника promo
+2026-03-08 14:41:36,887 - LasVenturas By parviz - INFO - Пользователь None активировал промокод game
+2026-03-08 14:47:15,466 - LasVenturas By parviz - INFO - Начислен доход 30000$ пользователю 7696828602 из источника promo
+2026-03-08 14:47:15,672 - LasVenturas By parviz - INFO - Пользователь viccha2 активировал промокод game
+2026-03-08 14:53:09,187 - LasVenturas By parviz - INFO - Начислен доход 30000$ пользователю 5446191917 из источника promo
+2026-03-08 14:53:09,435 - LasVenturas By parviz - INFO - Пользователь lunraishik активировал промокод game
+2026-03-08 14:53:28,171 - LasVenturas By parviz - INFO - ❌ Пользователь 5446191917 НЕ имеет нужный текст в bio.
+2026-03-08 14:53:28,258 - LasVenturas By parviz - INFO - Начислен доход 1458$ пользователю 5446191917 из источника farm
+2026-03-08 14:53:28,258 - LasVenturas By parviz - INFO - Пользователь 5446191917 получил обычный доход с фермы 1458$
+2026-03-08 15:49:45,250 - LasVenturas By parviz - INFO - Админ 7526512670 провел сбор налогов. Собрано: 180042503508$
+2026-03-08 15:49:57,923 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 429. Description: Too Many Requests: retry after 11
+2026-03-08 15:49:57,924 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2471, in admin_collect_tax
+    bot.edit_message_text(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 5444, in edit_message_text
+    result = apihelper.edit_message_text(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1668, in edit_message_text
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 429. Description: Too Many Requests: retry after 11
+
+2026-03-08 15:50:15,709 - LasVenturas By parviz - INFO - Админ 7526512670 запросил статистику бота
+2026-03-08 16:33:50,651 - LasVenturas By parviz - INFO - ❌ Пользователь 1448932943 НЕ имеет нужный текст в bio.
+2026-03-08 16:33:50,744 - LasVenturas By parviz - INFO - Начислен доход 880$ пользователю 1448932943 из источника farm
+2026-03-08 16:33:50,744 - LasVenturas By parviz - INFO - Пользователь 1448932943 получил обычный доход с фермы 880$
+2026-03-08 16:33:56,683 - LasVenturas By parviz - INFO - ❌ Пользователь 1448932943 НЕ имеет нужный текст в bio.
+2026-03-08 16:33:56,767 - LasVenturas By parviz - INFO - Начислен доход 3412$ пользователю 1448932943 из источника bonus
+2026-03-08 16:33:56,767 - LasVenturas By parviz - INFO - Пользователь 1448932943 получил обычный бонус 3412$
+2026-03-08 16:34:11,927 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 4292 | Результат: win | Скорость: 316
+2026-03-08 16:34:27,755 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 8584 | Результат: win | Скорость: 198
+2026-03-08 16:34:42,674 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 17168 | Результат: lose | Скорость: 278
+2026-03-08 16:55:35,222 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 16:55:35,223 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 16:55:49,611 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 16:55:49,612 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2720, in ban_user
+    bot.ban_chat_member(chat_id, target.id)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4351, in ban_chat_member
+    return apihelper.ban_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1256, in ban_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 16:55:53,687 - LasVenturas By parviz - INFO - Пользователь You_feya запросил информацию о доме
+2026-03-08 16:55:56,066 - LasVenturas By parviz - INFO - Пользователь You_feya собрал аренду: 58446$
+2026-03-08 16:55:57,834 - LasVenturas By parviz - INFO - Пользователь You_feya оплатил содержание дома: 10000$
+2026-03-08 17:29:28,695 - LasVenturas By parviz - INFO - Пользователь Me_Vangog запросил информацию о бизнесе
+2026-03-08 17:41:23,392 - LasVenturas By parviz - INFO - Пользователь nik_smiles запросил информацию о бизнесе
+2026-03-08 17:41:25,787 - LasVenturas By parviz - INFO - Начислен доход 36748$ пользователю 6514588039 из источника business
+2026-03-08 17:41:39,595 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-08 17:41:39,686 - LasVenturas By parviz - INFO - Начислен доход 3257$ пользователю 6514588039 из источника bonus
+2026-03-08 17:41:39,686 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный бонус 3257$
+2026-03-08 17:41:41,004 - LasVenturas By parviz - INFO - ❌ Пользователь 6514588039 НЕ имеет нужный текст в bio.
+2026-03-08 17:41:41,089 - LasVenturas By parviz - INFO - Начислен доход 577$ пользователю 6514588039 из источника farm
+2026-03-08 17:41:41,089 - LasVenturas By parviz - INFO - Пользователь 6514588039 получил обычный доход с фермы 577$
+2026-03-08 17:44:58,391 - LasVenturas By parviz - INFO - Тянка автоматически ушла (сытость: 0)
+2026-03-08 17:44:58,395 - TeleBot - ERROR - Infinity polling exception: 'NoneType' object is not subscriptable
+2026-03-08 17:44:58,396 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1110, in infinity_polling
+    self.polling(non_stop=True, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1198, in polling
+    self.__threaded_polling(non_stop=non_stop, interval=interval, timeout=timeout, long_polling_timeout=long_polling_timeout,
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1273, in __threaded_polling
+    raise e
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 16529, in my_tyanka
+    info = TYANKA_DATA[tyanka["name"]]
+                       ~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+2026-03-08 17:46:27,403 - LasVenturas By parviz - INFO - Пользователь witch_801 запросил информацию о бизнесе
+2026-03-08 17:46:30,766 - LasVenturas By parviz - INFO - Начислен доход 380343$ пользователю 6392543992 из источника business
+2026-03-08 17:46:37,705 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-03-08 17:46:37,809 - LasVenturas By parviz - INFO - Начислен доход 3204$ пользователю 6392543992 из источника bonus
+2026-03-08 17:46:37,809 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный бонус 3204$
+2026-03-08 17:46:40,894 - LasVenturas By parviz - INFO - ❌ Пользователь 6392543992 НЕ имеет нужный текст в bio.
+2026-03-08 17:46:40,976 - LasVenturas By parviz - INFO - Начислен доход 718$ пользователю 6392543992 из источника farm
+2026-03-08 17:46:40,976 - LasVenturas By parviz - INFO - Пользователь 6392543992 получил обычный доход с фермы 718$
+2026-03-08 17:47:36,384 - LasVenturas By parviz - INFO - Пользователь kirill_xranytel запросил информацию о бизнесе
+2026-03-08 17:47:39,545 - LasVenturas By parviz - INFO - Начислен доход 514950$ пользователю 5694141752 из источника business
+2026-03-08 17:47:43,417 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-08 17:47:43,501 - LasVenturas By parviz - INFO - Начислен доход 3562$ пользователю 5694141752 из источника farm
+2026-03-08 17:47:43,502 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный доход с фермы 3562$
+2026-03-08 17:47:46,208 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-08 17:47:46,294 - LasVenturas By parviz - INFO - Начислен доход 4602$ пользователю 5694141752 из источника bonus
+2026-03-08 17:47:46,294 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный бонус 4602$
+2026-03-08 17:48:32,896 - LasVenturas By parviz - INFO - Перевод: 04|Кirill_Xranytel → Nik | Отправил: 3000000$, Получил: 2700000$
+2026-03-08 17:48:48,657 - LasVenturas By parviz - INFO - Перевод: 𝙨𝙖𝙡𝙞𝙢 → 04|Кirill_Xranytel | Отправил: 1000000$, Получил: 900000$
+2026-03-08 18:34:15,985 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7158187651 из источника promo
+2026-03-08 18:34:16,263 - LasVenturas By parviz - INFO - Пользователь Syetolog1703 активировал промокод с_8_марта_парни
+2026-03-08 18:34:46,674 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 7948779033 из источника promo
+2026-03-08 18:34:46,956 - LasVenturas By parviz - INFO - Пользователь proga178 активировал промокод с_8_марта_парни
+2026-03-08 18:34:51,697 - LasVenturas By parviz - INFO - Пользователь delyxsqt запросил магазин бизнесов
+2026-03-08 18:34:56,558 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8335186885 из источника promo
+2026-03-08 18:34:56,712 - LasVenturas By parviz - INFO - Пользователь Mgighmm активировал промокод с_8_марта_парни
+2026-03-08 18:35:05,618 - LasVenturas By parviz - INFO - Перевод: Карина → (◕‿◕) | Отправил: 1000000$, Получил: 900000$
+2026-03-08 18:35:15,897 - LasVenturas By parviz - INFO - Перевод: . → (◕‿◕) | Отправил: 1000000$, Получил: 900000$
+2026-03-08 18:35:57,283 - LasVenturas By parviz - INFO - Пользователь delyxsqt купил бизнес автосалон
+2026-03-08 18:36:07,651 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия 5ff5088c
+2026-03-08 18:37:47,281 - LasVenturas By parviz - INFO - Пользователь delyxsqt запросил информацию о бизнесе
+2026-03-08 18:37:49,786 - LasVenturas By parviz - INFO - Начислен доход 155$ пользователю 5369584460 из источника business
+2026-03-08 19:29:15,436 - LasVenturas By parviz - INFO - ❌ Пользователь 649602076 НЕ имеет нужный текст в bio.
+2026-03-08 19:29:15,529 - LasVenturas By parviz - INFO - Начислен доход 2337$ пользователю 649602076 из источника bonus
+2026-03-08 19:29:15,529 - LasVenturas By parviz - INFO - Пользователь 649602076 получил обычный бонус 2337$
+2026-03-08 19:29:29,362 - LasVenturas By parviz - INFO - Игра 'Разгон': 649602076 | Ставка: 30000000 | Результат: lose | Скорость: 224
+2026-03-08 19:41:15,487 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8589562480 из источника promo
+2026-03-08 19:41:15,630 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop активировал промокод с_8_марта_парни
+2026-03-08 19:43:29,239 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 0 з, сессия 59871d51
+2026-03-08 19:43:41,228 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 34 ч, сессия 827a5b29
+2026-03-08 19:44:00,964 - LasVenturas By parviz - INFO - ✅ Результат рулетки записан в лог: 22 ч, сессия f5a3def7
+2026-03-08 19:45:07,551 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop запросил информацию о бизнесе
+2026-03-08 19:45:30,761 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop запросил магазин бизнесов
+2026-03-08 19:46:15,310 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop купил бизнес отель
+2026-03-08 19:46:21,050 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop запросил информацию о доме
+2026-03-08 19:46:24,970 - LasVenturas By parviz - INFO - Пользователь erkex18 запросил информацию о доме
+2026-03-08 19:46:26,084 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop оплатил содержание дома: 30000$
+2026-03-08 19:46:26,470 - LasVenturas By parviz - INFO - Пользователь erkex18 собрал аренду: 1930671$
+2026-03-08 19:46:27,482 - LasVenturas By parviz - INFO - Пользователь erkex18 оплатил содержание дома: 30000$
+2026-03-08 19:46:29,659 - LasVenturas By parviz - INFO - Пользователь erkex18 оплатил содержание дома: 30000$
+2026-03-08 19:46:30,202 - LasVenturas By parviz - INFO - Пользователь EgoistMetroShop оплатил содержание дома: 30000$
+2026-03-08 19:46:45,871 - LasVenturas By parviz - INFO - EgoistMetroShop открыл магазин машин (страница 1)
+2026-03-08 19:46:48,683 - LasVenturas By parviz - INFO - EgoistMetroShop перешел на страницу 2 машин
+2026-03-08 19:47:12,138 - LasVenturas By parviz - INFO - EgoistMetroShop перешел на страницу 1 машин
+2026-03-08 19:47:16,684 - LasVenturas By parviz - INFO - EgoistMetroShop перешел на страницу 2 машин
+2026-03-08 19:48:29,705 - LasVenturas By parviz - INFO - Пользователь ASTROVVG запросил информацию о бизнесе
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-08 19:48:45,473 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-08 19:48:45,474 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-08 19:48:45,475 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-08 19:48:45,476 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-08 19:48:45,476 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-08 19:48:45,476 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-08 19:48:45,476 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-08 19:48:45,477 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-08 19:48:45,478 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-08 19:48:45,570 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-08 20:14:19,332 - LasVenturas By parviz - INFO - Перевод: 𝙷𝚄𝙽𝚃𝙴𝚁 ᡕᠵデᡁ᠊╾━ → . | Отправил: 100000000$, Получил: 90000000$
+2026-03-08 20:15:30,888 - LasVenturas By parviz - INFO - Игра 'Разгон': 5424666061 | Ставка: 122000000 | Результат: lose | Скорость: 207
+2026-03-08 20:16:21,923 - TeleBot - ERROR - Threaded polling exception: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+2026-03-08 20:16:21,924 - TeleBot - ERROR - Exception traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 1235, in __threaded_polling
+    self.worker_pool.raise_exceptions()
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 154, in raise_exceptions
+    raise self.exception_info
+  File "/usr/local/lib/python3.11/site-packages/telebot/util.py", line 97, in run
+    task(*args, **kwargs)
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 10427, in _run_middlewares_and_handler
+    result = handler['function'](message)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/tuk.py", line 2610, in mute_user
+    bot.restrict_chat_member(
+  File "/usr/local/lib/python3.11/site-packages/telebot/__init__.py", line 4467, in restrict_chat_member
+    return apihelper.restrict_chat_member(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 1281, in restrict_chat_member
+    return _make_request(token, method_url, params=payload, method='post')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 168, in _make_request
+    json_result = _check_result(method_name, result)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/telebot/apihelper.py", line 197, in _check_result
+    raise ApiTelegramException(method_name, result, result_json)
+telebot.apihelper.ApiTelegramException: A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: not enough rights to restrict/unrestrict chat member
+
+2026-03-08 20:19:48,288 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-08 20:19:48,382 - LasVenturas By parviz - INFO - Начислен доход 834$ пользователю 7457101105 из источника farm
+2026-03-08 20:19:48,382 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 834$
+2026-03-08 20:20:41,034 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-08 20:20:55,110 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 20:38:33,536 - LasVenturas By parviz - INFO - Пользователь Capibarnost228 запросил информацию о бизнесе
+2026-03-08 20:38:39,547 - LasVenturas By parviz - INFO - Начислен доход 1000000$ пользователю 8293448450 из источника promo
+2026-03-08 20:38:39,793 - LasVenturas By parviz - INFO - Пользователь Capibarnost228 активировал промокод с_8_марта_парни
+2026-03-08 21:05:26,275 - LasVenturas By parviz - INFO - ❌ Пользователь 8358458560 НЕ имеет нужный текст в bio.
+2026-03-08 21:05:26,367 - LasVenturas By parviz - INFO - Начислен доход 4779$ пользователю 8358458560 из источника farm
+2026-03-08 21:05:26,367 - LasVenturas By parviz - INFO - Пользователь 8358458560 получил обычный доход с фермы 4779$
+2026-03-08 21:05:33,679 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 2816 | Результат: win | Скорость: 234
+2026-03-08 21:05:45,665 - LasVenturas By parviz - INFO - Игра 'Разгон': 1448932943 | Ставка: 5632 | Результат: lose | Скорость: 136
+2026-03-08 21:06:20,623 - LasVenturas By parviz - INFO - ❌ Пользователь 8264765149 НЕ имеет нужный текст в bio.
+2026-03-08 21:06:20,715 - LasVenturas By parviz - INFO - Начислен доход 2707$ пользователю 8264765149 из источника bonus
+2026-03-08 21:06:20,715 - LasVenturas By parviz - INFO - Пользователь 8264765149 получил обычный бонус 2707$
+2026-03-08 21:06:27,257 - LasVenturas By parviz - INFO - ❌ Пользователь 8264765149 НЕ имеет нужный текст в bio.
+2026-03-08 21:06:27,348 - LasVenturas By parviz - INFO - Начислен доход 3426$ пользователю 8264765149 из источника farm
+2026-03-08 21:06:27,348 - LasVenturas By parviz - INFO - Пользователь 8264765149 получил обычный доход с фермы 3426$
+2026-03-08 21:49:23,369 - LasVenturas By parviz - INFO - ✅ Удален префикс пользователя 7694717699
+2026-03-08 22:57:55,718 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-08 22:58:00,065 - LasVenturas By parviz - INFO - Начислен доход 189529$ пользователю 7733538262 из источника business
+2026-03-09 01:48:45,570 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7526512670 +20000$
+2026-03-09 01:48:45,571 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1375612102 +20000$
+2026-03-09 01:48:45,571 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5694141752 +20000$
+2026-03-09 01:48:45,571 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5203713503 +5000$
+2026-03-09 01:48:45,571 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7457101105 +20000$
+2026-03-09 01:48:45,571 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7245117477 +5000$
+2026-03-09 01:48:45,572 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 2 +2500$
+2026-03-09 01:48:45,572 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7224384020 +8000$
+2026-03-09 01:48:45,572 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7984662069 +5000$
+2026-03-09 01:48:45,572 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7985048553 +5000$
+2026-03-09 01:48:45,572 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7737537535 +1000$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8293448450 +14000$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7696828602 +20000$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7355771676 +5000$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7367892015 +2500$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5365339772 +5000$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8434252090 +2500$
+2026-03-09 01:48:45,573 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6939750387 +2500$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5815880196 +20000$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8168027201 +20000$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8452337057 +20000$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7174147624 +20000$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5862775750 +20000$
+2026-03-09 01:48:45,574 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6401913458 +20000$
+2026-03-09 01:48:45,575 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6512241065 +20000$
+2026-03-09 01:48:45,575 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1248832437 +20000$
+2026-03-09 01:48:45,575 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 1183936756 +20000$
+2026-03-09 01:48:45,576 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7451308154 +1000$
+2026-03-09 01:48:45,576 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6769029176 +20000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 5264373801 +8000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8589562480 +20000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 649602076 +20000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 7882268176 +20000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 6656216987 +20000$
+2026-03-09 01:48:45,577 - LasVenturas By parviz - INFO - 💰 VIP доход начислен: 8320414195 +20000$
+2026-03-09 01:48:45,687 - LasVenturas By parviz - INFO - 💾 VIP доход: данные сохранены
+2026-03-09 03:00:45,590 - LasVenturas By parviz - INFO - 💰 Начислены проценты для 11 счетов
+2026-03-09 03:00:45,591 - LasVenturas By parviz - INFO - 💰 Ежедневные проценты начислены
+2026-03-09 03:02:03,522 - LasVenturas By parviz - INFO - ❌ Пользователь 7457101105 НЕ имеет нужный текст в bio.
+2026-03-09 03:02:03,640 - LasVenturas By parviz - INFO - Начислен доход 1696$ пользователю 7457101105 из источника farm
+2026-03-09 03:02:03,640 - LasVenturas By parviz - INFO - Пользователь 7457101105 получил обычный доход с фермы 1696$
+2026-03-09 03:02:05,228 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-09 03:02:06,334 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-09 03:02:14,428 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-09 03:12:17,305 - LasVenturas By parviz - INFO - ✅ Установлен префикс 1 для пользователя 5369584460
+2026-03-09 03:49:12,607 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-09 03:49:37,534 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о доме
+2026-03-09 03:49:39,666 - LasVenturas By parviz - INFO - Пользователь None оплатил содержание дома: 30000$
+2026-03-09 03:50:06,057 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-09 03:50:06,143 - LasVenturas By parviz - INFO - Начислен доход 3838$ пользователю 8232024665 из источника farm
+2026-03-09 03:50:06,143 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный доход с фермы 3838$
+2026-03-09 03:50:11,405 - LasVenturas By parviz - INFO - ❌ Пользователь 8232024665 НЕ имеет нужный текст в bio.
+2026-03-09 03:50:11,492 - LasVenturas By parviz - INFO - Начислен доход 4679$ пользователю 8232024665 из источника bonus
+2026-03-09 03:50:11,493 - LasVenturas By parviz - INFO - Пользователь 8232024665 получил обычный бонус 4679$
+2026-03-09 03:50:28,654 - LasVenturas By parviz - INFO - Игра 'Разгон': 8232024665 | Ставка: 545 | Результат: lose | Скорость: 97
+2026-03-09 03:50:43,613 - LasVenturas By parviz - INFO - None открыл магазин машин (страница 1)
+2026-03-09 03:50:47,567 - LasVenturas By parviz - INFO - None перешел на страницу 2 машин
+2026-03-09 05:17:17,944 - LasVenturas By parviz - INFO - Пользователь None запросил магазин домов
+2026-03-09 05:17:33,938 - LasVenturas By parviz - INFO - Пользователь None запросил информацию о бизнесе
+2026-03-09 05:17:36,959 - LasVenturas By parviz - INFO - Начислен доход 633032$ пользователю 5646570650 из источника business
+2026-03-09 05:24:07,109 - LasVenturas By parviz - INFO - Пользователь kirill_xranytel запросил информацию о бизнесе
+2026-03-09 05:24:09,434 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-09 05:24:09,522 - LasVenturas By parviz - INFO - Начислен доход 4567$ пользователю 5694141752 из источника farm
+2026-03-09 05:24:09,522 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный доход с фермы 4567$
+2026-03-09 05:24:18,902 - LasVenturas By parviz - INFO - ❌ Пользователь 5694141752 НЕ имеет нужный текст в bio.
+2026-03-09 05:24:18,986 - LasVenturas By parviz - INFO - Начислен доход 1602$ пользователю 5694141752 из источника bonus
+2026-03-09 05:24:18,986 - LasVenturas By parviz - INFO - Пользователь 5694141752 получил обычный бонус 1602$
+2026-03-09 05:53:31,085 - LasVenturas By parviz - INFO - Пользователь You_feya запросил информацию о доме
+2026-03-09 05:53:32,551 - LasVenturas By parviz - INFO - Пользователь You_feya собрал аренду: 32399$
+2026-03-09 05:53:34,193 - LasVenturas By parviz - INFO - Пользователь You_feya оплатил содержание дома: 10000$
