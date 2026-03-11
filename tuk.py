@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("LasVenturas By parviz")
 
 # ================== КОНСТАНТЫ И ОГРАНИЧЕНИЯ ==================
-TOKEN = "8293824305:AAH-Z8pb3eDArf98C3_IUWHBzSTRUfsI338"
+TOKEN = "8293824305:AAEWUoEkJqwmFajNDQDNKnthfTSX7K_J_Qk"
 WELCOME_IMAGE_URL = "https://i.supaimg.com/2939d8ad-5c5a-4bea-a182-6c3e8bbc833d.jpg"
 CASINO_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=c651fbed170eb7128e00ff84ca1c0bf543c74de2-10332115-images-thumbs&n=13"
 BLACKJACK_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=dc64180881834f3c5a302bda16d65de46956d887-5355514-images-thumbs&n=13&shower=-1&blur=-1"
@@ -3064,6 +3064,800 @@ def ban_user(message):
         f"📌 <code>Перманентно</code>",
         parse_mode="HTML"
     )
+    
+    # ================== 🐝 НОВАЯ ИГРА "УЛЕЙ" (HIVE) ==================
+# Поле 4x4, ищешь мед 🍯, избегая пчел 🐝
+# Кнопки: неоткрытая ячейка - 🟫 (соты), открытая с медом - 🍯, открытая с пчелой - 🐝
+
+import random
+import uuid
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+active_hive_games = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("улей"))
+def hive_game_start(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "❌ Ставка?\nПример: <code>улей 1000</code>", parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка > 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
+            return
+
+        if user_data["balance"] < bet:
+            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
+            return
+
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        game_id = str(uuid.uuid4())[:8]
+
+        # 4x4 = 16 клеток, 4 пчелы (мины)
+        bee_positions = random.sample(range(16), 4)
+
+        active_hive_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "bee_positions": bee_positions,
+            "opened_cells": [],
+            "honey_found": 0,
+            "current_multiplier": 1.0,
+            "active": True
+        }
+
+        text = f"🐝 <b>УЛЕЙ</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n⬜⬜⬜⬜\n⬜⬜⬜⬜\n⬜⬜⬜⬜\n⬜⬜⬜⬜"
+
+        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=hive_keyboard(game_id, user_id, [], show_cashout=False))
+        active_hive_games[game_id]["message_id"] = msg.message_id
+
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка Улей: {e}")
+
+def hive_keyboard(game_id, user_id, opened_cells, show_cashout=False):
+    kb = InlineKeyboardMarkup(row_width=4)
+    game = active_hive_games.get(game_id)
+    
+    buttons = []
+    for i in range(16):
+        if i in opened_cells:
+            if game and i in game["bee_positions"]:
+                buttons.append(InlineKeyboardButton("🐝", callback_data="hive_noop"))
+            else:
+                buttons.append(InlineKeyboardButton("🍯", callback_data="hive_noop"))
+        else:
+            buttons.append(InlineKeyboardButton("🟫", callback_data=f"hive_open_{game_id}_{i}_{user_id}"))
+    
+    for i in range(0, 16, 4):
+        kb.row(*buttons[i:i+4])
+    
+    if show_cashout:
+        kb.add(InlineKeyboardButton("💸 Забрать мёд", callback_data=f"hive_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("hive_open_"))
+def hive_open_cell(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = int(parts[3])
+        owner_id = int(parts[4])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
+            return
+
+        game = active_hive_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if cell in game["opened_cells"]:
+            bot.answer_callback_query(call.id)
+            return
+
+        game["opened_cells"].append(cell)
+
+        if cell in game["bee_positions"]:
+            game["active"] = False
+            bot.edit_message_text(
+                f"🐝 <b>УЖАЛИЛА!</b>\n💸 -{format_number(game['bet'])}$",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+            del active_hive_games[game_id]
+            bot.answer_callback_query(call.id, "🐝 Тебя ужалили!")
+            return
+        else:
+            game["honey_found"] += 1
+            game["current_multiplier"] = round(1.0 + (game["honey_found"] * 0.3), 2)
+
+            if game["honey_found"] >= 12:
+                win = int(game["bet"] * game["current_multiplier"])
+                user_data = get_user_data(owner_id)
+                user_data["balance"] += win
+                save_casino_data()
+
+                bot.edit_message_text(
+                    f"🐝 <b>ВЕСЬ МЁД!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_hive_games[game_id]
+                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+                return
+
+            bot.edit_message_text(
+                f"🐝 <b>+1 мёд!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=hive_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
+            )
+            bot.answer_callback_query(call.id, f"🍯 +1 мёд!")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("hive_cashout_"))
+def hive_cashout(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
+            return
+
+        game = active_hive_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if game["honey_found"] == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала найди мёд!")
+            return
+
+        win = int(game["bet"] * game["current_multiplier"])
+        user_data = get_user_data(owner_id)
+        user_data["balance"] += win
+        save_casino_data()
+
+        bot.edit_message_text(
+            f"✅ <b>Мёд собран!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML"
+        )
+
+        del active_hive_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data == "hive_noop")
+def hive_noop(call):
+    bot.answer_callback_query(call.id)
+
+print("✅ Игра 'Улей' (Hive) загружена!")
+
+
+# ================== 🦴 НОВАЯ ИГРА "КОСТИ" (BONES) ==================
+# Поле 5x5, ищешь кости 🦴, избегая пустых ям 🕳️
+# Кнопки: неоткрытая - 🪨 (камень), кость - 🦴, яма - 🕳️
+
+active_bones_games = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("кости"))
+def bones_game_start(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "❌ Ставка?\nПример: <code>кости 1000</code>", parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка > 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
+            return
+
+        if user_data["balance"] < bet:
+            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
+            return
+
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        game_id = str(uuid.uuid4())[:8]
+
+        # 5x5 = 25 клеток, 6 пустых ям (мины)
+        pit_positions = random.sample(range(25), 6)
+
+        active_bones_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "pit_positions": pit_positions,
+            "opened_cells": [],
+            "bones_found": 0,
+            "current_multiplier": 1.0,
+            "active": True
+        }
+
+        text = f"🦴 <b>КОСТИ</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜"
+
+        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=bones_keyboard(game_id, user_id, [], show_cashout=False))
+        active_bones_games[game_id]["message_id"] = msg.message_id
+
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка Кости: {e}")
+
+def bones_keyboard(game_id, user_id, opened_cells, show_cashout=False):
+    kb = InlineKeyboardMarkup(row_width=5)
+    game = active_bones_games.get(game_id)
+    
+    buttons = []
+    for i in range(25):
+        if i in opened_cells:
+            if game and i in game["pit_positions"]:
+                buttons.append(InlineKeyboardButton("🕳️", callback_data="bones_noop"))
+            else:
+                buttons.append(InlineKeyboardButton("🦴", callback_data="bones_noop"))
+        else:
+            buttons.append(InlineKeyboardButton("🪨", callback_data=f"bones_open_{game_id}_{i}_{user_id}"))
+    
+    for i in range(0, 25, 5):
+        kb.row(*buttons[i:i+5])
+    
+    if show_cashout:
+        kb.add(InlineKeyboardButton("💸 Забрать кости", callback_data=f"bones_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("bones_open_"))
+def bones_open_cell(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = int(parts[3])
+        owner_id = int(parts[4])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
+            return
+
+        game = active_bones_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if cell in game["opened_cells"]:
+            bot.answer_callback_query(call.id)
+            return
+
+        game["opened_cells"].append(cell)
+
+        if cell in game["pit_positions"]:
+            game["active"] = False
+            bot.edit_message_text(
+                f"🕳️ <b>СОРВАЛСЯ В ЯМУ!</b>\n💸 -{format_number(game['bet'])}$",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+            del active_bones_games[game_id]
+            bot.answer_callback_query(call.id, "🕳️ Ты упал в яму!")
+            return
+        else:
+            game["bones_found"] += 1
+            game["current_multiplier"] = round(1.0 + (game["bones_found"] * 0.25), 2)
+
+            if game["bones_found"] >= 19:  # 25-6 = 19 костей
+                win = int(game["bet"] * game["current_multiplier"])
+                user_data = get_user_data(owner_id)
+                user_data["balance"] += win
+                save_casino_data()
+
+                bot.edit_message_text(
+                    f"🦴 <b>ВСЕ КОСТИ!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_bones_games[game_id]
+                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+                return
+
+            bot.edit_message_text(
+                f"🦴 <b>+1 кость!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=bones_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
+            )
+            bot.answer_callback_query(call.id, f"🦴 +1 кость!")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("bones_cashout_"))
+def bones_cashout(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
+            return
+
+        game = active_bones_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if game["bones_found"] == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала найди кости!")
+            return
+
+        win = int(game["bet"] * game["current_multiplier"])
+        user_data = get_user_data(owner_id)
+        user_data["balance"] += win
+        save_casino_data()
+
+        bot.edit_message_text(
+            f"✅ <b>Кости собраны!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML"
+        )
+
+        del active_bones_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data == "bones_noop")
+def bones_noop(call):
+    bot.answer_callback_query(call.id)
+
+print("✅ Игра 'Кости' (Bones) загружена!")
+
+# ================== 🐭 НОВАЯ ИГРА "СЫР" (CHEESE) ==================
+# Поле 4x4, ищешь сыр 🧀, избегая мышеловок 🪤
+# Кнопки: неоткрытая - 🧱 (кирпич), сыр - 🧀, мышеловка - 🪤
+
+active_cheese_games = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("сыр"))
+def cheese_game_start(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "❌ Ставка?\nПример: <code>сыр 1000</code>", parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка > 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
+            return
+
+        if user_data["balance"] < bet:
+            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
+            return
+
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        game_id = str(uuid.uuid4())[:8]
+
+        # 4x4 = 16 клеток, 5 мышеловок
+        trap_positions = random.sample(range(16), 5)
+
+        active_cheese_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "trap_positions": trap_positions,
+            "opened_cells": [],
+            "cheese_found": 0,
+            "current_multiplier": 1.0,
+            "active": True
+        }
+
+        text = f"🐭 <b>СЫР</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n🧱🧱🧱🧱\n🧱🧱🧱🧱\n🧱🧱🧱🧱\n🧱🧱🧱🧱"
+
+        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=cheese_keyboard(game_id, user_id, [], show_cashout=False))
+        active_cheese_games[game_id]["message_id"] = msg.message_id
+
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка Сыр: {e}")
+
+def cheese_keyboard(game_id, user_id, opened_cells, show_cashout=False):
+    kb = InlineKeyboardMarkup(row_width=4)
+    game = active_cheese_games.get(game_id)
+    
+    buttons = []
+    for i in range(16):
+        if i in opened_cells:
+            if game and i in game["trap_positions"]:
+                buttons.append(InlineKeyboardButton("🪤", callback_data="cheese_noop"))
+            else:
+                buttons.append(InlineKeyboardButton("🧀", callback_data="cheese_noop"))
+        else:
+            buttons.append(InlineKeyboardButton("🧱", callback_data=f"cheese_open_{game_id}_{i}_{user_id}"))
+    
+    for i in range(0, 16, 4):
+        kb.row(*buttons[i:i+4])
+    
+    if show_cashout:
+        kb.add(InlineKeyboardButton("💸 Забрать сыр", callback_data=f"cheese_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("cheese_open_"))
+def cheese_open_cell(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = int(parts[3])
+        owner_id = int(parts[4])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
+            return
+
+        game = active_cheese_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if cell in game["opened_cells"]:
+            bot.answer_callback_query(call.id)
+            return
+
+        game["opened_cells"].append(cell)
+
+        if cell in game["trap_positions"]:
+            game["active"] = False
+            bot.edit_message_text(
+                f"🪤 <b>МЫШЕЛОВКА!</b>\n💸 -{format_number(game['bet'])}$",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+            del active_cheese_games[game_id]
+            bot.answer_callback_query(call.id, "🪤 Попал в мышеловку!")
+            return
+        else:
+            game["cheese_found"] += 1
+            game["current_multiplier"] = round(1.0 + (game["cheese_found"] * 0.35), 2)
+
+            if game["cheese_found"] >= 11:  # 16-5 = 11 кусков сыра
+                win = int(game["bet"] * game["current_multiplier"])
+                user_data = get_user_data(owner_id)
+                user_data["balance"] += win
+                save_casino_data()
+
+                bot.edit_message_text(
+                    f"🧀 <b>ВЕСЬ СЫР!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_cheese_games[game_id]
+                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+                return
+
+            bot.edit_message_text(
+                f"🐭 <b>+1 сыр!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=cheese_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
+            )
+            bot.answer_callback_query(call.id, f"🧀 +1 сыр!")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("cheese_cashout_"))
+def cheese_cashout(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
+            return
+
+        game = active_cheese_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if game["cheese_found"] == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала найди сыр!")
+            return
+
+        win = int(game["bet"] * game["current_multiplier"])
+        user_data = get_user_data(owner_id)
+        user_data["balance"] += win
+        save_casino_data()
+
+        bot.edit_message_text(
+            f"✅ <b>Сыр съеден!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML"
+        )
+
+        del active_cheese_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data == "cheese_noop")
+def cheese_noop(call):
+    bot.answer_callback_query(call.id)
+
+print("✅ Игра 'Сыр' (Cheese) загружена!")
+
+
+# ================== 🦉 НОВАЯ ИГРА "ГНЕЗДО" (NEST) ==================
+# Поле 5x5, ищешь яйца 🥚, избегая совы 🦉
+# Кнопки: неоткрытая - 🌿 (трава), яйцо - 🥚, сова - 🦉
+
+active_nest_games = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("гнездо"))
+def nest_game_start(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message, "❌ Ставка?\nПример: <code>гнездо 1000</code>", parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка > 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
+            return
+
+        if user_data["balance"] < bet:
+            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
+            return
+
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        game_id = str(uuid.uuid4())[:8]
+
+        # 5x5 = 25 клеток, 5 сов
+        owl_positions = random.sample(range(25), 5)
+
+        active_nest_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "owl_positions": owl_positions,
+            "opened_cells": [],
+            "eggs_found": 0,
+            "current_multiplier": 1.0,
+            "active": True
+        }
+
+        text = f"🦉 <b>ГНЕЗДО</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿"
+
+        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=nest_keyboard(game_id, user_id, [], show_cashout=False))
+        active_nest_games[game_id]["message_id"] = msg.message_id
+
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка Гнездо: {e}")
+
+def nest_keyboard(game_id, user_id, opened_cells, show_cashout=False):
+    kb = InlineKeyboardMarkup(row_width=5)
+    game = active_nest_games.get(game_id)
+    
+    buttons = []
+    for i in range(25):
+        if i in opened_cells:
+            if game and i in game["owl_positions"]:
+                buttons.append(InlineKeyboardButton("🦉", callback_data="nest_noop"))
+            else:
+                buttons.append(InlineKeyboardButton("🥚", callback_data="nest_noop"))
+        else:
+            buttons.append(InlineKeyboardButton("🌿", callback_data=f"nest_open_{game_id}_{i}_{user_id}"))
+    
+    for i in range(0, 25, 5):
+        kb.row(*buttons[i:i+5])
+    
+    if show_cashout:
+        kb.add(InlineKeyboardButton("💸 Забрать яйца", callback_data=f"nest_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("nest_open_"))
+def nest_open_cell(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        cell = int(parts[3])
+        owner_id = int(parts[4])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
+            return
+
+        game = active_nest_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if cell in game["opened_cells"]:
+            bot.answer_callback_query(call.id)
+            return
+
+        game["opened_cells"].append(cell)
+
+        if cell in game["owl_positions"]:
+            game["active"] = False
+            bot.edit_message_text(
+                f"🦉 <b>СОВА ПРОСНУЛАСЬ!</b>\n💸 -{format_number(game['bet'])}$",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML"
+            )
+            del active_nest_games[game_id]
+            bot.answer_callback_query(call.id, "🦉 Сова атаковала!")
+            return
+        else:
+            game["eggs_found"] += 1
+            game["current_multiplier"] = round(1.0 + (game["eggs_found"] * 0.2), 2)
+
+            if game["eggs_found"] >= 20:  # 25-5 = 20 яиц
+                win = int(game["bet"] * game["current_multiplier"])
+                user_data = get_user_data(owner_id)
+                user_data["balance"] += win
+                save_casino_data()
+
+                bot.edit_message_text(
+                    f"🥚 <b>ВСЕ ЯЙЦА!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+                    game["chat_id"],
+                    game["message_id"],
+                    parse_mode="HTML"
+                )
+                del active_nest_games[game_id]
+                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+                return
+
+            bot.edit_message_text(
+                f"🦉 <b>+1 яйцо!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=nest_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
+            )
+            bot.answer_callback_query(call.id, f"🥚 +1 яйцо!")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("nest_cashout_"))
+def nest_cashout(call):
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
+            return
+
+        game = active_nest_games.get(game_id)
+        if not game or not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра окончена")
+            return
+
+        if game["eggs_found"] == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала найди яйца!")
+            return
+
+        win = int(game["bet"] * game["current_multiplier"])
+        user_data = get_user_data(owner_id)
+        user_data["balance"] += win
+        save_casino_data()
+
+        bot.edit_message_text(
+            f"✅ <b>Яйца собраны!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML"
+        )
+
+        del active_nest_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+
+@bot.callback_query_handler(func=lambda c: c.data == "nest_noop")
+def nest_noop(call):
+    bot.answer_callback_query(call.id)
+
+print("✅ Игра 'Гнездо' (Nest) загружена!")
 
 # ================== 💰 СИСТЕМА ДЕНЕЖНЫХ КЕЙСОВ (CASES) ==================
 CASES_DB = "cases.db"
@@ -12587,6 +13381,10 @@ HELP_CONTENT = {
 [🪙] <b>рб [ставка] [орёл/решка]</b>
 [🎲] <b>кубик [ставка]</b>
 [⭕] <b>кнб [ставка]</b>
+[🐝] <b>улей [ставка]</b>
+[🦴] <b>кости [ставка]</b>
+[🐭] <b>сыр [ставка]</b>
+[🦉] <b>гнездо [ставка]</b>
 
 """,
 

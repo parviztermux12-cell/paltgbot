@@ -1709,10 +1709,11 @@
   "XZ8Z5A4A": {
     "amount": 3144,
     "max_activations": 7,
-    "current_activations": 2,
+    "current_activations": 3,
     "activated_by": [
       7696828602,
-      8340514324
+      8340514324,
+      1248832437
     ]
   },
   "WPI2JT9K": {
@@ -1728,7 +1729,7 @@
   "с_8_марта_парни": {
     "amount": 1000000,
     "max_activations": 120,
-    "current_activations": 34,
+    "current_activations": 37,
     "activated_by": [
       777000,
       5369584460,
@@ -1763,17 +1764,110 @@
       7948779033,
       8335186885,
       8589562480,
-      8293448450
+      8293448450,
+      5317756229,
+      7801101813,
+      8598423757
     ]
   },
   "3HELPNFU": {
     "amount": 2816,
     "max_activations": 16,
-    "current_activations": 4,
+    "current_activations": 6,
     "activated_by": [
       1448932943,
       7694717699,
       5446191917,
+      7457101105,
+      8293448450,
+      1248832437
+    ]
+  },
+  "-налог": {
+    "amount": 1500000,
+    "max_activations": 5,
+    "current_activations": 5,
+    "activated_by": [
+      7526512670,
+      777000,
+      5815880196,
+      8168027201,
+      1448932943
+    ]
+  },
+  "ещё": {
+    "amount": 1500000,
+    "max_activations": 8,
+    "current_activations": 8,
+    "activated_by": [
+      7526512670,
+      777000,
+      5815880196,
+      8168027201,
+      1448932943,
+      7696828602,
+      8095860146,
+      8358458560
+    ]
+  },
+  "Y5RK584T": {
+    "amount": 1131,
+    "max_activations": 2,
+    "current_activations": 2,
+    "activated_by": [
+      7696828602,
+      7526512670
+    ]
+  },
+  "LX3VLA8C": {
+    "amount": 3432,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      8168027201
+    ]
+  },
+  "OXOZWB4C": {
+    "amount": 3369,
+    "max_activations": 13,
+    "current_activations": 5,
+    "activated_by": [
+      5369584460,
+      7158187651,
+      8168027201,
+      1248832437,
+      6512241065
+    ]
+  },
+  "сайт_почти_готов": {
+    "amount": 1000000,
+    "max_activations": 12,
+    "current_activations": 12,
+    "activated_by": [
+      777000,
+      8232024665,
+      1448932943,
+      8358458560,
+      8264765149,
+      2130826649,
+      8047686231,
+      7696828602,
+      5424666061,
+      5369584460,
+      8084177547,
+      5815880196
+    ]
+  },
+  "Z24SLUIX": {
+    "amount": 3758,
+    "max_activations": 13,
+    "current_activations": 6,
+    "activated_by": [
+      7526512670,
+      8084177547,
+      7158187651,
+      8293448450,
+      7696828602,
       7457101105
     ]
   }

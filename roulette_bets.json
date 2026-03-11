@@ -26,5 +26,17 @@
                 "mention": "<a href=\"tg://user?id=7102403681\">〄</a>"
             }
         ]
+    },
+    "-1002394011535": {
+        "8074119869": [
+            {
+                "type": "single",
+                "amount": 1,
+                "value": [
+                    26
+                ],
+                "mention": "<a href=\"tg://user?id=8074119869\">Blood moon</a>"
+            }
+        ]
     }
 }
