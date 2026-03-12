@@ -1870,5 +1870,11 @@
       7696828602,
       7457101105
     ]
+  },
+  "VK8DSACB": {
+    "amount": 4542,
+    "max_activations": 16,
+    "current_activations": 0,
+    "activated_by": []
   }
 }

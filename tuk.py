@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("LasVenturas By parviz")
 
 # ================== КОНСТАНТЫ И ОГРАНИЧЕНИЯ ==================
-TOKEN = "8293824305:AAEWUoEkJqwmFajNDQDNKnthfTSX7K_J_Qk"
+TOKEN = "8293824305:AAFJOr6qmu3TGAzuLz0yc4MXF_fa7eVnBHQ"
 WELCOME_IMAGE_URL = "https://i.supaimg.com/2939d8ad-5c5a-4bea-a182-6c3e8bbc833d.jpg"
 CASINO_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=c651fbed170eb7128e00ff84ca1c0bf543c74de2-10332115-images-thumbs&n=13"
 BLACKJACK_IMAGE_URL = "https://avatars.mds.yandex.net/i?id=dc64180881834f3c5a302bda16d65de46956d887-5355514-images-thumbs&n=13&shower=-1&blur=-1"
@@ -1308,6 +1308,813 @@ def admin_referrals_top(message):
 
     bot.send_message(message.chat.id, text, parse_mode="HTML")
     
+    # ================== 🌱 НОВЫЙ ИВЕНТ: САДОВНИК (GARDENER) ==================
+GARDENER_DB = "gardener.db"
+
+# Инициализация базы данных
+def init_gardener_db():
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    # Таблица с данными растений пользователя
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS user_plants (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            plant_name TEXT NOT NULL,
+            plant_type TEXT NOT NULL,
+            planted_at TEXT NOT NULL,
+            water_level INTEGER DEFAULT 100,
+            last_watered TEXT,
+            grow_time_minutes INTEGER NOT NULL,
+            status TEXT DEFAULT 'growing',  -- growing, ready, sold
+            sell_price INTEGER NOT NULL
+        )
+    """)
+    
+    # Таблица для статистики пользователя
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS gardener_stats (
+            user_id INTEGER PRIMARY KEY,
+            total_plants_ever INTEGER DEFAULT 0,
+            total_earned INTEGER DEFAULT 0,
+            last_water_all TEXT
+        )
+    """)
+    
+    conn.commit()
+    conn.close()
+
+init_gardener_db()
+
+# Данные растений (10 видов) - время до 60 минут
+PLANTS_DATA = {
+    1: {
+        "name": "🌻 Подсолнух",
+        "emoji": "🌻",
+        "price": 5000,
+        "grow_time": 30,  # минут (0.5 часа)
+        "sell_multiplier": 1.5,
+        "description": "Яркий и солнечный цветок"
+    },
+    2: {
+        "name": "🍓 Клубника",
+        "emoji": "🍓",
+        "price": 8000,
+        "grow_time": 45,  # минут (0.75 часа)
+        "sell_multiplier": 1.8,
+        "description": "Сладкая и ароматная ягода"
+    },
+    3: {
+        "name": "🌹 Роза",
+        "emoji": "🌹",
+        "price": 12000,
+        "grow_time": 60,  # минут (1 час)
+        "sell_multiplier": 2.0,
+        "description": "Королева цветов с божественным ароматом"
+    },
+    4: {
+        "name": "🌵 Кактус",
+        "emoji": "🌵",
+        "price": 15000,
+        "grow_time": 50,  # минут (50 минут)
+        "sell_multiplier": 2.2,
+        "description": "Неприхотливый, но колючий друг"
+    },
+    5: {
+        "name": "🍄 Гриб",
+        "emoji": "🍄",
+        "price": 20000,
+        "grow_time": 40,  # минут (40 минут)
+        "sell_multiplier": 2.5,
+        "description": "Загадочный лесной гриб"
+    },
+    6: {
+        "name": "🌿 Мята",
+        "emoji": "🌿",
+        "price": 7000,
+        "grow_time": 20,  # минут (20 минут)
+        "sell_multiplier": 1.6,
+        "description": "Ароматная и полезная трава"
+    },
+    7: {
+        "name": "🍅 Помидор",
+        "emoji": "🍅",
+        "price": 10000,
+        "grow_time": 35,  # минут (35 минут)
+        "sell_multiplier": 1.7,
+        "description": "Сочный и вкусный овощ"
+    },
+    8: {
+        "name": "🌶️ Перец",
+        "emoji": "🌶️",
+        "price": 18000,
+        "grow_time": 55,  # минут (55 минут)
+        "sell_multiplier": 2.1,
+        "description": "Острый и дерзкий перец чили"
+    },
+    9: {
+        "name": "🎃 Тыква",
+        "emoji": "🎃",
+        "price": 25000,
+        "grow_time": 60,  # минут (1 час)
+        "sell_multiplier": 2.3,
+        "description": "Большая и полезная тыква"
+    },
+    10: {
+        "name": "🌸 Сакура",
+        "emoji": "🌸",
+        "price": 30000,
+        "grow_time": 60,  # минут (1 час)
+        "sell_multiplier": 2.5,
+        "description": "Нежное японское дерево"
+    }
+}
+
+WATER_COOLDOWN = 30  # минут
+
+def check_gardener_button_owner(call, user_id):
+    """Проверка владельца кнопки для садовника"""
+    if call.from_user.id != user_id:
+        bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+        return False
+    return True
+
+def get_user_gardener_stats(user_id):
+    """Получает статистику пользователя-садовника"""
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    c.execute("SELECT total_plants_ever, total_earned, last_water_all FROM gardener_stats WHERE user_id = ?", (user_id,))
+    stats = c.fetchone()
+    
+    if not stats:
+        # Создаем новую запись
+        c.execute("INSERT INTO gardener_stats (user_id) VALUES (?)", (user_id,))
+        conn.commit()
+        stats = (0, 0, None)
+    
+    conn.close()
+    return {
+        "total_plants_ever": stats[0],
+        "total_earned": stats[1],
+        "last_water_all": stats[2]
+    }
+
+def update_gardener_stats(user_id, plants_ever_delta=0, earned_delta=0, last_water=None):
+    """Обновляет статистику садовника"""
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    current = get_user_gardener_stats(user_id)
+    new_plants = current["total_plants_ever"] + plants_ever_delta
+    new_earned = current["total_earned"] + earned_delta
+    new_last_water = last_water if last_water else current["last_water_all"]
+    
+    c.execute("""
+        INSERT OR REPLACE INTO gardener_stats 
+        (user_id, total_plants_ever, total_earned, last_water_all) 
+        VALUES (?, ?, ?, ?)
+    """, (user_id, new_plants, new_earned, new_last_water))
+    
+    conn.commit()
+    conn.close()
+
+def add_plant(user_id, plant_type):
+    """Добавляет новое растение пользователю"""
+    plant_info = PLANTS_DATA[plant_type]
+    now = datetime.now().isoformat()
+    
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    sell_price = int(plant_info["price"] * plant_info["sell_multiplier"])
+    
+    c.execute("""
+        INSERT INTO user_plants 
+        (user_id, plant_name, plant_type, planted_at, last_watered, grow_time_minutes, sell_price) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (user_id, plant_info["emoji"] + " " + plant_info["name"], plant_type, now, now, 
+          plant_info["grow_time"], sell_price))
+    
+    conn.commit()
+    conn.close()
+    
+    update_gardener_stats(user_id, plants_ever_delta=1)
+    return True
+
+def get_user_plants(user_id, status_filter=None):
+    """Получает растения пользователя"""
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    query = "SELECT id, plant_name, plant_type, planted_at, water_level, last_watered, grow_time_minutes, status, sell_price FROM user_plants WHERE user_id = ?"
+    params = [user_id]
+    
+    if status_filter:
+        if isinstance(status_filter, list):
+            query += " AND status IN ({})".format(','.join(['?']*len(status_filter)))
+            params.extend(status_filter)
+        else:
+            query += " AND status = ?"
+            params.append(status_filter)
+    
+    c.execute(query, params)
+    plants = c.fetchall()
+    conn.close()
+    
+    return plants
+
+def update_plant_status(plant_id, status=None, water_level=None):
+    """Обновляет статус растения"""
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    updates = []
+    params = []
+    
+    if status:
+        updates.append("status = ?")
+        params.append(status)
+    
+    if water_level is not None:
+        updates.append("water_level = ?")
+        params.append(water_level)
+    
+    if updates:
+        query = "UPDATE user_plants SET " + ", ".join(updates) + " WHERE id = ?"
+        params.append(plant_id)
+        c.execute(query, params)
+        conn.commit()
+    
+    conn.close()
+
+def delete_plant(plant_id):
+    """Удаляет растение"""
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    c.execute("DELETE FROM user_plants WHERE id = ?", (plant_id,))
+    conn.commit()
+    conn.close()
+
+def water_all_plants(user_id):
+    """Поливает все растения пользователя"""
+    plants = get_user_plants(user_id, ["growing", "ready"])
+    
+    conn = sqlite3.connect(GARDENER_DB)
+    c = conn.cursor()
+    
+    now = datetime.now().isoformat()
+    for plant in plants:
+        plant_id = plant[0]
+        c.execute("UPDATE user_plants SET water_level = 100, last_watered = ? WHERE id = ?", (now, plant_id))
+    
+    conn.commit()
+    conn.close()
+    
+    update_gardener_stats(user_id, last_water=now)
+
+def check_plant_readiness(user_id):
+    """Проверяет, какие растения уже выросли и обновляет их статус"""
+    plants = get_user_plants(user_id, "growing")
+    now = datetime.now()
+    
+    ready_count = 0
+    for plant in plants:
+        plant_id = plant[0]
+        planted_at = datetime.fromisoformat(plant[3])
+        grow_time = timedelta(minutes=plant[6])
+        
+        if now >= planted_at + grow_time:
+            update_plant_status(plant_id, status="ready")
+            ready_count += 1
+    
+    return ready_count
+
+def get_gardening_stats(user_id):
+    """Получает актуальную статистику для садовника"""
+    check_plant_readiness(user_id)
+    
+    all_plants = get_user_plants(user_id)
+    growing_plants = get_user_plants(user_id, "growing")
+    ready_plants = get_user_plants(user_id, "ready")
+    
+    return {
+        "total_plants_ever": get_user_gardener_stats(user_id)["total_plants_ever"],
+        "growing_count": len(growing_plants),
+        "ready_count": len(ready_plants),
+        "all_count": len(all_plants),
+        "ready_plants": ready_plants
+    }
+
+def format_time_remaining(planted_at, grow_time_minutes):
+    """Форматирует оставшееся время до созревания"""
+    planted = datetime.fromisoformat(planted_at)
+    ready_time = planted + timedelta(minutes=grow_time_minutes)
+    now = datetime.now()
+    
+    if now >= ready_time:
+        return "✅ Готово!"
+    
+    remaining = ready_time - now
+    minutes = remaining.seconds // 60
+    hours = minutes // 60
+    minutes = minutes % 60
+    
+    if hours > 0:
+        return f"⏳ {hours}ч {minutes}м"
+    else:
+        return f"⏳ {minutes}м"
+
+def can_water(user_id):
+    """Проверяет, можно ли полить растения (кулдаун 30 минут)"""
+    stats = get_user_gardener_stats(user_id)
+    if not stats["last_water_all"]:
+        return True, 0
+    
+    last_water = datetime.fromisoformat(stats["last_water_all"])
+    now = datetime.now()
+    cooldown = timedelta(minutes=WATER_COOLDOWN)
+    
+    if now >= last_water + cooldown:
+        return True, 0
+    else:
+        remaining = (last_water + cooldown) - now
+        minutes = remaining.seconds // 60
+        seconds = remaining.seconds % 60
+        return False, f"{minutes} мин {seconds} сек"
+        
+        # ================== КОМАНДА: ПОСАДИТЬ РАСТЕНИЕ ==================
+# ================== КОМАНДА: ПОСАДИТЬ РАСТЕНИЕ (С ДОБАВЛЕНИЕМ В ПРОФИЛЬ) ==================
+# Словарь для хранения кулдаунов посадки
+plant_cooldowns = {}
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["посадить растение", "посадить растения", "растения"])
+def plant_seedling(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    # Проверка кулдауна (1 минута)
+    current_time = time.time()
+    last_plant_time = plant_cooldowns.get(user_id, 0)
+    
+    if current_time - last_plant_time < 60:  # 60 секунд = 1 минута
+        remaining = int(60 - (current_time - last_plant_time))
+        bot.reply_to(message, 
+                    f"⏳ {mention}, сажать можно раз в минуту! Подожди ещё <code>{remaining} сек</code>",
+                    parse_mode="HTML")
+        return
+    
+    # Случайный выбор саженца из списка растений
+    # Можно сделать выбор случайного растения или определенного
+    # Сейчас случайный, но можно изменить на выбор пользователя
+    plant_num = random.choice(list(PLANTS_DATA.keys()))
+    plant_info = PLANTS_DATA[plant_num]
+    
+    # Проверяем, хватает ли денег (опционально)
+    user_data = get_user_data(user_id)
+    if user_data["balance"] < plant_info["price"]:
+        bot.reply_to(message,
+                    f"❌ {mention}, у тебя недостаточно средств для посадки!\n\n"
+                    f"💰 Нужно: <code>{format_number(plant_info['price'])}$</code>\n"
+                    f"💳 У тебя: <code>{format_number(user_data['balance'])}$</code>\n\n"
+                    f"Купить саженец можно в магазине: <code>мои растения</code> → Купить саженцы",
+                    parse_mode="HTML")
+        return
+    
+    # Списываем деньги
+    user_data["balance"] -= plant_info["price"]
+    save_casino_data()
+    
+    # Добавляем растение в профиль игрока
+    add_plant(user_id, plant_num)
+    
+    # Обновляем время последней посадки
+    plant_cooldowns[user_id] = current_time
+    
+    text = f"🍀 {mention} Ты посадил сажанец <code>{plant_info['emoji']} {plant_info['name']}</code>\n\n🌱 Следить за ростом: <code>мои растения</code>"
+    bot.reply_to(message, text, parse_mode="HTML")
+    
+    logger.info(f"Пользователь {user_id} посадил растение {plant_info['name']} за {plant_info['price']}$")
+
+# ================== КОМАНДА: МОИ РАСТЕНИЯ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["мои растения", "мое растение", "мое растения"])
+def my_plants(message):
+    user_id = message.from_user.id
+    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+    
+    stats = get_gardening_stats(user_id)
+    
+    # Рассчитываем время до продажи (максимальное время среди растущих)
+    growing_plants = get_user_plants(user_id, "growing")
+    max_time_remaining = "—"
+    
+    if growing_plants:
+        max_minutes = 0
+        for plant in growing_plants:
+            planted = plant[3]
+            grow_time = plant[6]
+            planted_dt = datetime.fromisoformat(planted)
+            ready_dt = planted_dt + timedelta(minutes=grow_time)
+            now = datetime.now()
+            
+            if now < ready_dt:
+                remaining = (ready_dt - now).seconds // 60
+                if remaining > max_minutes:
+                    max_minutes = remaining
+        
+        if max_minutes > 0:
+            hours = max_minutes // 60
+            minutes = max_minutes % 60
+            if hours > 0:
+                max_time_remaining = f"{hours}ч {minutes}м"
+            else:
+                max_time_remaining = f"{minutes}м"
+        else:
+            max_time_remaining = "Скоро созреют"
+    
+    text = (
+        f"🌿 Привет {mention}, это твое меню где ты можешь следить за своими растениями, продавать, расти.\n\n"
+        f"🍀 Всего растений: <code>{stats['total_plants_ever']}</code>\n"
+        f"🌰 Сейчас растёт: <code>{stats['growing_count']}</code> растений\n"
+        f"🌷 Осталось ждать до продажи: <code>{max_time_remaining}</code>"
+    )
+    
+    # Создаем клавиатуру
+    kb = InlineKeyboardMarkup(row_width=2)
+    
+    # Кнопка Полить (всегда доступна, проверка будет в обработчике)
+    kb.add(InlineKeyboardButton("💧Полить", callback_data=f"gardener_water_{user_id}"))
+    
+    # Кнопка Продать все (только если есть готовые растения)
+    if stats['ready_count'] > 0:
+        kb.add(InlineKeyboardButton("🍈 Продать все", callback_data=f"gardener_sell_all_{user_id}"))
+    
+    # Кнопка Купить саженцы
+    kb.add(InlineKeyboardButton("🌿 Купить саженцы", callback_data=f"gardener_shop_{user_id}"))
+    
+    bot.reply_to(message, text, parse_mode="HTML", reply_markup=kb)
+
+# ================== КНОПКА: ПОЛИТЬ ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_water_"))
+def gardener_water_callback(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        if not check_gardener_button_owner(call, user_id):
+            return
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        # Проверяем кулдаун
+        can_water_result, time_left = can_water(user_id)
+        
+        if not can_water_result:
+            bot.answer_callback_query(call.id, f"⏳ Подожди {time_left} до следующего полива!", show_alert=True)
+            return
+        
+        # Проверяем, есть ли растения
+        plants = get_user_plants(user_id)
+        if not plants:
+            bot.answer_callback_query(call.id, "❌ У тебя нет растений для полива!", show_alert=True)
+            return
+        
+        # Поливаем все растения
+        water_all_plants(user_id)
+        
+        text = f"🍄 {mention}, ты успешно полил свои саженцы, они вырастут в скором времени"
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("Назад", callback_data=f"gardener_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id, "✅ Растения политы!")
+        
+    except Exception as e:
+        logger.error(f"Ошибка полива растений: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== КНОПКА: ПРОДАТЬ ВСЕ (ПОДТВЕРЖДЕНИЕ) ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_sell_all_") and "confirm" not in c.data and "cancel" not in c.data)
+def gardener_sell_all_prompt(call):
+    try:
+        # Разбираем данные: gardener_sell_all_USERID
+        parts = call.data.split("_")
+        user_id = int(parts[3])  # Индекс 3, потому что: gardener(0) sell(1) all(2) USERID(3)
+        
+        # Проверяем владельца кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        stats = get_gardening_stats(user_id)
+        
+        if stats['ready_count'] == 0:
+            bot.answer_callback_query(call.id, "❌ Нет готовых растений для продажи!", show_alert=True)
+            return
+        
+        # Рассчитываем общую цену
+        total_price = 0
+        ready_plants = stats['ready_plants']
+        
+        for plant in ready_plants:
+            total_price += plant[8]  # sell_price
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, садовник - ты уверен что хочешь продать все свои выращенные саженцы за <code>{format_number(total_price)}$</code>"
+        
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(
+            InlineKeyboardButton("Да", callback_data=f"gardener_confirm_sell_{user_id}"),
+            InlineKeyboardButton("Нет", callback_data=f"gardener_cancel_sell_{user_id}")
+        )
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка подтверждения продажи: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== КНОПКА: ПРОДАТЬ ВСЕ (ПОДТВЕРЖДЕНИЕ - ДА) ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_confirm_sell_"))
+def gardener_confirm_sell(call):
+    try:
+        # Разбираем данные: gardener_confirm_sell_USERID
+        parts = call.data.split("_")
+        user_id = int(parts[3])  # Индекс 3, потому что: gardener(0) confirm(1) sell(2) USERID(3)
+        
+        # Проверяем владельца кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        stats = get_gardening_stats(user_id)
+        ready_plants = stats['ready_plants']
+        
+        if not ready_plants:
+            bot.answer_callback_query(call.id, "❌ Нет готовых растений для продажи!", show_alert=True)
+            return
+        
+        # Рассчитываем общую цену и удаляем растения
+        total_price = 0
+        plant_names = []
+        
+        for plant in ready_plants:
+            plant_id = plant[0]
+            plant_name = plant[1]
+            plant_price = plant[8]
+            
+            total_price += plant_price
+            plant_names.append(plant_name)
+            
+            # Удаляем растение
+            delete_plant(plant_id)
+        
+        # Начисляем деньги
+        user_data = get_user_data(user_id)
+        user_data["balance"] += total_price
+        save_casino_data()
+        
+        # Обновляем статистику
+        update_gardener_stats(user_id, earned_delta=total_price)
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"{mention}, ты продал все свои растения за <code>{format_number(total_price)}$</code>"
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("Назад", callback_data=f"gardener_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id, f"✅ +{format_number(total_price)}$")
+        
+    except Exception as e:
+        logger.error(f"Ошибка продажи растений: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== КНОПКА: ПРОДАТЬ ВСЕ (ПОДТВЕРЖДЕНИЕ - НЕТ) ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_cancel_sell_"))
+def gardener_cancel_sell(call):
+    try:
+        # Разбираем данные: gardener_cancel_sell_USERID
+        parts = call.data.split("_")
+        user_id = int(parts[3])  # Индекс 3, потому что: gardener(0) cancel(1) sell(2) USERID(3)
+        
+        # Проверяем владельца кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Возвращаемся в меню растений
+        class FakeCall:
+            def __init__(self, message, from_user, data):
+                self.message = message
+                self.from_user = from_user
+                self.data = data
+        
+        fake_call = FakeCall(call.message, call.from_user, f"gardener_back_{user_id}")
+        gardener_back(fake_call)
+        
+        bot.answer_callback_query(call.id, "❌ Продажа отменена")
+        
+    except Exception as e:
+        logger.error(f"Ошибка отмены продажи: {e}")
+        bot.answer_callback_query(call.id, "Продажа саженцев отменена", show_alert=True)
+        
+        # ================== КНОПКА: КУПИТЬ САЖЕНЦЫ (МАГАЗИН) ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_shop_"))
+def gardener_shop(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        if not check_gardener_button_owner(call, user_id):
+            return
+        
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        text = f"🛒 {mention}, магазин саженцев:\n\n"
+        
+        for num, plant_data in PLANTS_DATA.items():
+            text += (
+                f"<b>{num}. {plant_data['emoji']} {plant_data['name']}</b>\n"
+                f"   💰 Цена: <code>{format_number(plant_data['price'])}$</code>\n"
+                f"   ⏱ Время роста: <code>{plant_data['grow_time']} мин</code>\n"
+                f"   📝 {plant_data['description']}\n\n"
+            )
+        
+        text += (
+            "\n<b>Как купить:</b>\n"
+            "<code>купить сажанец [номер]</code>\n"
+            "Пример: <code>купить сажанец 1</code>"
+        )
+        
+        kb = InlineKeyboardMarkup()
+        kb.add(InlineKeyboardButton("Назад", callback_data=f"gardener_back_{user_id}"))
+        
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка магазина саженцев: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+# ================== КОМАНДА: КУПИТЬ САЖАНЕЦ ==================
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("купить сажанец"))
+def buy_seedling(message):
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        
+        parts = message.text.split()
+        if len(parts) < 3:
+            bot.reply_to(message, 
+                       f"❌ {mention}, используй: <code>купить сажанец [номер]</code>\n\n"
+                       f"Список саженцев: <code>мои растения</code> → Купить саженцы",
+                       parse_mode="HTML")
+            return
+        
+        try:
+            plant_num = int(parts[2])
+        except ValueError:
+            bot.reply_to(message, "❌ Номер саженца должен быть числом!", parse_mode="HTML")
+            return
+        
+        if plant_num not in PLANTS_DATA:
+            bot.reply_to(message, f"❌ Саженца с номером {plant_num} не существует!", parse_mode="HTML")
+            return
+        
+        plant_info = PLANTS_DATA[plant_num]
+        user_data = get_user_data(user_id)
+        
+        if user_data["balance"] < plant_info["price"]:
+            bot.reply_to(message,
+                       f"❌ {mention}, недостаточно средств!\n\n"
+                       f"💰 Нужно: <code>{format_number(plant_info['price'])}$</code>\n"
+                       f"💳 У тебя: <code>{format_number(user_data['balance'])}$</code>",
+                       parse_mode="HTML")
+            return
+        
+        # Списываем деньги
+        user_data["balance"] -= plant_info["price"]
+        save_casino_data()
+        
+        # Сажаем растение
+        add_plant(user_id, plant_num)
+        
+        bot.reply_to(message,
+                   f"✅ {mention}, ты успешно купил и посадил <code>{plant_info['emoji']} {plant_info['name']}</code>!\n\n"
+                   f"🌱 Следить за ростом: <code>мои растения</code>",
+                   parse_mode="HTML")
+        
+    except Exception as e:
+        logger.error(f"Ошибка покупки саженца: {e}")
+        bot.reply_to(message, "❌ Ошибка при покупке саженца!", parse_mode="HTML")
+
+# ================== КНОПКА: НАЗАД ==================
+@bot.callback_query_handler(func=lambda c: c.data.startswith("gardener_back_"))
+def gardener_back(call):
+    try:
+        user_id = int(call.data.split("_")[2])
+        
+        # Проверяем владельца кнопки
+        if call.from_user.id != user_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя кнопка!", show_alert=True)
+            return
+        
+        # Получаем данные для отображения
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        
+        stats = get_gardening_stats(user_id)
+        
+        # Рассчитываем время до продажи
+        growing_plants = get_user_plants(user_id, "growing")
+        max_time_remaining = "—"
+        
+        if growing_plants:
+            max_minutes = 0
+            for plant in growing_plants:
+                planted = plant[3]
+                grow_time = plant[6]
+                planted_dt = datetime.fromisoformat(planted)
+                ready_dt = planted_dt + timedelta(minutes=grow_time)
+                now = datetime.now()
+                
+                if now < ready_dt:
+                    remaining = (ready_dt - now).seconds // 60
+                    if remaining > max_minutes:
+                        max_minutes = remaining
+            
+            if max_minutes > 0:
+                hours = max_minutes // 60
+                minutes = max_minutes % 60
+                if hours > 0:
+                    max_time_remaining = f"{hours}ч {minutes}м"
+                else:
+                    max_time_remaining = f"{minutes}м"
+            else:
+                max_time_remaining = "Скоро созреют"
+        
+        text = (
+            f"🌿 Привет {mention}, это твое меню где ты можешь следить за своими растениями, продавать, расти.\n\n"
+            f"🍀 Всего растений: <code>{stats['total_plants_ever']}</code>\n"
+            f"🌰 Сейчас растёт: <code>{stats['growing_count']}</code> растений\n"
+            f"🌷 Осталось ждать до продажи: <code>{max_time_remaining}</code>"
+        )
+        
+        # Создаем клавиатуру со стикерами
+        kb = InlineKeyboardMarkup(row_width=2)
+        kb.add(InlineKeyboardButton("💧 Полить", callback_data=f"gardener_water_{user_id}"))
+        
+        if stats['ready_count'] > 0:
+            kb.add(InlineKeyboardButton("💰 Продать все", callback_data=f"gardener_sell_all_{user_id}"))
+        
+        kb.add(InlineKeyboardButton("🛒 Купить саженцы", callback_data=f"gardener_shop_{user_id}"))
+        
+        # Редактируем существующее сообщение
+        bot.edit_message_text(
+            text,
+            call.message.chat.id,
+            call.message.message_id,
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id)
+        
+    except Exception as e:
+        logger.error(f"Ошибка возврата: {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+    
     # ================== 🍬 НОВАЯ ИГРА: КОНФЕТКА (CANDY HUNT) ==================
 # Команда: конфетка [ставка] или конфета [ставка]
 # Поле 2x3 (6 клеток), 3 конфеты, 3 пустых клетки
@@ -1319,7 +2126,7 @@ import uuid
 active_candy_games = {}
 
 # Настройки игры
-CANDY_MULTIPLIER_PER_CANDY = 0.35  # +0.35 к множителю за каждую конфету
+CANDY_MULTIPLIER_PER_CANDY = 0.50  # +0.35 к множителю за каждую конфету
 CANDY_TOTAL_CELLS = 6               # Всего клеток 2x3
 CANDY_COUNT = 3                      # Количество конфет
 
@@ -3121,8 +3928,8 @@ def hive_game_start(message):
             "active": True
         }
 
-        text = f"🐝 <b>УЛЕЙ</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n⬜⬜⬜⬜\n⬜⬜⬜⬜\n⬜⬜⬜⬜\n⬜⬜⬜⬜"
-
+        text = f"🐝 <b>УЛЕЙ</b> | {mention}\n💰 {format_number(bet)}$ | x1.00"
+        
         msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=hive_keyboard(game_id, user_id, [], show_cashout=False))
         active_hive_games[game_id]["message_id"] = msg.message_id
 
@@ -3267,597 +4074,7 @@ def hive_noop(call):
 print("✅ Игра 'Улей' (Hive) загружена!")
 
 
-# ================== 🦴 НОВАЯ ИГРА "КОСТИ" (BONES) ==================
-# Поле 5x5, ищешь кости 🦴, избегая пустых ям 🕳️
-# Кнопки: неоткрытая - 🪨 (камень), кость - 🦴, яма - 🕳️
 
-active_bones_games = {}
-
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("кости"))
-def bones_game_start(message):
-    try:
-        user_id = message.from_user.id
-        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-        chat_id = message.chat.id
-        user_data = get_user_data(user_id)
-
-        parts = message.text.split()
-        if len(parts) < 2:
-            bot.reply_to(message, "❌ Ставка?\nПример: <code>кости 1000</code>", parse_mode="HTML")
-            return
-
-        try:
-            bet = int(parts[1])
-            if bet <= 0:
-                bot.reply_to(message, "❌ Ставка > 0!")
-                return
-        except ValueError:
-            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
-            return
-
-        if user_data["balance"] < bet:
-            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
-            return
-
-        user_data["balance"] -= bet
-        save_casino_data()
-
-        game_id = str(uuid.uuid4())[:8]
-
-        # 5x5 = 25 клеток, 6 пустых ям (мины)
-        pit_positions = random.sample(range(25), 6)
-
-        active_bones_games[game_id] = {
-            "user_id": user_id,
-            "chat_id": chat_id,
-            "message_id": None,
-            "bet": bet,
-            "pit_positions": pit_positions,
-            "opened_cells": [],
-            "bones_found": 0,
-            "current_multiplier": 1.0,
-            "active": True
-        }
-
-        text = f"🦴 <b>КОСТИ</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜"
-
-        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=bones_keyboard(game_id, user_id, [], show_cashout=False))
-        active_bones_games[game_id]["message_id"] = msg.message_id
-
-        try:
-            bot.delete_message(chat_id, message.message_id)
-        except:
-            pass
-
-    except Exception as e:
-        logger.error(f"Ошибка Кости: {e}")
-
-def bones_keyboard(game_id, user_id, opened_cells, show_cashout=False):
-    kb = InlineKeyboardMarkup(row_width=5)
-    game = active_bones_games.get(game_id)
-    
-    buttons = []
-    for i in range(25):
-        if i in opened_cells:
-            if game and i in game["pit_positions"]:
-                buttons.append(InlineKeyboardButton("🕳️", callback_data="bones_noop"))
-            else:
-                buttons.append(InlineKeyboardButton("🦴", callback_data="bones_noop"))
-        else:
-            buttons.append(InlineKeyboardButton("🪨", callback_data=f"bones_open_{game_id}_{i}_{user_id}"))
-    
-    for i in range(0, 25, 5):
-        kb.row(*buttons[i:i+5])
-    
-    if show_cashout:
-        kb.add(InlineKeyboardButton("💸 Забрать кости", callback_data=f"bones_cashout_{game_id}_{user_id}"))
-    
-    return kb
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("bones_open_"))
-def bones_open_cell(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        cell = int(parts[3])
-        owner_id = int(parts[4])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
-            return
-
-        game = active_bones_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if cell in game["opened_cells"]:
-            bot.answer_callback_query(call.id)
-            return
-
-        game["opened_cells"].append(cell)
-
-        if cell in game["pit_positions"]:
-            game["active"] = False
-            bot.edit_message_text(
-                f"🕳️ <b>СОРВАЛСЯ В ЯМУ!</b>\n💸 -{format_number(game['bet'])}$",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML"
-            )
-            del active_bones_games[game_id]
-            bot.answer_callback_query(call.id, "🕳️ Ты упал в яму!")
-            return
-        else:
-            game["bones_found"] += 1
-            game["current_multiplier"] = round(1.0 + (game["bones_found"] * 0.25), 2)
-
-            if game["bones_found"] >= 19:  # 25-6 = 19 костей
-                win = int(game["bet"] * game["current_multiplier"])
-                user_data = get_user_data(owner_id)
-                user_data["balance"] += win
-                save_casino_data()
-
-                bot.edit_message_text(
-                    f"🦴 <b>ВСЕ КОСТИ!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-                    game["chat_id"],
-                    game["message_id"],
-                    parse_mode="HTML"
-                )
-                del active_bones_games[game_id]
-                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-                return
-
-            bot.edit_message_text(
-                f"🦴 <b>+1 кость!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML",
-                reply_markup=bones_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
-            )
-            bot.answer_callback_query(call.id, f"🦴 +1 кость!")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("bones_cashout_"))
-def bones_cashout(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        owner_id = int(parts[3])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
-            return
-
-        game = active_bones_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if game["bones_found"] == 0:
-            bot.answer_callback_query(call.id, "❌ Сначала найди кости!")
-            return
-
-        win = int(game["bet"] * game["current_multiplier"])
-        user_data = get_user_data(owner_id)
-        user_data["balance"] += win
-        save_casino_data()
-
-        bot.edit_message_text(
-            f"✅ <b>Кости собраны!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-            game["chat_id"],
-            game["message_id"],
-            parse_mode="HTML"
-        )
-
-        del active_bones_games[game_id]
-        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data == "bones_noop")
-def bones_noop(call):
-    bot.answer_callback_query(call.id)
-
-print("✅ Игра 'Кости' (Bones) загружена!")
-
-# ================== 🐭 НОВАЯ ИГРА "СЫР" (CHEESE) ==================
-# Поле 4x4, ищешь сыр 🧀, избегая мышеловок 🪤
-# Кнопки: неоткрытая - 🧱 (кирпич), сыр - 🧀, мышеловка - 🪤
-
-active_cheese_games = {}
-
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("сыр"))
-def cheese_game_start(message):
-    try:
-        user_id = message.from_user.id
-        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-        chat_id = message.chat.id
-        user_data = get_user_data(user_id)
-
-        parts = message.text.split()
-        if len(parts) < 2:
-            bot.reply_to(message, "❌ Ставка?\nПример: <code>сыр 1000</code>", parse_mode="HTML")
-            return
-
-        try:
-            bet = int(parts[1])
-            if bet <= 0:
-                bot.reply_to(message, "❌ Ставка > 0!")
-                return
-        except ValueError:
-            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
-            return
-
-        if user_data["balance"] < bet:
-            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
-            return
-
-        user_data["balance"] -= bet
-        save_casino_data()
-
-        game_id = str(uuid.uuid4())[:8]
-
-        # 4x4 = 16 клеток, 5 мышеловок
-        trap_positions = random.sample(range(16), 5)
-
-        active_cheese_games[game_id] = {
-            "user_id": user_id,
-            "chat_id": chat_id,
-            "message_id": None,
-            "bet": bet,
-            "trap_positions": trap_positions,
-            "opened_cells": [],
-            "cheese_found": 0,
-            "current_multiplier": 1.0,
-            "active": True
-        }
-
-        text = f"🐭 <b>СЫР</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n🧱🧱🧱🧱\n🧱🧱🧱🧱\n🧱🧱🧱🧱\n🧱🧱🧱🧱"
-
-        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=cheese_keyboard(game_id, user_id, [], show_cashout=False))
-        active_cheese_games[game_id]["message_id"] = msg.message_id
-
-        try:
-            bot.delete_message(chat_id, message.message_id)
-        except:
-            pass
-
-    except Exception as e:
-        logger.error(f"Ошибка Сыр: {e}")
-
-def cheese_keyboard(game_id, user_id, opened_cells, show_cashout=False):
-    kb = InlineKeyboardMarkup(row_width=4)
-    game = active_cheese_games.get(game_id)
-    
-    buttons = []
-    for i in range(16):
-        if i in opened_cells:
-            if game and i in game["trap_positions"]:
-                buttons.append(InlineKeyboardButton("🪤", callback_data="cheese_noop"))
-            else:
-                buttons.append(InlineKeyboardButton("🧀", callback_data="cheese_noop"))
-        else:
-            buttons.append(InlineKeyboardButton("🧱", callback_data=f"cheese_open_{game_id}_{i}_{user_id}"))
-    
-    for i in range(0, 16, 4):
-        kb.row(*buttons[i:i+4])
-    
-    if show_cashout:
-        kb.add(InlineKeyboardButton("💸 Забрать сыр", callback_data=f"cheese_cashout_{game_id}_{user_id}"))
-    
-    return kb
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("cheese_open_"))
-def cheese_open_cell(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        cell = int(parts[3])
-        owner_id = int(parts[4])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
-            return
-
-        game = active_cheese_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if cell in game["opened_cells"]:
-            bot.answer_callback_query(call.id)
-            return
-
-        game["opened_cells"].append(cell)
-
-        if cell in game["trap_positions"]:
-            game["active"] = False
-            bot.edit_message_text(
-                f"🪤 <b>МЫШЕЛОВКА!</b>\n💸 -{format_number(game['bet'])}$",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML"
-            )
-            del active_cheese_games[game_id]
-            bot.answer_callback_query(call.id, "🪤 Попал в мышеловку!")
-            return
-        else:
-            game["cheese_found"] += 1
-            game["current_multiplier"] = round(1.0 + (game["cheese_found"] * 0.35), 2)
-
-            if game["cheese_found"] >= 11:  # 16-5 = 11 кусков сыра
-                win = int(game["bet"] * game["current_multiplier"])
-                user_data = get_user_data(owner_id)
-                user_data["balance"] += win
-                save_casino_data()
-
-                bot.edit_message_text(
-                    f"🧀 <b>ВЕСЬ СЫР!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-                    game["chat_id"],
-                    game["message_id"],
-                    parse_mode="HTML"
-                )
-                del active_cheese_games[game_id]
-                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-                return
-
-            bot.edit_message_text(
-                f"🐭 <b>+1 сыр!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML",
-                reply_markup=cheese_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
-            )
-            bot.answer_callback_query(call.id, f"🧀 +1 сыр!")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("cheese_cashout_"))
-def cheese_cashout(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        owner_id = int(parts[3])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
-            return
-
-        game = active_cheese_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if game["cheese_found"] == 0:
-            bot.answer_callback_query(call.id, "❌ Сначала найди сыр!")
-            return
-
-        win = int(game["bet"] * game["current_multiplier"])
-        user_data = get_user_data(owner_id)
-        user_data["balance"] += win
-        save_casino_data()
-
-        bot.edit_message_text(
-            f"✅ <b>Сыр съеден!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-            game["chat_id"],
-            game["message_id"],
-            parse_mode="HTML"
-        )
-
-        del active_cheese_games[game_id]
-        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data == "cheese_noop")
-def cheese_noop(call):
-    bot.answer_callback_query(call.id)
-
-print("✅ Игра 'Сыр' (Cheese) загружена!")
-
-
-# ================== 🦉 НОВАЯ ИГРА "ГНЕЗДО" (NEST) ==================
-# Поле 5x5, ищешь яйца 🥚, избегая совы 🦉
-# Кнопки: неоткрытая - 🌿 (трава), яйцо - 🥚, сова - 🦉
-
-active_nest_games = {}
-
-@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("гнездо"))
-def nest_game_start(message):
-    try:
-        user_id = message.from_user.id
-        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-        chat_id = message.chat.id
-        user_data = get_user_data(user_id)
-
-        parts = message.text.split()
-        if len(parts) < 2:
-            bot.reply_to(message, "❌ Ставка?\nПример: <code>гнездо 1000</code>", parse_mode="HTML")
-            return
-
-        try:
-            bet = int(parts[1])
-            if bet <= 0:
-                bot.reply_to(message, "❌ Ставка > 0!")
-                return
-        except ValueError:
-            bot.reply_to(message, "❌ Число!", parse_mode="HTML")
-            return
-
-        if user_data["balance"] < bet:
-            bot.reply_to(message, f"❌ Нужно: {format_number(bet)}$", parse_mode="HTML")
-            return
-
-        user_data["balance"] -= bet
-        save_casino_data()
-
-        game_id = str(uuid.uuid4())[:8]
-
-        # 5x5 = 25 клеток, 5 сов
-        owl_positions = random.sample(range(25), 5)
-
-        active_nest_games[game_id] = {
-            "user_id": user_id,
-            "chat_id": chat_id,
-            "message_id": None,
-            "bet": bet,
-            "owl_positions": owl_positions,
-            "opened_cells": [],
-            "eggs_found": 0,
-            "current_multiplier": 1.0,
-            "active": True
-        }
-
-        text = f"🦉 <b>ГНЕЗДО</b> | {mention}\n💰 {format_number(bet)}$ | x1.00\n\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿\n🌿🌿🌿🌿🌿"
-
-        msg = bot.send_message(chat_id, text, parse_mode="HTML", reply_markup=nest_keyboard(game_id, user_id, [], show_cashout=False))
-        active_nest_games[game_id]["message_id"] = msg.message_id
-
-        try:
-            bot.delete_message(chat_id, message.message_id)
-        except:
-            pass
-
-    except Exception as e:
-        logger.error(f"Ошибка Гнездо: {e}")
-
-def nest_keyboard(game_id, user_id, opened_cells, show_cashout=False):
-    kb = InlineKeyboardMarkup(row_width=5)
-    game = active_nest_games.get(game_id)
-    
-    buttons = []
-    for i in range(25):
-        if i in opened_cells:
-            if game and i in game["owl_positions"]:
-                buttons.append(InlineKeyboardButton("🦉", callback_data="nest_noop"))
-            else:
-                buttons.append(InlineKeyboardButton("🥚", callback_data="nest_noop"))
-        else:
-            buttons.append(InlineKeyboardButton("🌿", callback_data=f"nest_open_{game_id}_{i}_{user_id}"))
-    
-    for i in range(0, 25, 5):
-        kb.row(*buttons[i:i+5])
-    
-    if show_cashout:
-        kb.add(InlineKeyboardButton("💸 Забрать яйца", callback_data=f"nest_cashout_{game_id}_{user_id}"))
-    
-    return kb
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("nest_open_"))
-def nest_open_cell(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        cell = int(parts[3])
-        owner_id = int(parts[4])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя игра!", show_alert=True)
-            return
-
-        game = active_nest_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if cell in game["opened_cells"]:
-            bot.answer_callback_query(call.id)
-            return
-
-        game["opened_cells"].append(cell)
-
-        if cell in game["owl_positions"]:
-            game["active"] = False
-            bot.edit_message_text(
-                f"🦉 <b>СОВА ПРОСНУЛАСЬ!</b>\n💸 -{format_number(game['bet'])}$",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML"
-            )
-            del active_nest_games[game_id]
-            bot.answer_callback_query(call.id, "🦉 Сова атаковала!")
-            return
-        else:
-            game["eggs_found"] += 1
-            game["current_multiplier"] = round(1.0 + (game["eggs_found"] * 0.2), 2)
-
-            if game["eggs_found"] >= 20:  # 25-5 = 20 яиц
-                win = int(game["bet"] * game["current_multiplier"])
-                user_data = get_user_data(owner_id)
-                user_data["balance"] += win
-                save_casino_data()
-
-                bot.edit_message_text(
-                    f"🥚 <b>ВСЕ ЯЙЦА!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-                    game["chat_id"],
-                    game["message_id"],
-                    parse_mode="HTML"
-                )
-                del active_nest_games[game_id]
-                bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-                return
-
-            bot.edit_message_text(
-                f"🦉 <b>+1 яйцо!</b>\n💰 {format_number(game['bet'])}$ | x{game['current_multiplier']:.2f}",
-                game["chat_id"],
-                game["message_id"],
-                parse_mode="HTML",
-                reply_markup=nest_keyboard(game_id, owner_id, game["opened_cells"], show_cashout=True)
-            )
-            bot.answer_callback_query(call.id, f"🥚 +1 яйцо!")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data.startswith("nest_cashout_"))
-def nest_cashout(call):
-    try:
-        parts = call.data.split("_")
-        game_id = parts[2]
-        owner_id = int(parts[3])
-
-        if call.from_user.id != owner_id:
-            bot.answer_callback_query(call.id, "❌ Не твоя кнопка!", show_alert=True)
-            return
-
-        game = active_nest_games.get(game_id)
-        if not game or not game["active"]:
-            bot.answer_callback_query(call.id, "❌ Игра окончена")
-            return
-
-        if game["eggs_found"] == 0:
-            bot.answer_callback_query(call.id, "❌ Сначала найди яйца!")
-            return
-
-        win = int(game["bet"] * game["current_multiplier"])
-        user_data = get_user_data(owner_id)
-        user_data["balance"] += win
-        save_casino_data()
-
-        bot.edit_message_text(
-            f"✅ <b>Яйца собраны!</b>\n💰 +{format_number(win)}$ | x{game['current_multiplier']:.2f}",
-            game["chat_id"],
-            game["message_id"],
-            parse_mode="HTML"
-        )
-
-        del active_nest_games[game_id]
-        bot.answer_callback_query(call.id, f"✅ +{format_number(win)}$")
-
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
-
-@bot.callback_query_handler(func=lambda c: c.data == "nest_noop")
-def nest_noop(call):
-    bot.answer_callback_query(call.id)
-
-print("✅ Игра 'Гнездо' (Nest) загружена!")
 
 # ================== 💰 СИСТЕМА ДЕНЕЖНЫХ КЕЙСОВ (CASES) ==================
 CASES_DB = "cases.db"
@@ -11944,7 +12161,7 @@ def squirrel_callback(call):
         
         if cell == squirrel_cell:
             # ПОБЕДА - игрок нашел белку
-            win_amount = bet * 2
+            win_amount = bet * 2.3
             user_data = get_user_data(user_id)
             user_data["balance"] += win_amount
             save_casino_data()
@@ -11959,7 +12176,7 @@ def squirrel_callback(call):
             
             # Текст победы
             result_text = (f"{mention}, <b>ты нашёл белку! 🐿️</b>\n\n"
-                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> удвоилась!\n"
+                          f"💰 Твоя ставка <code>{format_number(bet)}$</code> увеличилась в 2.5х\n"
                           f"🎉 Ты получил <code>{format_number(win_amount)}$</code>")
             
         else:
@@ -12984,7 +13201,7 @@ def drag_race_game(message):
 
         # 7. Генерируем результат (60% победа, 40% проигрыш)
         speed = random.randint(90, 320)  # Рандомная скорость
-        is_win = random.random() < 0.4  # 60% шанс на победу
+        is_win = random.random() < 0.5  # 60% шанс на победу
 
         # 8. Формируем текст результата
         if is_win:
@@ -13376,15 +13593,11 @@ HELP_CONTENT = {
 [🔢] <b>[ставка] 1-36 | Ставки на числа и диапозон</b>
 [⚽] <b>футбол [ставка]</b>
 [🏀] <b>баскетбол [ставка]</b>
-[🏀] <b>бс [ставка]</b>
 [🎯] <b>тир [ставка]</b>
 [🪙] <b>рб [ставка] [орёл/решка]</b>
 [🎲] <b>кубик [ставка]</b>
 [⭕] <b>кнб [ставка]</b>
 [🐝] <b>улей [ставка]</b>
-[🦴] <b>кости [ставка]</b>
-[🐭] <b>сыр [ставка]</b>
-[🦉] <b>гнездо [ставка]</b>
 
 """,
 
@@ -13479,6 +13692,11 @@ HELP_CONTENT = {
 <b>🎏 РЫБАЛКА:</b>
 [🎣] <b>рыбачить</b> — Начать рыбалку
 [🐟] <b>моя рыбалка</b> — Статистика рыбалок
+
+<b>🌱 САДОВНИК:</b>
+[🌱] <b>мои растения</b> — Меню садовника
+[🪴] <b>посадить растение</b> — Посадить новый саженец
+[🛒] <b>купить сажанец [номер]</b> — Купить саженец из магазина
 
 """,
 
