@@ -642,7 +642,7 @@
   "game": {
     "amount": 30000,
     "max_activations": 100000,
-    "current_activations": 31,
+    "current_activations": 32,
     "activated_by": [
       7526512670,
       8168027201,
@@ -674,7 +674,8 @@
       8517130971,
       8095860146,
       7696828602,
-      5446191917
+      5446191917,
+      6973024496
     ]
   },
   "ponchik": {
@@ -1876,5 +1877,35 @@
     "max_activations": 16,
     "current_activations": 0,
     "activated_by": []
+  },
+  "izzzy": {
+    "amount": 250000,
+    "max_activations": 15,
+    "current_activations": 15,
+    "activated_by": [
+      777000,
+      8598423757,
+      7526512670,
+      8452337057,
+      7309661931,
+      7307656251,
+      5317756229,
+      7985048553,
+      8084177547,
+      8232024665,
+      1448932943,
+      7696828602,
+      8168027201,
+      7694717699,
+      8358458560
+    ]
+  },
+  "88UDBTDQ": {
+    "amount": 773,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7696828602
+    ]
   }
 }
