@@ -1907,5 +1907,30 @@
     "activated_by": [
       7696828602
     ]
+  },
+  "12349": {
+    "amount": 1,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      6973024496
+    ]
+  },
+  "HD5NVW39": {
+    "amount": 3075,
+    "max_activations": 10,
+    "current_activations": 2,
+    "activated_by": [
+      8084177547,
+      1248832437
+    ]
+  },
+  "82V7SR7A": {
+    "amount": 4390,
+    "max_activations": 1,
+    "current_activations": 1,
+    "activated_by": [
+      7307656251
+    ]
   }
 }

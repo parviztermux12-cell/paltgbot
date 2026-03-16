@@ -987,7 +987,408 @@ def list_cheques(message):
     
 
 
+# ================== 🃏 НОВАЯ ИГРА "ДЖОКЕР" (JOKER) ==================
+# Команда: джокер [ставка]
+# Правила:
+# - Начальное поле: 3 клетки (1 ряд)
+# - Если игрок открывает безопасную клетку, поле расширяется на 3 новые клетки (новый ряд)
+# - Максимум: 5 рядов (15 клеток)
+# - Множитель за каждую безопасную клетку: +0.20
+# - Если игрок натыкается на череп 💀 - проигрыш
 
+import uuid
+
+# Словарь для хранения активных игр
+active_joker_games = {}
+
+# Настройки игры
+JOKER_ROWS = 5  # Максимальное количество рядов
+JOKER_COLS = 3  # Количество колонок (всегда 3)
+JOKER_MULTIPLIER_PER_CELL = 0.20  # +0.20 за каждую безопасную клетку
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("джокер"))
+def joker_game_start(message):
+    """
+    Запуск игры "Джокер".
+    Использование: джокер [ставка]
+    """
+    try:
+        user_id = message.from_user.id
+        mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
+        chat_id = message.chat.id
+        user_data = get_user_data(user_id)
+
+        # --- Парсинг ставки ---
+        parts = message.text.split()
+        if len(parts) < 2:
+            bot.reply_to(message,
+                         f"{mention}, укажи ставку!\n\n"
+                         f"🃏 <b>Игра Джокер</b>\n"
+                         f"• Начальное поле: 3 клетки\n"
+                         f"• За каждый ход +{JOKER_MULTIPLIER_PER_CELL:.2f} к множителю\n"
+                         f"• Максимум: {JOKER_ROWS} рядов ({JOKER_ROWS * JOKER_COLS} клеток)\n"
+                         f"• Попадаешь на череп 💀 - проигрыш\n\n"
+                         f"<b>Пример:</b> <code>джокер 1000</code>",
+                         parse_mode="HTML")
+            return
+
+        try:
+            bet = int(parts[1])
+            if bet <= 0:
+                bot.reply_to(message, "❌ Ставка должна быть больше 0!")
+                return
+        except ValueError:
+            bot.reply_to(message, "❌ Ставка должна быть числом!")
+            return
+
+        # --- Проверка баланса ---
+        if user_data["balance"] < bet:
+            bot.reply_to(message,
+                         f"❌ {mention}, недостаточно средств!\n\n"
+                         f"💰 Нужно: <code>{format_number(bet)}$</code>\n"
+                         f"💳 У тебя: <code>{format_number(user_data['balance'])}$</code>",
+                         parse_mode="HTML")
+            return
+
+        # Списываем ставку
+        user_data["balance"] -= bet
+        save_casino_data()
+
+        # Генерация уникального ID игры
+        game_id = str(uuid.uuid4())[:8]
+
+        # Создаём поле с черепами
+        # В первом ряду всегда один череп
+        skull_positions = []
+        
+        # Для каждого ряда рандомно выбираем клетку с черепом (0, 1 или 2)
+        for row in range(JOKER_ROWS):
+            skull_positions.append(random.randint(0, 2))
+
+        # Сохраняем игру
+        active_joker_games[game_id] = {
+            "user_id": user_id,
+            "chat_id": chat_id,
+            "message_id": None,
+            "bet": bet,
+            "skull_positions": skull_positions,  # Список позиций черепов по рядам
+            "opened_cells": [],  # Список открытых клеток (row, col)
+            "current_row": 0,  # Текущий ряд (0 - первый)
+            "current_multiplier": 1.0,
+            "active": True,
+            "max_visible_row": 0  # Максимальный видимый ряд (изначально только первый)
+        }
+
+        # Создаем клавиатуру для первого ряда
+        kb = joker_keyboard(game_id, user_id, [], 0, 0, skull_positions)
+
+        # Отправляем сообщение
+        game_text = (f"🃏 <b>Джокер</b> | {mention}\n\n"
+                     f"💰 Ставка: <code>{format_number(bet)}$</code>\n"
+                     f"📈 Текущий множитель: <b>x{1.0:.2f}</b>\n"
+                     f"🎯 Ряд: <b>1/{JOKER_ROWS}</b>\n\n"
+                     f"Выбери клетку 👇")
+        msg = bot.send_message(chat_id, game_text, parse_mode="HTML", reply_markup=kb)
+
+        # Сохраняем ID сообщения
+        active_joker_games[game_id]["message_id"] = msg.message_id
+
+        # Удаляем команду пользователя (для чистоты чата)
+        try:
+            bot.delete_message(chat_id, message.message_id)
+        except:
+            pass
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Джокер (старт): {e}")
+        bot.reply_to(message, "❌ Произошла ошибка при создании игры!")
+
+
+def joker_keyboard(game_id, user_id, opened_cells, current_row, max_visible_row, skull_positions, show_cashout=False):
+    """Создает клавиатуру для игры"""
+    kb = InlineKeyboardMarkup()
+    
+    # Показываем все ряды до max_visible_row
+    for row in range(max_visible_row + 1):
+        row_buttons = []
+        for col in range(JOKER_COLS):
+            cell = (row, col)
+            
+            if cell in opened_cells:
+                # Клетка уже открыта
+                if col == skull_positions[row]:
+                    # Это череп (но он не должен быть открыт, если игрок не проиграл)
+                    row_buttons.append(InlineKeyboardButton("⬛", callback_data="joker_done"))
+                else:
+                    # Безопасная клетка
+                    row_buttons.append(InlineKeyboardButton(" 🟢 ", callback_data="joker_done"))
+            else:
+                if row == current_row and row <= max_visible_row:
+                    # Текущий ряд, который можно открывать
+                    row_buttons.append(InlineKeyboardButton(f" ❓ ", callback_data=f"joker_open_{game_id}_{row}_{col}_{user_id}"))
+                else:
+                    # Недоступные ряды
+                    row_buttons.append(InlineKeyboardButton("       ", callback_data="joker_done"))
+        
+        kb.row(*row_buttons)
+    
+    # Кнопка "Забрать выигрыш" (появляется после первого хода)
+    if show_cashout and game_id in active_joker_games:
+        game = active_joker_games[game_id]
+        current_win = int(game["bet"] * game["current_multiplier"])
+        kb.add(InlineKeyboardButton(f"💸 Забрать ({format_number(current_win)}$)", 
+                                   callback_data=f"joker_cashout_{game_id}_{user_id}"))
+    
+    return kb
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("joker_open_"))
+def joker_open_cell(call):
+    """Обработчик открытия клетки"""
+    try:
+        # Разбираем callback_data: joker_open_GAMEID_ROW_COL_USERID
+        parts = call.data.split("_")
+        game_id = parts[2]
+        row = int(parts[3])
+        col = int(parts[4])
+        owner_id = int(parts[5])
+
+        # ЗАЩИТА: проверяем, что нажимает владелец игры
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+
+        # Проверяем существование игры
+        game = active_joker_games.get(game_id)
+        if not game:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+
+        # Проверяем, активна ли игра
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
+            return
+
+        # Проверяем, что это текущий ряд
+        if row != game["current_row"]:
+            bot.answer_callback_query(call.id, "❌ Сейчас не твой ход!", show_alert=True)
+            return
+
+        # Проверяем, не открыта ли уже клетка
+        if (row, col) in game["opened_cells"]:
+            bot.answer_callback_query(call.id, "❌ Эта клетка уже открыта!", show_alert=True)
+            return
+
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        skull_positions = game["skull_positions"]
+        bet = game["bet"]
+
+        # Проверяем, есть ли череп в этой клетке
+        if col == skull_positions[row]:
+            # 💀 ПРОИГРЫШ - наткнулся на череп
+            game["active"] = False
+            
+            # Показываем поле с черепом
+            result_kb = InlineKeyboardMarkup()
+            for r in range(game["max_visible_row"] + 1):
+                row_buttons = []
+                for c in range(JOKER_COLS):
+                    if r == row and c == col:
+                        row_buttons.append(InlineKeyboardButton("💀", callback_data="joker_done"))
+                    elif c == skull_positions[r]:
+                        row_buttons.append(InlineKeyboardButton("💀", callback_data="joker_done"))
+                    elif (r, c) in game["opened_cells"]:
+                        row_buttons.append(InlineKeyboardButton(" 🟢 ", callback_data="joker_done"))
+                    else:
+                        row_buttons.append(InlineKeyboardButton("      ", callback_data="joker_done"))
+                result_kb.row(*row_buttons)
+
+            text = (f"💀 {mention}, <b>Ты наткнулся на череп и проиграл</b>\n\n"
+                    f"💰 Ты потерял ставку: <code>{format_number(bet)}$</code>")
+            
+            bot.edit_message_text(
+                text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=result_kb
+            )
+            
+            del active_joker_games[game_id]
+            bot.answer_callback_query(call.id, "💀 Ты проиграл!")
+            return
+
+        # ✅ БЕЗОПАСНАЯ КЛЕТКА
+        # Открываем клетку
+        game["opened_cells"].append((row, col))
+        
+        # Увеличиваем множитель
+        game["current_multiplier"] = round(game["current_multiplier"] + JOKER_MULTIPLIER_PER_CELL, 2)
+        
+        # Подсчитываем, сколько безопасных клеток открыто в текущем ряду
+        safe_cells_in_row = 0
+        for opened_cell in game["opened_cells"]:
+            if opened_cell[0] == row:
+                safe_cells_in_row += 1
+        
+        # В каждом ряду 2 безопасные клетки (3 всего, 1 череп)
+        if safe_cells_in_row == 2:  # Открыты обе безопасные клетки
+            # Переходим на следующий ряд, если он существует
+            if game["current_row"] + 1 < JOKER_ROWS:
+                game["current_row"] += 1
+                game["max_visible_row"] = max(game["max_visible_row"], game["current_row"])
+        
+        # Проверяем, не достигнут ли максимум рядов
+        if game["current_row"] >= JOKER_ROWS and safe_cells_in_row == 2:
+            # 🎉 ПОБЕДА - пройдены все ряды
+            game["active"] = False
+            win_amount = int(bet * game["current_multiplier"])
+            
+            user_data = get_user_data(user_id)
+            user_data["balance"] += win_amount
+            save_casino_data()
+            
+            # Показываем поле с результатом
+            result_kb = InlineKeyboardMarkup()
+            for r in range(JOKER_ROWS):
+                row_buttons = []
+                for c in range(JOKER_COLS):
+                    if c == skull_positions[r]:
+                        row_buttons.append(InlineKeyboardButton(" 💀 ", callback_data="joker_done"))
+                    else:
+                        row_buttons.append(InlineKeyboardButton("      ", callback_data="joker_done"))
+                result_kb.row(*row_buttons)
+            
+            text = (f"🎉 {mention}, <b>Ты прошёл все ряды и выиграл</b>\n\n"
+                    f"💰 Выигрыш: <code>{format_number(win_amount)}$</code>\n"
+                    f"📈 Итоговый множитель: <b>x{game['current_multiplier']:.2f}</b>")
+            
+            bot.edit_message_text(
+                text,
+                game["chat_id"],
+                game["message_id"],
+                parse_mode="HTML",
+                reply_markup=result_kb
+            )
+            
+            del active_joker_games[game_id]
+            bot.answer_callback_query(call.id, f"🎉 +{format_number(win_amount)}$")
+            return
+
+        # Обновляем сообщение
+        show_cashout = len(game["opened_cells"]) > 0  # Кнопка появляется после первого хода
+        current_win = int(bet * game["current_multiplier"])
+        
+        text = (f"🃏 <b>Джокер</b> | {mention}\n\n"
+                f"💰 Ставка: <code>{format_number(bet)}$</code>\n"
+                f"📈 Текущий множитель: <b>x{game['current_multiplier']:.2f}</b>\n"
+                f"💎 Возможный выигрыш: <code>{format_number(current_win)}$</code>\n"
+                f"🎯 Ряд: <b>{game['current_row'] + 1}/{JOKER_ROWS}</b>\n\n"
+                f"Выбери клетку 👇")
+        
+        kb = joker_keyboard(game_id, user_id, game["opened_cells"], game["current_row"], 
+                           game["max_visible_row"], game["skull_positions"], show_cashout)
+        
+        bot.edit_message_text(
+            text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML",
+            reply_markup=kb
+        )
+        
+        bot.answer_callback_query(call.id, f"✅ Безопасно! +{JOKER_MULTIPLIER_PER_CELL:.2f} к множителю")
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Джокер (ход): {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+@bot.callback_query_handler(func=lambda c: c.data.startswith("joker_cashout_"))
+def joker_cashout(call):
+    """Обработчик кнопки 'Забрать выигрыш'"""
+    try:
+        parts = call.data.split("_")
+        game_id = parts[2]
+        owner_id = int(parts[3])
+
+        # ЗАЩИТА: проверяем, что нажимает владелец игры
+        if call.from_user.id != owner_id:
+            bot.answer_callback_query(call.id, "❌ Это не твоя игра!", show_alert=True)
+            return
+
+        # Проверяем существование игры
+        game = active_joker_games.get(game_id)
+        if not game:
+            bot.answer_callback_query(call.id, "❌ Игра не найдена!", show_alert=True)
+            return
+
+        # Проверяем, активна ли игра
+        if not game["active"]:
+            bot.answer_callback_query(call.id, "❌ Игра уже завершена!", show_alert=True)
+            return
+
+        # Проверяем, есть ли что забирать (хотя бы одна клетка открыта)
+        if len(game["opened_cells"]) == 0:
+            bot.answer_callback_query(call.id, "❌ Сначала открой хотя бы одну клетку!", show_alert=True)
+            return
+
+        # Завершаем игру
+        game["active"] = False
+        user_id = game["user_id"]
+        mention = f'<a href="tg://user?id={user_id}">{call.from_user.first_name}</a>'
+        bet = game["bet"]
+        win_amount = int(bet * game["current_multiplier"])
+        
+        # Начисляем выигрыш
+        user_data = get_user_data(user_id)
+        user_data["balance"] += win_amount
+        save_casino_data()
+
+        # Показываем поле с результатом
+        result_kb = InlineKeyboardMarkup()
+        skull_positions = game["skull_positions"]
+        max_visible = game["max_visible_row"]
+        
+        for r in range(max_visible + 1):
+            row_buttons = []
+            for c in range(JOKER_COLS):
+                if (r, c) in game["opened_cells"]:
+                    row_buttons.append(InlineKeyboardButton("       ", callback_data="joker_done"))
+                elif c == skull_positions[r]:
+                    row_buttons.append(InlineKeyboardButton(" 💀 ", callback_data="joker_done"))
+                else:
+                    row_buttons.append(InlineKeyboardButton(" 🟢 ", callback_data="joker_done"))
+            result_kb.row(*row_buttons)
+
+        text = (f"✅ {mention}, <b>ты забрал выигрыш!</b>\n\n"
+                f"💰 Ты получил: <code>{format_number(win_amount)}$</code>\n"
+                f"📈 Множитель: <b>x{game['current_multiplier']:.2f}</b>\n"
+                f"🎯 Открыто рядов: <b>{max_visible + 1}</b>")
+
+        bot.edit_message_text(
+            text,
+            game["chat_id"],
+            game["message_id"],
+            parse_mode="HTML",
+            reply_markup=result_kb
+        )
+
+        del active_joker_games[game_id]
+        bot.answer_callback_query(call.id, f"✅ +{format_number(win_amount)}$")
+
+    except Exception as e:
+        logger.error(f"Ошибка в игре Джокер (выигрыш): {e}")
+        bot.answer_callback_query(call.id, "❌ Ошибка!", show_alert=True)
+
+
+# Заглушка для неактивных кнопок
+@bot.callback_query_handler(func=lambda c: c.data == "joker_done")
+def joker_done_callback(call):
+    bot.answer_callback_query(call.id, "🎮 Игра завершена")
+
+print("✅ Игра 'Джокер' с расширяющимся полем успешно загружена! 🃏")
         
 # ================== РЕФЕРАЛЬНАЯ СИСТЕМА (SQLite) ==================
 REFERRAL_BONUS = 15000
@@ -9279,10 +9680,23 @@ def marriages_list(message):
             )
             return
         
+        # СОРТИРУЕМ браки по убыванию продолжительности
+        marriages_with_days = []
+        for marriage in marriages:
+            user1_id, user2_id, user1_name, user2_name, married_at = marriage
+            days_married = get_marriage_days(married_at)
+            marriages_with_days.append((days_married, marriage))
+        
+        # Сортируем по убыванию дней
+        marriages_with_days.sort(key=lambda x: x[0], reverse=True)
+        
+        # Извлекаем отсортированные браки
+        sorted_marriages = [m[1] for m in marriages_with_days]
+        
         text = "<b>Список браков</b>\n\n"
         
-        # Показываем только топ-10
-        top_marriages = marriages[:10]
+        # Показываем только топ-10 (самые долгие браки)
+        top_marriages = sorted_marriages[:10]
         
         # Формируем список браков с индексацией
         for i, (user1_id, user2_id, user1_name, user2_name, married_at) in enumerate(top_marriages, 1):
@@ -9298,14 +9712,14 @@ def marriages_list(message):
                 f"   Продолжительность: {days_married} дней ({marriage_rank})\n\n"
             )
         
-        text += "------------------\n\n"
+        text += "------------------------------\n\n"
         
         # Проверяем, состоит ли пользователь в браке
         marriage = get_marriage(user_id)
         if marriage:
-            # Находим место пользователя в общем списке
+            # Находим место пользователя в ОТСОРТИРОВАННОМ списке
             user_place = None
-            for idx, (u1_id, u2_id, u1_name, u2_name, married_at) in enumerate(marriages, 1):
+            for idx, (u1_id, u2_id, u1_name, u2_name, married_at) in enumerate(sorted_marriages, 1):
                 if user_id in (u1_id, u2_id):
                     user_place = idx
                     partner_id = u2_id if u1_id == user_id else u1_id
@@ -9336,7 +9750,6 @@ def marriages_list(message):
             message.chat.id, 
             "Произошла ошибка при загрузке списка браков. Пожалуйста, попробуйте позже."
         )
-
 
 
 
@@ -13605,6 +14018,7 @@ HELP_CONTENT = {
 
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
+[♦️] <b>джокер [ставка]</b>
 [🍬] <b>конфетка [ставка]</b>
 [🍹] <b>бомба [ставка]</b>
 [☁️] <b>лестница [ставка]</b>
