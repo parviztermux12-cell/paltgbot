@@ -74,5 +74,15 @@
                 "mention": "<a href=\"tg://user?id=5243615462\">manograff’</a>"
             }
         ]
+    },
+    "6590819557": {
+        "6590819557": [
+            {
+                "type": "color",
+                "amount": 50000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=6590819557\">†♪†</a>"
+            }
+        ]
     }
 }

@@ -1932,5 +1932,22 @@
     "activated_by": [
       7307656251
     ]
+  },
+  "RONS7ONJ": {
+    "amount": 1643,
+    "max_activations": 9,
+    "current_activations": 1,
+    "activated_by": [
+      1248832437
+    ]
+  },
+  "UPC2JPAT": {
+    "amount": 2009,
+    "max_activations": 18,
+    "current_activations": 2,
+    "activated_by": [
+      8168027201,
+      1248832437
+    ]
   }
 }
