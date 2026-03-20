@@ -987,9 +987,96 @@ def list_cheques(message):
     
 
 
+# ================== КОМАНДА: ШИППЕРИМ (РАНДОМНЫЙ ШИППЕРИНГ) ==================
 
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["шипперим", "шип"])
+def random_ship(message):
+    """
+    Команда для рандомного шипперинга двух пользователей из текущего чата.
+    Если не получается - бот молчит.
+    """
+    try:
+        chat_id = message.chat.id
+        
+        # Проверяем, что это групповой чат
+        if message.chat.type not in ["group", "supergroup"]:
+            return  # Молчим
+        
+        users_in_chat = []
+        
+        # Пытаемся получить администраторов
+        try:
+            admins = bot.get_chat_administrators(chat_id)
+            for admin in admins:
+                user = admin.user
+                if not user.is_bot:
+                    users_in_chat.append(user)
+        except:
+            pass  # Молчим, если не получилось
+        
+        # Пытаемся получить обычных участников
+        try:
+            offset = 0
+            limit = 100
+            while len(users_in_chat) < 30 and offset < 500:
+                members = bot.get_chat_members(chat_id, offset=offset, limit=limit)
+                if not members:
+                    break
+                for member in members:
+                    user = member.user
+                    if not user.is_bot and user.id not in [u.id for u in users_in_chat]:
+                        users_in_chat.append(user)
+                offset += limit
+                if len(users_in_chat) >= 50:
+                    break
+        except:
+            pass  # Молчим, если не получилось
+        
+        # Если меньше 2 пользователей - молчим
+        if len(users_in_chat) < 2:
+            return
+        
+        # Выбираем двух рандомных пользователей
+        user1, user2 = random.sample(users_in_chat, 2)
+        
+        # Проверяем, что можно сделать кликабельные ссылки
+        # Для ссылки нужен хотя бы first_name, он всегда есть
+        if not user1.first_name or not user2.first_name:
+            return
+        
+        # Создаем кликабельные ссылки
+        mention1 = f'<a href="tg://user?id={user1.id}">{user1.first_name}</a>'
+        mention2 = f'<a href="tg://user?id={user2.id}">{user2.first_name}</a>'
+        
+        # Формируем текст
+        text = (
+            f"🧬 <b>Рандом шипперим:</b>\n\n"
+            f"{mention1} + {mention2}\n\n"
+            f"<i>любите друг друга - с детьми не затягивайте 🐿️</i>"
+        )
+        
+        bot.send_message(chat_id, text, parse_mode="HTML")
+        
+    except Exception:
+        # Любая ошибка - бот молчит
+        pass
    
+# ================== КОМАНДЫ ПРО АДМИНОВ ==================
 
+ADMIN_STICKER_ID = "CAACAgIAAxkBAAEQydZpvWX9-922CKXPyCrWF1Yd3L3l8QACxVEAAm0RMEkuPu6fxGBkPDoE"
+
+@bot.message_handler(func=lambda m: m.text and m.text.lower() in ["кто админ", "админ", "админы", "адм", "дай админку", "админка"])
+def admin_joke(message):
+    try:
+        bot.send_sticker(
+            message.chat.id,
+            ADMIN_STICKER_ID,
+            reply_to_message_id=message.message_id
+        )
+    except Exception as e:
+        logger.error(f"Ошибка отправки стикера админа: {e}")
+        
+        
 # ================== 🃏 НОВАЯ ИГРА "ДЖОКЕР" (JOKER) ==================
 # Команда: джокер [ставка]
 # Правила:
@@ -9994,31 +10081,19 @@ def unblock_user_cmd(message):
                        parse_mode="HTML")
 
 # ================== КОМАНДА БОТ ==================
+
+BOT_STICKER_ID = "CAACAgIAAxkBAAEQydhpvWYCwITu1o2Y5aooMiqVzaEBmgACFU0AAt4XMEnTcn4sxj05nToE"
+
 @bot.message_handler(func=lambda m: m.text and m.text.lower() in ["бот", "bot", "meow"])
 def bot_response(message):
-    user_id = message.from_user.id
-    mention = f'<a href="tg://user?id={user_id}">{message.from_user.first_name}</a>'
-    
-    # Список случайных ответов
-    responses = [
-        f"<b>⭐ {mention} Izzzy спит</b>",
-        f"<b>🌟 {mention} Иззичат</b>",
-        f"<b>💫 {mention} Сафонов - плати</b>",
-        f"<b>✨ {mention} Зови - мне лень приходить</b>",
-        f"<b>🎯 {mention} Батя в здании</b>",
-        f"<b>Izzzy tyta</b>"
-    ]
-    
-    # Выбираем случайный ответ
-    response = random.choice(responses)
-    
-    # Отправляем ответ
-    if message.reply_to_message:
-        # Если команда отправлена ответом на сообщение
-        bot.reply_to(message.reply_to_message, response, parse_mode="HTML")
-    else:
-        # Если команда отправлена просто так
-        bot.send_message(message.chat.id, response, parse_mode="HTML")
+    try:
+        bot.send_sticker(
+            message.chat.id,
+            BOT_STICKER_ID,
+            reply_to_message_id=message.message_id
+        )
+    except Exception as e:
+        logger.error(f"Ошибка отправки стикера бота: {e}")
 
 
 
@@ -13973,8 +14048,9 @@ def help_section_handler(call):
 HELP_CONTENT = {
     # ----- КОМАНДЫ (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
     "cmds": """
+--------------------------------------------------
 📋 <b>Основные команды</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 [💰] <b>баланс</b> / <b>б</b> — твой текущий баланс
 [👥] <b>мой кабинет</b> — реферальная информация
@@ -14004,8 +14080,9 @@ HELP_CONTENT = {
 
     # ----- ИГРЫ (СТРАНИЦА 1) - ТОЛЬКО КОМАНДЫ, БЕЗ ОПИСАНИЙ -----
     "games": """
+--------------------------------------------------
  <b>🕹️ Игры 🕹️</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 [🃏] <b>играть [ставка]</b>
 [🎰] <b>слот [ставка]</b>
@@ -14030,8 +14107,9 @@ HELP_CONTENT = {
 
     # ----- VIP (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
     "vip": """
+--------------------------------------------------
 💎 <b>VIP Система</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>🥉 VIP 1 - Bronze</b>
 [💳] <b>вип</b> / <b>vip</b> — открыть магазин VIP
@@ -14073,8 +14151,9 @@ HELP_CONTENT = {
 
     # ----- ТЯНКИ (СТРАНИЦА 1) - С ОПИСАНИЯМИ -----
     "tyanki": """
+--------------------------------------------------
 🏧 <b>Тянки</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>🛍 КОМАНДЫ:</b>
 [🏪] <b>магазин тянок</b> — посмотреть всех тянок
@@ -14085,8 +14164,9 @@ HELP_CONTENT = {
 
     # ----- ПИТОМЦЫ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
     "pets": """
+--------------------------------------------------
 🐾 <b>ПИТОМЦЫ</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>🛍 КОМАНДЫ:</b>
 [🏪] <b>магазин питомцев</b> — посмотреть всех питомцев
@@ -14097,8 +14177,9 @@ HELP_CONTENT = {
 
     # ----- БРАК (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
     "marriage": """
+--------------------------------------------------
 💍 <b>Система брака</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>💌 КОМАНДЫ:</b>
 [💞] <b>+брак</b> — предложить брак (ответом)
@@ -14109,8 +14190,9 @@ HELP_CONTENT = {
 
     # ----- ИВЕНТЫ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
     "events": """
+--------------------------------------------------
 🏧 <b>Ивенты</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>⛏ ШАХТА:</b>
 [⛏] <b>моя шахта</b> — главное меню шахты
@@ -14129,8 +14211,9 @@ HELP_CONTENT = {
 
     # ----- ДОНАТ (СТРАНИЦА 2) - С ОПИСАНИЯМИ -----
     "donate": """
+--------------------------------------------------
 💰 <b>Донат и поддержка</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 <b>⭐ ПОПОЛНЕНИЕ:</b>
 [💸] <b>задонатить [сумма]</b> — пополнить баланс через Telegram Stars
@@ -14145,8 +14228,9 @@ HELP_CONTENT = {
 
     # ----- РП КОМАНДЫ (СТРАНИЦА 3) - ТОЛЬКО КОМАНДЫ -----
     "rp": """
+--------------------------------------------------
 <b>🎭 РП КОМАНДЫ</b>
-━━━━━━━━━━━━━━━━━━━
+--------------------------------------------------
 
 [🤗] <b>обнять</b>
 [😘] <b>поцеловать</b>
