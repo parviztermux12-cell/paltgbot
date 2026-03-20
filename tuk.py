@@ -987,6 +987,9 @@ def list_cheques(message):
     
 
 
+
+   
+
 # ================== 🃏 НОВАЯ ИГРА "ДЖОКЕР" (JOKER) ==================
 # Команда: джокер [ставка]
 # Правила:
@@ -14013,15 +14016,15 @@ HELP_CONTENT = {
 [🐿️] <b>белка [ставка]</b>
 [🏎️] <b>разгон [ставка]</b>
 [💣] <b>мины [ставка]</b>
-[🔴] <b>[ставка] к/ч | Ставка на красное или чёрное</b>
-[🔢] <b>[ставка] 1-36 | Ставки на числа и диапозон</b>
+[🐝] <b>улей [ставка]</b>
 [⚽] <b>футбол [ставка]</b>
 [🏀] <b>баскетбол [ставка]</b>
 [🎯] <b>тир [ставка]</b>
 [🪙] <b>рб [ставка] [орёл/решка]</b>
 [🎲] <b>кубик [ставка]</b>
 [⭕] <b>кнб [ставка]</b>
-[🐝] <b>улей [ставка]</b>
+[🔴] <b>[ставка] к/ч</b>
+[🔢] <b>[ставка] 1-36</b>
 
 """,
 
@@ -14385,7 +14388,117 @@ def start_coin_flip(message):
         logger.error(f"Ошибка в игре Орёл и Решка: {e}")
         bot.reply_to(message, "❌ Ошибка при игре в Орёл и Решка")
 
+# ================== 💎 ДОНАТ МЕНЮ (ЗВЁЗДЫ, ТОЛЬКО ВАЛЮТА) ==================
+STARS_DB = "stars_payments.db"
+DONATE_IMAGE_URL = "https://w7.pngwing.com/pngs/853/96/png-transparent-computer-icons-donation-charitable-organization-donate-miscellaneous-text-logo.png"
 
+# ----------- ИНИЦИАЛИЗАЦИЯ БД -----------
+def init_star_db():
+    conn = sqlite3.connect(STARS_DB)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS star_payments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            payment_id TEXT UNIQUE,
+            stars INTEGER,
+            amount INTEGER,
+            status TEXT DEFAULT 'pending',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+init_star_db()
+
+def create_star_payment(user_id, stars, amount):
+    pid = str(uuid.uuid4())
+    conn = sqlite3.connect(STARS_DB)
+    c = conn.cursor()
+    c.execute("INSERT INTO star_payments (user_id, payment_id, stars, amount) VALUES (?, ?, ?, ?)",
+              (user_id, pid, stars, amount))
+    conn.commit()
+    conn.close()
+    return pid
+
+def complete_star_payment(pid):
+    conn = sqlite3.connect(STARS_DB)
+    c = conn.cursor()
+    c.execute("UPDATE star_payments SET status='completed' WHERE payment_id=?", (pid,))
+    conn.commit()
+    conn.close()
+
+def get_star_payment(pid):
+    conn = sqlite3.connect(STARS_DB)
+    c = conn.cursor()
+    c.execute("SELECT user_id, stars, amount, status FROM star_payments WHERE payment_id=?", (pid,))
+    row = c.fetchone()
+    conn.close()
+    return row
+
+
+# ----------- МЕНЮ ДОНАТА -----------
+def show_donate_menu(message):
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton("💰 Купить валюту", callback_data="don_stars_money"))
+    kb.add(types.InlineKeyboardButton("🪙 Задонатить командой", callback_data="don_stars_cmd"))
+    kb.add(types.InlineKeyboardButton("⬅️ Главное меню", callback_data="menu_main"))
+
+    text = (
+        "💎 <b>Донат через Telegram Stars</b>\n\n"
+        "⭐ <b>Курс:</b>\n"
+        "10 000💸 = 5⭐  →  1⭐ = 2 000💸\n\n"
+        "📦 <b>Ты можешь:</b>\n"
+        "• Купить фиксированный пакет 💰\n"
+        "• Или написать команду: <code>задонатить 20000</code>\n\n"
+        "⚡ Безопасная оплата через Telegram Stars!"
+    )
+
+    bot.send_photo(message.chat.id, DONATE_IMAGE_URL, caption=text, parse_mode="HTML", reply_markup=kb)
+
+@bot.message_handler(commands=["довжжвжвжвт"])
+def cmd_donate(message):
+    show_donate_menu(message)
+
+# ----------- КНОПКА «КУПИТЬ ВАЛЮТУ» -----------
+@bot.callback_query_handler(func=lambda c: c.data == "don_stars_money")
+def donate_money(call):
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton("💰 10 000💸 — 5⭐", callback_data="buy_money_10000"))
+    kb.add(types.InlineKeyboardButton("💰 50 000💸 — 25⭐", callback_data="buy_money_50000"))
+    kb.add(types.InlineKeyboardButton("💰 100 000💸 — 50⭐", callback_data="buy_money_100000"))
+    kb.add(types.InlineKeyboardButton("⬅️ Назад", callback_data="donate_back"))
+
+    bot.edit_message_media(
+        types.InputMediaPhoto(
+            DONATE_IMAGE_URL,
+            caption="💰 <b>Выбери пакет игровой валюты:</b>",
+            parse_mode="HTML"
+        ),
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=kb
+    )
+
+# ----------- КНОПКА «ЗАДОНАТИТЬ КОМАНДОЙ» -----------
+@bot.callback_query_handler(func=lambda c: c.data == "don_stars_cmd")
+def donate_cmd_info(call):
+    text = (
+        "🪙 <b>Команда доната</b>\n\n"
+        "Просто напиши:\n<code>задонатить 20000</code>\n\n"
+        "Бот посчитает стоимость в ⭐ и предложит оплату.\n"
+        "После успешной оплаты 💸 зачислятся автоматически."
+    )
+    kb = types.InlineKeyboardMarkup()
+    kb.add(types.InlineKeyboardButton("⬅️ Назад", callback_data="donate_back"))
+    bot.edit_message_media(
+        types.InputMediaPhoto(DONATE_IMAGE_URL, caption=text, parse_mode="HTML"),
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        reply_markup=kb
+    )
+    
 
 # ----------- ОБРАБОТЧИК ТЕКСТОВОЙ КОМАНДЫ «задонатить ...» -----------
 @bot.message_handler(func=lambda m: m.text and m.text.lower().startswith("задонатить"))
