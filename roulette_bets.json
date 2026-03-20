@@ -1,1 +1,88 @@
-{}
+{
+    "-1003782525593": {
+        "7707406638": [
+            {
+                "type": "color",
+                "amount": 5000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
+            },
+            {
+                "type": "color",
+                "amount": 3000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=7707406638\">WEEKEND</a>"
+            }
+        ]
+    },
+    "-1003880804092": {
+        "7102403681": [
+            {
+                "type": "single",
+                "amount": 13,
+                "value": [
+                    14
+                ],
+                "mention": "<a href=\"tg://user?id=7102403681\">〄</a>"
+            }
+        ]
+    },
+    "-1002394011535": {
+        "8074119869": [
+            {
+                "type": "single",
+                "amount": 1,
+                "value": [
+                    26
+                ],
+                "mention": "<a href=\"tg://user?id=8074119869\">Blood moon</a>"
+            }
+        ]
+    },
+    "6973024496": {
+        "6973024496": [
+            {
+                "type": "color",
+                "amount": 50,
+                "value": "к",
+                "mention": "<a href=\"tg://user?id=6973024496\">♱#𝖒𝖆𝖑𝖊𝖓𝖐𝖆𝖞𝖆⁶⁶⁶ || 𝟏𝟏:𝟑𝟎♱</a>"
+            },
+            {
+                "type": "single",
+                "amount": 50,
+                "value": [
+                    28
+                ],
+                "mention": "<a href=\"tg://user?id=6973024496\">♱#𝖒𝖆𝖑𝖊𝖓𝖐𝖆𝖞𝖆⁶⁶⁶ || 𝟏𝟏:𝟑𝟎♱</a>"
+            },
+            {
+                "type": "single",
+                "amount": 50,
+                "value": [
+                    30
+                ],
+                "mention": "<a href=\"tg://user?id=6973024496\">♱#𝖒𝖆𝖑𝖊𝖓𝖐𝖆𝖞𝖆⁶⁶⁶ || 𝟏𝟏:𝟑𝟎♱</a>"
+            }
+        ]
+    },
+    "-1003583349882": {
+        "5243615462": [
+            {
+                "type": "color",
+                "amount": 22,
+                "value": "к",
+                "mention": "<a href=\"tg://user?id=5243615462\">manograff’</a>"
+            }
+        ]
+    },
+    "6590819557": {
+        "6590819557": [
+            {
+                "type": "color",
+                "amount": 50000,
+                "value": "ч",
+                "mention": "<a href=\"tg://user?id=6590819557\">†♪†</a>"
+            }
+        ]
+    }
+}
